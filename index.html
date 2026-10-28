@@ -687,10 +687,9 @@
 
     try {
       const { data, error } = await pomeloDB
-        .from("menu_items")
-        .select("id, name, description, image_url, price_mxn, category, active")
-        .eq("active", true)
-        .order("created_at", { ascending: false });
+  .from("menu_items")
+  .select("id, name, description, image_url, price_mxn, category, active")
+  .eq("active", true);
 
       if (error) {
         throw error;
