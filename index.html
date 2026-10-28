@@ -423,10 +423,18 @@ function hideDay() {
     '<p class="day-empty">Toca un día para ver los platillos.</p>';
 }
 
-// Al hacer clic fuera de los botones y del menú (o con Escape), se oculta
+// Oculta el menú solo al hacer clic fuera de la zona del menú y el resumen.
 document.addEventListener("click", event => {
-  const open = document.querySelector('#day-tabs .day-tab[aria-selected="true"]');
-  if (open && !event.target.closest("#day-tabs, #public-menu")) hideDay();
+  const open = document.querySelector(
+    '#day-tabs .day-tab[aria-selected="true"]'
+  );
+
+  if (
+    open &&
+    !event.target.closest("#day-tabs, #public-menu, #order-summary")
+  ) {
+    hideDay();
+  }
 });
 document.addEventListener("keydown", event => {
   const open = document.querySelector('#day-tabs .day-tab[aria-selected="true"]');
