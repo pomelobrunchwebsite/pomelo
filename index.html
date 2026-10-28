@@ -691,6 +691,13 @@
   .select("id, name, description, image_url, price_mxn, category, active")
   .eq("active", true);
 
+console.log("Resultado de Supabase:", data);
+console.log("Error de Supabase:", error);
+
+if (error) {
+  throw error;
+}
+
       if (error) {
         throw error;
       }
@@ -748,9 +755,12 @@
       status.classList.add("hidden");
 
        } catch (error) {
-      console.error("Error al cargar el menú:", error);
+  console.error("Error al cargar el menú:", error);
 
-      status.classList.remove("hidden");
+  status.classList.remove("hidden");
+  status.textContent =
+    "Error: " + (error.message || JSON.stringify(error));
+}
 
       if (
         error.message?.includes("Failed to fetch") ||
