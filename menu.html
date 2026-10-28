@@ -1644,6 +1644,105 @@ img {
   }
 }
 
+/* FORMULARIO DE SUSCRIPCIÓN */
+
+.subscription-form {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid var(--line);
+}
+
+.subscription-form h3 {
+  margin: 0 0 8px;
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.form-description {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.subscription-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.subscription-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.subscription-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.subscription-field label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.subscription-field input,
+.subscription-field textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 14px;
+}
+
+.subscription-field textarea {
+  resize: vertical;
+}
+
+.subscription-field input:focus,
+.subscription-field textarea:focus {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.subscription-submit {
+  width: 100%;
+}
+
+.subscription-submit:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.subscription-feedback {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.subscription-feedback:empty {
+  display: none;
+}
+
+@media (max-width: 500px) {
+  .subscription-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+
+  .subscription-field.full-width {
+    grid-column: auto;
+  }
+}
+
 </style>
 
   <script>  
@@ -1751,9 +1850,65 @@ img {
     <span>Total</span>  
     <span id="order-summary-total">$0.00 MXN</span>  
   </div>  
-  <button id="clear-order" class="order-summary-clear" type="button">  
-    Limpiar selección  
-  </button>  
+
+<button id="clear-order" class="order-summary-clear" type="button">
+  Limpiar selección
+</button>
+
+<div class="subscription-form" id="subscription-form">
+  <h3>Organiza tus entregas.</h3>
+  <p class="form-description">
+    Selecciona el periodo durante el cual quieres recibir tus platillos.
+    Tus días elegidos se repetirán dentro de esas fechas.
+  </p>
+
+  <div class="subscription-fields">
+    <div class="subscription-field">
+      <label for="subscription-start-date">Fecha de inicio</label>
+      <input type="date" id="subscription-start-date" required>
+    </div>
+
+    <div class="subscription-field">
+      <label for="subscription-end-date">Fecha de término</label>
+      <input type="date" id="subscription-end-date" required>
+    </div>
+
+    <div class="subscription-field full-width">
+      <label for="subscription-address">Dirección de entrega</label>
+      <input
+        type="text"
+        id="subscription-address"
+        placeholder="Calle, número, colonia y referencias"
+        maxlength="500"
+        autocomplete="street-address"
+        required
+      >
+    </div>
+
+    <div class="subscription-field full-width">
+      <label for="subscription-notes">Indicaciones adicionales (opcional)</label>
+      <textarea
+        id="subscription-notes"
+        rows="3"
+        maxlength="1000"
+        placeholder="Referencias para encontrar tu domicilio o indicaciones de entrega"
+      ></textarea>
+    </div>
+  </div>
+
+  <p class="form-description">
+    La solicitud quedará pendiente de confirmación. El total mostrado
+    corresponde a las cantidades seleccionadas por día, no al total
+    de todas las entregas del periodo.
+  </p>
+
+  <button id="submit-subscription" class="button subscription-submit" type="button">
+    Solicitar suscripción
+  </button>
+
+  <p id="subscription-feedback" class="subscription-feedback"
+     role="status" aria-live="polite"></p>
+</div>
 </div>  
     </div>  
   </section>  
@@ -1775,7 +1930,10 @@ img {
       <div>  
         <div class="eyebrow">Una semana más simple</div>  
         <h2>Tu comida, organizada a tu manera.</h2>  
-        <p>Próximamente podrás consultar el menú, seleccionar tus platillos por fecha y organizar tus entregas desde tu propia cuenta.</p>  
+<p>
+  Consulta el menú, elige tus platillos por día y solicita tus entregas
+  desde tu propia cuenta. Revisaremos tu solicitud antes de activarla.
+</p>     
       </div>  
       <a class="button" href="#como-funciona">Así funcionará ↗</a>  
     </div>  
@@ -1787,7 +1945,11 @@ img {
       </div>  
       <p class="section-description">Estamos preparando una experiencia para que elegir, programar y recibir tus comidas sea sencillo desde tu celular.</p>  
     </div>  
-    <div class="notice">La plataforma de pedidos y cuentas está en preparación. Los pedidos todavía no se pueden realizar desde esta página.</div>  
+<div class="notice">
+  Puedes enviar tu solicitud de suscripción desde el menú.
+  La programación de tus entregas comenzará una vez que tu suscripción
+  haya sido revisada y activada.
+</div>  
   </section>  
 </main>  <footer>  
   <a class="brand" href="#">pomelo<span>.</span><small>brunch house</small></a>  
@@ -2167,6 +2329,154 @@ const dishes = menuItems.filter(item =>
         '#day-tabs .day-tab[aria-selected="true"]'  
       );  
   
+const startDateInput = document.getElementById("subscription-start-date");
+const endDateInput = document.getElementById("subscription-end-date");
+const addressInput = document.getElementById("subscription-address");
+const notesInput = document.getElementById("subscription-notes");
+const submitButton = document.getElementById("submit-subscription");
+const feedback = document.getElementById("subscription-feedback");
+
+// Fecha local para evitar diferencias por zona horaria.
+function getLocalDateString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+startDateInput.min = getLocalDateString();
+endDateInput.min = startDateInput.value || getLocalDateString();
+
+startDateInput.addEventListener("change", () => {
+  endDateInput.min = startDateInput.value || getLocalDateString();
+
+  if (
+    endDateInput.value &&
+    startDateInput.value &&
+    endDateInput.value < startDateInput.value
+  ) {
+    endDateInput.value = startDateInput.value;
+  }
+});
+
+submitButton.addEventListener("click", async () => {
+  feedback.textContent = "";
+
+  const startDate = startDateInput.value;
+  const endDate = endDateInput.value;
+  const address = addressInput.value.trim();
+  const notes = notesInput.value.trim();
+
+  if (!startDate || !endDate) {
+    feedback.textContent = "Selecciona las fechas de inicio y término.";
+    return;
+  }
+
+  if (startDate < getLocalDateString()) {
+    feedback.textContent = "La fecha de inicio no puede estar en el pasado.";
+    return;
+  }
+
+  if (endDate < startDate) {
+    feedback.textContent = "La fecha de término debe ser posterior a la de inicio.";
+    return;
+  }
+
+  if (!address) {
+    feedback.textContent = "Escribe tu dirección de entrega.";
+    addressInput.focus();
+    return;
+  }
+
+  const items = [];
+
+  Object.entries(quantities).forEach(([day, selectedItems]) => {
+    Object.entries(selectedItems).forEach(([menu_item_id, quantity]) => {
+      if (Number(quantity) > 0) {
+        items.push({
+          day: Number(day),
+          menu_item_id,
+          quantity: Number(quantity)
+        });
+      }
+    });
+  });
+
+  if (items.length === 0) {
+    feedback.textContent = "Agrega al menos un platillo antes de continuar.";
+    return;
+  }
+
+  const selectedDays = new Set(items.map(item => item.day));
+
+  if (selectedDays.size < 1 || selectedDays.size > 5) {
+    feedback.textContent = "Selecciona platillos para entre 1 y 5 días.";
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Enviando solicitud…";
+
+  try {
+    const { data: userData, error: userError } =
+      await pomeloDB.auth.getUser();
+
+    if (userError || !userData.user) {
+      throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
+    }
+
+    const { data, error } = await pomeloDB.rpc(
+      "create_subscription_request",
+      {
+        p_start_date: startDate,
+        p_end_date: endDate,
+        p_delivery_address: address,
+        p_delivery_notes: notes,
+        p_items: items
+      }
+    );
+
+    if (error) {
+      console.error("Error de Supabase:", error);
+      throw new Error(
+        "No pudimos registrar tu solicitud. Revisa los datos e inténtalo nuevamente."
+      );
+    }
+
+    if (!data) {
+      throw new Error("No recibimos la confirmación del servidor. Verifica tu solicitud antes de enviarla otra vez.");
+    }
+
+    // Limpiar la selección local después de guardar correctamente.
+    Object.keys(quantities).forEach(day => delete quantities[day]);
+
+    const selectedTab = document.querySelector(
+      '#day-tabs .day-tab[aria-selected="true"]'
+    );
+
+    if (selectedTab) {
+      renderDay(Number(selectedTab.dataset.day));
+    }
+
+    renderSummary();
+
+    feedback.textContent =
+      "¡Solicitud enviada! Tu suscripción quedó pendiente de confirmación.";
+
+    feedback.style.color = "var(--green)";
+
+  } catch (error) {
+    console.error("Error al solicitar suscripción:", error);
+    feedback.textContent =
+      error.message || "Ocurrió un error. Inténtalo nuevamente.";
+    feedback.style.color = "#a33b32";
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Solicitar suscripción";
+  }
+});
+
       if (selected) renderDay(Number(selected.dataset.day));  
       renderSummary();  
     };  
