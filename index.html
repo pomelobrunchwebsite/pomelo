@@ -540,14 +540,16 @@ async function loadPublicMenu() {
 
     if (error) throw error;
 
-    if (!data || data.length === 0) {
-      container.innerHTML = "";
-      tabsContainer.classList.add("hidden");
-      showMenuStatus(
-        "Estamos preparando nuestro menú. Muy pronto encontrarás aquí nuestros platillos."
-      );
-      return;
-    }
+const days = [
+  [1, "Lunes"],
+  [2, "Martes"],
+  [3, "Miércoles"],
+  [4, "Jueves"],
+  [5, "Viernes"]
+];
+
+// Si no hay platillos activos, usamos una lista vacía.
+const menuItems = data || [];
 
     const days = [
       [1, "Lunes"],
