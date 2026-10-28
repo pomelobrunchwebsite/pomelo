@@ -307,7 +307,8 @@
             if (insertError) throw insertError;
           }
 
-          showMessage("Sesión iniciada correctamente. El panel de pedidos se habilitará en el siguiente paso.", "success");
+          showMessage("Sesión iniciada. Abriendo administrador...", "success");
+window.location.href = "./admin.html";
         }
       } catch (error) {
         showMessage(error.message || "No se pudo completar la operación. Inténtalo de nuevo.", "error");
