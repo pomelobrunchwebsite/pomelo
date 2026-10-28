@@ -523,14 +523,15 @@ $("item-image-file").addEventListener("change", event => {
     await loadAll();
   }
 
-  async function loadAll() {
-    await Promise.all([
-      loadMenu(),
-      loadOrders(),
-      loadSubscriptions()
-    ]);
-  }
+async function loadAll() {
+  await Promise.all([
+    loadMenu(),
+    loadOrders(),
+    loadSubscriptions()
+  ]);
 
+  renderMenuList();
+}
   async function loadMenu() {
     $("menu-list").innerHTML = '<div class="empty">Cargando menú...</div>';
 
