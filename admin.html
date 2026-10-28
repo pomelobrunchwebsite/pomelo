@@ -353,7 +353,6 @@ input, select, textarea { font-size: 16px; } /* evita el zoom automático en iPh
             <input id="item-active" type="checkbox" checked>
             <label for="item-active" style="margin:0">Disponible para los clientes</label>
           </div>
-          <p class="muted">Por ahora, el platillo estará disponible de lunes a viernes.</p>
           <button class="btn primary" type="submit">Guardar platillo</button>
           <button class="btn" type="button" id="cancel-form-btn">Cancelar</button>
         </form>
@@ -553,6 +552,103 @@ $("stat-menu").textContent = menuCache.filter(item => item.active).length;
 renderMenuList();
   }
 
+let menuFilter = "all";
+
+function renderMenuList() {
+  const filteredItems = menuCache.filter(item => {
+    if (menuFilter === "active") return item.active === true;
+    if (menuFilter === "inactive") return item.active === false;
+    return true;
+  });
+
+  const activeCount = menuCache.filter(item => item.active === true).length;
+  const inactiveCount = menuCache.filter(item => item.active === false).length;
+
+  $("menu-count").textContent =
+    `${filteredItems.length} mostrados · ${activeCount} activos · ${inactiveCount} inactivos`;
+
+  if (!filteredItems.length) {
+    const messages = {
+      all: "Todavía no hay platillos registrados.",
+      active: "No hay platillos activos.",
+      inactive: "No hay platillos inactivos."
+    };
+
+    $("menu-list").innerHTML =
+      `<div class="empty">${messages[menuFilter]}</div>`;
+    return;
+  }
+
+  $("menu-list").innerHTML = filteredItems.map(item => {
+    const days = Array.isArray(item.available_days)
+      ? item.available_days.map(Number)
+      : [1, 2, 3, 4, 5];
+
+    const dayNames = days
+      .filter(day => day >= 1 && day <= 5)
+      .map(day => ["", "Lun", "Mar", "Mié", "Jue", "Vie"][day])
+      .join(", ");
+
+    return `
+      <article class="item">
+        <div>
+          <div class="item-title">${escapeHtml(item.name)}</div>
+          <div class="muted">${escapeHtml(item.description || "Sin descripción")}</div>
+
+          <div class="muted" style="margin-top:6px">
+            Días: ${dayNames || "Sin días asignados"}
+          </div>
+
+          <p style="margin:8px 0">
+            <strong>${money(item.price_mxn)}</strong>
+            <span class="pill">
+              ${item.category === "dinner" ? "Cena opcional" : "Comida"}
+            </span>
+            <span class="pill">
+              ${item.active ? "Activo" : "Inactivo"}
+            </span>
+          </p>
+        </div>
+
+        <div class="item-actions">
+          <button class="btn" data-edit="${item.id}">Editar</button>
+
+          <button
+            class="btn ${item.active ? "danger" : ""}"
+            data-toggle="${item.id}"
+          >
+            ${item.active ? "Desactivar" : "Activar"}
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  $("menu-list").querySelectorAll("[data-edit]").forEach(button => {
+    button.addEventListener("click", () => {
+      editItem(button.dataset.edit);
+    });
+  });
+
+  $("menu-list").querySelectorAll("[data-toggle]").forEach(button => {
+    button.addEventListener("click", () => {
+      toggleItem(button.dataset.toggle);
+    });
+  });
+}
+
+document.querySelectorAll("[data-menu-filter]").forEach(button => {
+  button.addEventListener("click", () => {
+    menuFilter = button.dataset.menuFilter;
+
+    document.querySelectorAll("[data-menu-filter]").forEach(filterButton => {
+      filterButton.classList.toggle("active", filterButton === button);
+    });
+
+    renderMenuList();
+  });
+});
+
 
   function resetItemForm() {
     $("item-form").reset();
@@ -579,8 +675,18 @@ document.querySelectorAll('input[name="available-day"]').forEach(input => {
     $("item-name").value = item.name || "";
     $("item-price").value = item.price_mxn;
     $("item-category").value = item.category || "meal";
-    $("item-image").value = item.image_url || "";
-    $("item-description").value = item.description || "";
+$("item-image").value = item.image_url || "";
+
+selectedPhotoFile = null;
+$("item-image-file").value = "";
+
+if (item.image_url) {
+  $("item-image-preview").src = item.image_url;
+  $("item-image-preview").classList.remove("hidden");
+} else {
+  $("item-image-preview").removeAttribute("src");
+  $("item-image-preview").classList.add("hidden");
+}    $("item-description").value = item.description || "";
     $("item-active").checked = Boolean(item.active);
     
 const savedDays = Array.isArray(item.available_days)
