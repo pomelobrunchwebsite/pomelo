@@ -256,14 +256,17 @@ footer{padding:34px var(--pad) calc(34px + env(safe-area-inset-bottom));display:
 }
 
 .order-summary-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 16px;
-  padding: 8px 0;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  background: transparent;
-  color: var(--muted);
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--dark);
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 </style>
