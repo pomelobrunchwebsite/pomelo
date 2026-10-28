@@ -541,23 +541,15 @@ async function loadPublicMenu() {
     if (error) throw error;
 
 const days = [
-  [1, "Lunes"],
-  [2, "Martes"],
-  [3, "Miércoles"],
-  [4, "Jueves"],
-  [5, "Viernes"]
+[1, "Lunes"],
+[2, "Martes"],
+[3, "Miércoles"],
+[4, "Jueves"],
+[5, "Viernes"]
 ];
 
-// Si no hay platillos activos, usamos una lista vacía.
+// Conserva un arreglo vacío si no hay platillos activos.
 const menuItems = data || [];
-
-    const days = [
-      [1, "Lunes"],
-      [2, "Martes"],
-      [3, "Miércoles"],
-      [4, "Jueves"],
-      [5, "Viernes"]
-    ];
 
     // Conserva las cantidades mientras el cliente cambia de día.
     const quantities = {};
