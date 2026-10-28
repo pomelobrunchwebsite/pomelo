@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f6ef">
+  <title>Mi cuenta | Pomelo Brunch House</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f8f6ef;
+      --green: #536247;
+      --dark: #25291f;
+      --muted: #77796d;
+      --line: #e5e2d8;
+      --white: #fffefa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--cream);
+      color: var(--dark);
+      font-family: "DM Sans", sans-serif;
+    }
+    .visual {
+      min-height: 100vh;
+      position: relative;
+      background: #dfe2d5;
+      overflow: hidden;
+    }
+    .visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+    .visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(25,31,22,.65), transparent 55%);
+    }
+    .visual-copy {
+      position: absolute;
+      z-index: 1;
+      bottom: 8%;
+      left: 9%;
+      right: 9%;
+      color: white;
+    }
+    .visual-copy h2 {
+      font: 400 clamp(34px, 4vw, 56px)/1.1 "Playfair Display", serif;
+      margin: 12px 0;
+    }
+    .visual-copy p { font-size: 13px; line-height: 1.8; }
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 8%;
+    }
+    .panel { width: 100%; max-width: 390px; }
+    .brand {
+      display: inline-block;
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .brand span { color: var(--green); }
+    .brand small {
+      display: block;
+      margin-top: 3px;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .eyebrow {
+      margin-top: 46px;
+      color: var(--green);
+      font-size: 10px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 13px 0 10px;
+      font: 400 42px/1.1 "Playfair Display", serif;
+      letter-spacing: -1px;
+    }
+    .intro {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); margin-bottom: 25px; }
+    .tab {
+      padding: 13px 5px;
+      background: transparent;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      font: inherit;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .tab.active { border-color: var(--green); color: var(--green); font-weight: 700; }
+    label { display: block; margin: 16px 0 8px; font-size: 11px; font-weight: 600; }
+    input {
+      width: 100%;
+      min-height: 47px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: var(--white);
+      padding: 0 13px;
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus { border-color: var(--green); }
+    .submit {
+      width: 100%;
+      min-height: 49px;
+      margin-top: 24px;
+      border: 0;
+      border-radius: 2px;
+      background: var(--green);
+      color: white;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .submit:disabled { opacity: .6; cursor: wait; }
+    .message { margin-top: 16px; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+    .message.error { color: #a13b32; }
+    .message.success { color: var(--green); }
+    .back { display: inline-block; margin-top: 27px; font-size: 12px; color: var(--muted); }
+    .hidden { display: none !important; }
+    @media (max-width: 760px) {
+      body { grid-template-columns: 1fr; }
+      .visual { display: none; }
+      .content { min-height: 100vh; padding: 35px 7%; }
+      .eyebrow { margin-top: 40px; }
+      h1 { font-size: 39px; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="visual" aria-hidden="true">
+    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=85" alt="">
+    <div class="visual-copy">
+      <div style="font-size:10px;letter-spacing:2px">POMELO BRUNCH HOUSE</div>
+      <h2>Una semana<br>bien alimentada.</h2>
+      <p>Comida real. Días más sencillos.</p>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="panel">
+      <a class="brand" href="./">pomelo<span>.</span><small>brunch house</small></a>
+
+      <div class="eyebrow">Tu espacio personal</div>
+      <h1 id="heading">Qué gusto verte.</h1>
+      <p class="intro" id="intro">Entra a tu cuenta para organizar tus comidas de la semana.</p>
+
+      <div class="tabs">
+        <button class="tab active" id="loginTab" type="button">Iniciar sesión</button>
+        <button class="tab" id="signupTab" type="button">Crear cuenta</button>
+      </div>
+
+      <form id="authForm">
+        <div id="nameField" class="hidden">
+          <label for="fullName">Nombre completo</label>
+          <input id="fullName" name="fullName" autocomplete="name" maxlength="100">
+        </div>
+
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+
+        <div id="phoneField" class="hidden">
+          <label for="phone">Teléfono</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="25">
+        </div>
+
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" minlength="8" required>
+
+        <button class="submit" id="submitButton" type="submit">Entrar a mi cuenta ↗</button>
+      </form>
+
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <button id="resetButton" class="back" type="button" style="border:0;background:none;padding:0;cursor:pointer">Olvidé mi contraseña</button>
+      <br>
+      <a class="back" href="./">← Volver a Pomelo</a>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const form = document.getElementById("authForm");
+    const loginTab = document.getElementById("loginTab");
+    const signupTab = document.getElementById("signupTab");
+    const message = document.getElementById("message");
+    const submitButton = document.getElementById("submitButton");
+    let mode = "login";
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = "message " + (type || "");
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const signup = mode === "signup";
+      loginTab.classList.toggle("active", !signup);
+      signupTab.classList.toggle("active", signup);
+      document.getElementById("nameField").classList.toggle("hidden", !signup);
+      document.getElementById("phoneField").classList.toggle("hidden", !signup);
+      document.getElementById("fullName").required = signup;
+      document.getElementById("heading").textContent = signup ? "Empecemos por aquí." : "Qué gusto verte.";
+      document.getElementById("intro").textContent = signup
+        ? "Crea tu cuenta para organizar tus comidas."
+        : "Entra a tu cuenta para organizar tus comidas de la semana.";
+      document.getElementById("password").autocomplete = signup ? "new-password" : "current-password";
+      submitButton.textContent = signup ? "Crear mi cuenta ↗" : "Entrar a mi cuenta ↗";
+      document.getElementById("resetButton").classList.toggle("hidden", signup);
+      showMessage("", "");
+    }
+
+    loginTab.addEventListener("click", () => setMode("login"));
+    signupTab.addEventListener("click", () => setMode("signup"));
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      showMessage("", "");
+      submitButton.disabled = true;
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        if (mode === "signup") {
+          const fullName = document.getElementById("fullName").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+
+          const { data, error } = await db.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: window.location.origin + window.location.pathname,
+              data: { full_name: fullName, phone: phone }
+            }
+          });
+          if (error) throw error;
+
+          if (data.session) {
+            const { error: profileError } = await db.from("profiles").upsert({
+              id: data.user.id,
+              full_name: fullName,
+              phone: phone,
+              role: "customer"
+            });
+            if (profileError) throw profileError;
+          }
+
+          showMessage(
+            data.session
+              ? "¡Cuenta creada! Ya puedes continuar cuando esté disponible tu panel."
+              : "Cuenta iniciada en el registro. Revisa tu correo para confirmar la dirección antes de iniciar sesión.",
+            "success"
+          );
+          if (data.session) form.reset();
+        } else {
+          const { data, error } = await db.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+
+          const { data: profile, error: profileError } = await db
+            .from("profiles")
+            .select("role")
+            .eq("id", data.user.id)
+            .maybeSingle();
+
+          if (profileError) throw profileError;
+
+          if (!profile) {
+            const fullName = data.user.user_metadata?.full_name || "";
+            const phone = data.user.user_metadata?.phone || "";
+            const { error: insertError } = await db.from("profiles").insert({
+              id: data.user.id,
+              full_name: fullName,
+              phone: phone,
+              role: "customer"
+            });
+            if (insertError) throw insertError;
+          }
+
+          showMessage("Sesión iniciada correctamente. El panel de pedidos se habilitará en el siguiente paso.", "success");
+        }
+      } catch (error) {
+        showMessage(error.message || "No se pudo completar la operación. Inténtalo de nuevo.", "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    document.getElementById("resetButton").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      if (!email) {
+        showMessage("Escribe tu correo para enviarte el enlace de recuperación.", "error");
+        document.getElementById("email").focus();
+        return;
+      }
+
+      try {
+        const { error } = await db.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname
+        });
+        if (error) throw error;
+        showMessage("Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.", "success");
+      } catch (error) {
+        showMessage(error.message || "No se pudo enviar el enlace.", "error");
+      }
+    });
+  </script>
+</body>
+</html>
