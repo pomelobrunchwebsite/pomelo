@@ -533,6 +533,7 @@ async function loadAll() {
   renderMenuList();
 }
   
+
 async function loadMenu() {
   $("menu-list").innerHTML =
     '<div class="empty">Cargando menú...</div>';
@@ -567,6 +568,7 @@ async function loadMenu() {
 
   console.log("Platillos recibidos de Supabase:", menuCache.length);
 }
+
 let menuFilter = "all";
 
 function renderMenuList() {
