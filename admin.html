@@ -532,27 +532,41 @@ async function loadAll() {
 
   renderMenuList();
 }
-  async function loadMenu() {
-    $("menu-list").innerHTML = '<div class="empty">Cargando menú...</div>';
+  
+async function loadMenu() {
+  $("menu-list").innerHTML =
+    '<div class="empty">Cargando menú...</div>';
+  $("menu-count").textContent = "Consultando platillos...";
 
-    const { data, error } = await db
-      .from("menu_items")
-      .select("*")
-      .order("created_at", { ascending: false });
+  const { data, error } = await db
+    .from("menu_items")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    if (error) {
-      $("menu-list").innerHTML = "";
-      showMenuMessage("No se pudo cargar el menú: " + error.message, "error");
-      return;
-    }
+  if (error) {
+    $("menu-list").innerHTML =
+      '<div class="empty">No se pudieron cargar los platillos.</div>';
 
-    
-menuCache = data || [];
-$("stat-menu").textContent = menuCache.filter(item => item.active).length;
+    $("menu-count").textContent = "Error de consulta";
 
-renderMenuList();
+    showMenuMessage(
+      "Error al cargar el menú: " + error.message,
+      "error"
+    );
+
+    console.error("Error al cargar menu_items:", error);
+    return;
   }
 
+  menuCache = data || [];
+
+  $("stat-menu").textContent =
+    menuCache.filter(item => item.active === true).length;
+
+  renderMenuList();
+
+  console.log("Platillos recibidos de Supabase:", menuCache.length);
+}
 let menuFilter = "all";
 
 function renderMenuList() {
