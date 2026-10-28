@@ -154,6 +154,118 @@ footer{padding:34px var(--pad) calc(34px + env(safe-area-inset-bottom));display:
   .menu-card-price{margin-top:4px;padding:0;font-size:15px}
   .day-tab{min-height:46px}
 }
+  /* Selector de cantidad de platillos */
+.dish-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.dish-order-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dish-order-controls button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+.dish-order-controls button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.dish-order-controls button:hover:not(:disabled) {
+  border-color: var(--green);
+}
+
+.dish-order-qty {
+  min-width: 18px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.dish-order-label {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dish-order-subtotal {
+  display: block;
+  margin-top: 5px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.order-summary {
+  margin-top: 28px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  background: var(--cream);
+}
+
+.order-summary h3 {
+  margin: 0 0 16px;
+  font-family: "Playfair Display", serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.order-summary-empty {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.order-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.order-summary-row small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.order-summary-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.order-summary-clear {
+  margin-top: 16px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -213,6 +325,21 @@ footer{padding:34px var(--pad) calc(34px + env(safe-area-inset-bottom));display:
         <button class="day-tab" role="tab" type="button" data-day="5"><span class="full">Viernes</span><span class="short">Vie</span></button>
       </div>
       <div id="public-menu" role="tabpanel" class="week-menu" aria-busy="true"></div>
+      <div id="order-summary" class="order-summary" aria-live="polite">
+  <h3>Tu selección.</h3>
+  <div id="order-summary-items">
+    <p class="order-summary-empty">
+      Elige un día y agrega los platillos que necesitas.
+    </p>
+  </div>
+  <div class="order-summary-total">
+    <span>Total</span>
+    <span id="order-summary-total">$0.00 MXN</span>
+  </div>
+  <button id="clear-order" class="order-summary-clear" type="button">
+    Limpiar selección
+  </button>
+</div>
     </div>
   </section>
   <!-- FIN DEL MENÚ DINÁMICO -->
@@ -306,14 +433,17 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape" && open) hideDay();
 });
 
+
 async function loadPublicMenu() {
   const status = document.getElementById("menu-status");
   const container = document.getElementById("public-menu");
+  const tabsContainer = document.getElementById("day-tabs");
 
   status.classList.add("hidden");
-  document.getElementById("day-tabs").classList.add("hidden");
+  tabsContainer.classList.add("hidden");
   container.setAttribute("aria-busy", "true");
-  container.innerHTML = '<div class="menu-grid">' + '<div class="skeleton"></div>'.repeat(2) + '</div>';
+  container.innerHTML =
+    '<div class="menu-grid"><div class="skeleton"></div><div class="skeleton"></div></div>';
 
   try {
     const { data, error } = await pomeloDB
@@ -326,73 +456,297 @@ async function loadPublicMenu() {
 
     if (!data || data.length === 0) {
       container.innerHTML = "";
-      document.getElementById("day-tabs").classList.add("hidden");
-      showMenuStatus("Estamos preparando nuestro menú. Muy pronto encontrarás aquí nuestros platillos.");
+      tabsContainer.classList.add("hidden");
+      showMenuStatus(
+        "Estamos preparando nuestro menú. Muy pronto encontrarás aquí nuestros platillos."
+      );
       return;
     }
 
-    const days = [[1, "Lunes"], [2, "Martes"], [3, "Miércoles"], [4, "Jueves"], [5, "Viernes"]];
+    const days = [
+      [1, "Lunes"],
+      [2, "Martes"],
+      [3, "Miércoles"],
+      [4, "Jueves"],
+      [5, "Viernes"]
+    ];
 
-    const cardHtml = item => {
-      const category = item.category === "dinner" ? "Cena opcional" : "Comida";
-      const image = item.image_url
-        ? `<img class="menu-card-image" src="${escapeMenuText(item.image_url)}" alt="${escapeMenuText(item.name)}" loading="lazy" width="800" height="600">`
-        : `<div class="menu-card-image" role="img" aria-label="Fotografía no disponible"></div>`;
-      return `
-        <article class="menu-card">
-          ${image}
-          <div class="menu-card-content">
-            <div class="menu-card-category">${category}</div>
-            <h4>${escapeMenuText(item.name)}</h4>
-            <p class="menu-card-description">${escapeMenuText(item.description || "Preparado con ingredientes frescos.")}</p>
-            <div class="menu-card-price">${formatMenuPrice(item.price_mxn)}</div>
-          </div>
-        </article>`;
-    };
+    // Conserva las cantidades mientras el cliente cambia de día.
+    const quantities = {};
 
-    const tabs = document.querySelectorAll("#day-tabs .day-tab");
+    function getQuantity(day, id) {
+      return quantities[day]?.[String(id)] || 0;
+    }
 
-    function selectDay(n) {
-      tabs.forEach(tab => {
-        const active = Number(tab.dataset.day) === n;
-        tab.setAttribute("aria-selected", active ? "true" : "false");
+    function setQuantity(day, id, value) {
+      if (!quantities[day]) quantities[day] = {};
+
+      if (value <= 0) {
+        delete quantities[day][String(id)];
+      } else {
+        quantities[day][String(id)] = value;
+      }
+
+      if (Object.keys(quantities[day]).length === 0) {
+        delete quantities[day];
+      }
+    }
+
+    function calculateTotal() {
+      let total = 0;
+
+      Object.entries(quantities).forEach(([day, items]) => {
+        Object.entries(items).forEach(([id, qty]) => {
+          const item = data.find(
+            x => String(x.id) === id && x.active
+          );
+
+          if (item) {
+            total += Number(item.price_mxn || 0) * qty;
+          }
+        });
+      });
+
+      return total;
+    }
+
+    function renderSummary() {
+      const summary = document.getElementById("order-summary-items");
+      const totalElement = document.getElementById("order-summary-total");
+      const rows = [];
+
+      days.forEach(([dayNumber, dayName]) => {
+        const items = quantities[dayNumber] || {};
+
+        Object.entries(items).forEach(([id, qty]) => {
+          const item = data.find(x => String(x.id) === id);
+          if (!item || qty <= 0) return;
+
+          const subtotal = Number(item.price_mxn || 0) * qty;
+          const row = document.createElement("div");
+          row.className = "order-summary-row";
+
+          const description = document.createElement("span");
+          description.textContent = `${item.name} × ${qty}`;
+
+          const detail = document.createElement("small");
+          detail.textContent = dayName;
+          description.appendChild(detail);
+
+          const amount = document.createElement("strong");
+          amount.textContent = formatMenuPrice(subtotal);
+
+          row.append(description, amount);
+          rows.push(row);
+        });
+      });
+
+      summary.replaceChildren();
+
+      if (rows.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "order-summary-empty";
+        empty.textContent =
+          "Elige un día y agrega los platillos que necesitas.";
+        summary.appendChild(empty);
+      } else {
+        rows.forEach(row => summary.appendChild(row));
+      }
+
+      totalElement.textContent = formatMenuPrice(calculateTotal());
+    }
+
+    function renderDay(dayNumber) {
+      const day = days.find(d => d[0] === dayNumber);
+      if (!day) return;
+
+      document.querySelectorAll("#day-tabs .day-tab").forEach(tab => {
+        const active = Number(tab.dataset.day) === dayNumber;
+        tab.setAttribute("aria-selected", String(active));
         tab.tabIndex = active ? 0 : -1;
       });
 
-      const label = days.find(d => d[0] === n)[1];
       const dishes = data.filter(item =>
         !Array.isArray(item.available_days) ||
         item.available_days.length === 0 ||
-        item.available_days.map(Number).includes(n)
+        item.available_days.map(Number).includes(dayNumber)
       );
 
-      container.innerHTML = `
-        <h3 class="day-title">${label}</h3>
-        ${dishes.length
-          ? `<div class="menu-grid">${dishes.map(cardHtml).join("")}</div>`
-          : `<p class="day-empty">Menú por confirmar para este día.</p>`}`;
+      container.innerHTML = "";
+
+      const heading = document.createElement("h3");
+      heading.className = "day-title";
+      heading.textContent = day[1];
+      container.appendChild(heading);
+
+      if (dishes.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "day-empty";
+        empty.textContent = "Menú por confirmar para este día.";
+        container.appendChild(empty);
+        return;
+      }
+
+      const grid = document.createElement("div");
+      grid.className = "menu-grid";
+
+      dishes.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "menu-card";
+
+        if (item.image_url) {
+          const image = document.createElement("img");
+          image.className = "menu-card-image";
+          image.src = item.image_url;
+          image.alt = item.name;
+          image.loading = "lazy";
+          image.width = 800;
+          image.height = 600;
+          card.appendChild(image);
+        } else {
+          const imagePlaceholder = document.createElement("div");
+          imagePlaceholder.className = "menu-card-image";
+          imagePlaceholder.setAttribute("aria-hidden", "true");
+          card.appendChild(imagePlaceholder);
+        }
+
+        const content = document.createElement("div");
+        content.className = "menu-card-content";
+
+        const category = document.createElement("div");
+        category.className = "menu-card-category";
+        category.textContent =
+          item.category === "dinner" ? "Cena · Producto independiente" : "Comida";
+
+        const name = document.createElement("h4");
+        name.textContent = item.name;
+
+        const description = document.createElement("p");
+        description.className = "menu-card-description";
+        description.textContent =
+          item.description || "Preparado con ingredientes frescos.";
+
+        const price = document.createElement("div");
+        price.className = "menu-card-price";
+        price.textContent = formatMenuPrice(item.price_mxn);
+
+        const quantity = document.createElement("div");
+        quantity.className = "dish-order";
+
+        const label = document.createElement("span");
+        label.className = "dish-order-label";
+        label.textContent = "Cantidad";
+
+        const controls = document.createElement("div");
+        controls.className = "dish-order-controls";
+
+        const minus = document.createElement("button");
+        minus.type = "button";
+        minus.textContent = "−";
+        minus.setAttribute("aria-label", `Quitar ${item.name}`);
+        minus.disabled = getQuantity(dayNumber, item.id) === 0;
+
+        const count = document.createElement("span");
+        count.className = "dish-order-qty";
+        count.textContent = getQuantity(dayNumber, item.id);
+
+        const plus = document.createElement("button");
+        plus.type = "button";
+        plus.textContent = "+";
+        plus.setAttribute("aria-label", `Agregar ${item.name}`);
+
+        const subtotal = document.createElement("span");
+        subtotal.className = "dish-order-subtotal";
+
+        function refreshCard() {
+          const qty = getQuantity(dayNumber, item.id);
+          count.textContent = qty;
+          minus.disabled = qty === 0;
+          subtotal.textContent = qty > 0
+            ? `Subtotal: ${formatMenuPrice(Number(item.price_mxn || 0) * qty)}`
+            : "";
+        }
+
+        minus.addEventListener("click", () => {
+          setQuantity(
+            dayNumber,
+            item.id,
+            getQuantity(dayNumber, item.id) - 1
+          );
+          refreshCard();
+          renderSummary();
+        });
+
+        plus.addEventListener("click", () => {
+          setQuantity(
+            dayNumber,
+            item.id,
+            getQuantity(dayNumber, item.id) + 1
+          );
+          refreshCard();
+          renderSummary();
+        });
+
+        controls.append(minus, count, plus);
+        quantity.append(label, controls);
+        content.append(category, name, description, price, subtotal, quantity);
+        card.appendChild(content);
+        grid.appendChild(card);
+
+        refreshCard();
+      });
+
+      container.appendChild(grid);
     }
 
-    tabs.forEach(tab => { tab.onclick = () => selectDay(Number(tab.dataset.day)); });
+    document.querySelectorAll("#day-tabs .day-tab").forEach(tab => {
+      tab.onclick = () => renderDay(Number(tab.dataset.day));
+    });
 
-    document.getElementById("day-tabs").classList.remove("hidden");
-    hideDay();
+    document.getElementById("clear-order").onclick = () => {
+      Object.keys(quantities).forEach(day => delete quantities[day]);
+      const selected = document.querySelector(
+        '#day-tabs .day-tab[aria-selected="true"]'
+      );
+
+      if (selected) renderDay(Number(selected.dataset.day));
+      renderSummary();
+    };
+
+    tabsContainer.classList.remove("hidden");
+    showMenuStatus(
+      "Selecciona un día y agrega las cantidades que necesitas. Puedes elegir varios platillos para el mismo día."
+    );
+
+    container.innerHTML =
+      '<p class="day-empty">Toca un día para consultar sus platillos.</p>';
+
+    renderSummary();
   } catch (error) {
     console.error("Error al cargar el menú:", error);
     container.innerHTML = "";
-    document.getElementById("day-tabs").classList.add("hidden");
+    tabsContainer.classList.add("hidden");
 
-    let text = "No pudimos cargar el menú. Inténtalo de nuevo en unos minutos.";
+    let message =
+      "No pudimos cargar el menú. Inténtalo de nuevo en unos minutos.";
+
     if (/failed to fetch|networkerror/i.test(error.message || "")) {
-      text = "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.";
+      message =
+        "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.";
     }
-    showMenuStatus(`${text}<br><button class="button" type="button" id="retry-menu">Reintentar</button>`);
-    document.getElementById("retry-menu").addEventListener("click", loadPublicMenu);
+
+    showMenuStatus(
+      `${message}<br><button class="button" type="button" id="retry-menu">Reintentar</button>`
+    );
+
+    document.getElementById("retry-menu").addEventListener(
+      "click",
+      loadPublicMenu
+    );
   } finally {
     container.setAttribute("aria-busy", "false");
   }
 }
-
 loadPublicMenu();
 </script>
 </body>
