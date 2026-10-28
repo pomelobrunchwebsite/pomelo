@@ -2323,12 +2323,20 @@ const dishes = menuItems.filter(item =>
       tab.onclick = () => renderDay(Number(tab.dataset.day));  
     });  
   
-    document.getElementById("clear-order").onclick = () => {  
-      Object.keys(quantities).forEach(day => delete quantities[day]);  
-      const selected = document.querySelector(  
-        '#day-tabs .day-tab[aria-selected="true"]'  
-      );  
-  
+
+document.getElementById("clear-order").onclick = () => {
+  Object.keys(quantities).forEach(day => delete quantities[day]);
+
+  const selected = document.querySelector(
+    '#day-tabs .day-tab[aria-selected="true"]'
+  );
+
+  if (selected) renderDay(Number(selected.dataset.day));
+
+  renderSummary();
+};
+
+// FORMULARIO DE SUSCRIPCIÓN
 const startDateInput = document.getElementById("subscription-start-date");
 const endDateInput = document.getElementById("subscription-end-date");
 const addressInput = document.getElementById("subscription-address");
@@ -2336,17 +2344,17 @@ const notesInput = document.getElementById("subscription-notes");
 const submitButton = document.getElementById("submit-subscription");
 const feedback = document.getElementById("subscription-feedback");
 
-// Fecha local para evitar diferencias por zona horaria.
 function getLocalDateString() {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
+
   return `${year}-${month}-${day}`;
 }
 
 startDateInput.min = getLocalDateString();
-endDateInput.min = startDateInput.value || getLocalDateString();
+endDateInput.min = getLocalDateString();
 
 startDateInput.addEventListener("change", () => {
   endDateInput.min = startDateInput.value || getLocalDateString();
@@ -2408,15 +2416,10 @@ submitButton.addEventListener("click", async () => {
     return;
   }
 
-  const selectedDays = new Set(items.map(item => item.day));
-
-  if (selectedDays.size < 1 || selectedDays.size > 5) {
-    feedback.textContent = "Selecciona platillos para entre 1 y 5 días.";
-    return;
-  }
-
   submitButton.disabled = true;
   submitButton.textContent = "Enviando solicitud…";
+  feedback.textContent = "Conectando con el servidor…";
+  feedback.style.color = "var(--muted)";
 
   try {
     const { data: userData, error: userError } =
@@ -2425,6 +2428,8 @@ submitButton.addEventListener("click", async () => {
     if (userError || !userData.user) {
       throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
     }
+
+    feedback.textContent = "Registrando tu solicitud…";
 
     const { data, error } = await pomeloDB.rpc(
       "create_subscription_request",
@@ -2439,47 +2444,42 @@ submitButton.addEventListener("click", async () => {
 
     if (error) {
       console.error("Error de Supabase:", error);
-      throw new Error(
-        "No pudimos registrar tu solicitud. Revisa los datos e inténtalo nuevamente."
-      );
+      throw new Error(error.message || "Supabase no pudo registrar la solicitud.");
     }
 
     if (!data) {
-      throw new Error("No recibimos la confirmación del servidor. Verifica tu solicitud antes de enviarla otra vez.");
+      throw new Error(
+        "No recibimos la confirmación del servidor. Revisa Supabase antes de volver a enviar."
+      );
     }
 
-    // Limpiar la selección local después de guardar correctamente.
     Object.keys(quantities).forEach(day => delete quantities[day]);
 
     const selectedTab = document.querySelector(
       '#day-tabs .day-tab[aria-selected="true"]'
     );
 
-    if (selectedTab) {
-      renderDay(Number(selectedTab.dataset.day));
-    }
+    if (selectedTab) renderDay(Number(selectedTab.dataset.day));
 
     renderSummary();
 
     feedback.textContent =
       "¡Solicitud enviada! Tu suscripción quedó pendiente de confirmación.";
-
     feedback.style.color = "var(--green)";
 
   } catch (error) {
     console.error("Error al solicitar suscripción:", error);
+
     feedback.textContent =
       error.message || "Ocurrió un error. Inténtalo nuevamente.";
+
     feedback.style.color = "#a33b32";
+
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = "Solicitar suscripción";
   }
 });
-
-      if (selected) renderDay(Number(selected.dataset.day));  
-      renderSummary();  
-    };  
   
     tabsContainer.classList.remove("hidden");  
     showMenuStatus(  
