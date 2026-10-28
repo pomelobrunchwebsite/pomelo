@@ -315,6 +315,111 @@
       color: var(--muted);
       font-size: 11px;
     }
+    /* MENÚ PÚBLICO */
+.menu-section {
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.menu-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--cream);
+}
+
+.menu-card-image {
+  width: 100%;
+  height: 230px;
+  display: block;
+  object-fit: cover;
+  background: #e9e4d7;
+}
+
+.menu-card-content {
+  padding: 20px;
+}
+
+.menu-card-category {
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.menu-card h3 {
+  margin: 10px 0;
+  font-family: "Playfair Display", serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.menu-card-description {
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.menu-card-price {
+  margin-top: 18px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.menu-status {
+  padding: 24px;
+  color: var(--muted);
+  background: var(--cream);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+@media (max-width: 760px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .menu-card-image {
+    height: 160px;
+  }
+
+  .menu-card-content {
+    padding: 13px;
+  }
+
+  .menu-card h3 {
+    font-size: 20px;
+  }
+
+  .menu-card-description {
+    min-height: 0;
+    font-size: 12px;
+  }
+
+  .menu-card-price {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-card-image {
+    height: 220px;
+  }
+}
 
     .notice {
       padding: 16px;
@@ -512,9 +617,8 @@
     <span>© <span id="year"></span> Pomelo Brunch House</span>
   </footer>
 
-  <script>
-    
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
   const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";
   const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";
@@ -524,19 +628,115 @@
     SUPABASE_KEY
   );
 
-  // Disponible para las siguientes funciones de la aplicación.
   window.pomeloDB = pomeloDB;
 
-  // Mantener actualizado el año del pie de página.
+  // Año del pie de página
   document.getElementById("year").textContent =
     new Date().getFullYear();
 
-  // Verificar que la biblioteca se haya cargado.
-  console.log("Pomelo: cliente de Supabase inicializado.");
-</script>
-</body>
-</html>
+  // Formato de precios
+  function formatMenuPrice(value) {
+    return new Intl.NumberFormat("es-MX", {
+      style: "currency",
+      currency: "MXN"
+    }).format(Number(value || 0));
+  }
 
-  </script>
+  // Escapar texto para evitar interpretar contenido como HTML
+  function escapeMenuText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[character]);
+  }
+
+  // Cargar los platillos desde Supabase
+  async function loadPublicMenu() {
+    const status = document.getElementById("menu-status");
+    const container = document.getElementById("public-menu");
+
+    status.classList.remove("hidden");
+    status.textContent = "Cargando nuestro menú...";
+    container.innerHTML = "";
+
+    try {
+      const { data, error } = await pomeloDB
+        .from("menu_items")
+        .select("id, name, description, image_url, price_mxn, category, active")
+        .eq("active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        status.textContent =
+          "Estamos preparando nuestro menú. Muy pronto encontrarás aquí nuestros platillos.";
+        return;
+      }
+
+      container.innerHTML = data.map(item => {
+        const category =
+          item.category === "dinner" ? "Cena opcional" : "Comida";
+
+        const image = item.image_url
+          ? `
+            <img
+              class="menu-card-image"
+              src="${escapeMenuText(item.image_url)}"
+              alt="${escapeMenuText(item.name)}"
+              loading="lazy"
+            >
+          `
+          : `
+            <div
+              class="menu-card-image"
+              role="img"
+              aria-label="Fotografía no disponible"
+            ></div>
+          `;
+
+        return `
+          <article class="menu-card">
+            ${image}
+
+            <div class="menu-card-content">
+              <div class="menu-card-category">
+                ${category}
+              </div>
+
+              <h3>${escapeMenuText(item.name)}</h3>
+
+              <p class="menu-card-description">
+                ${escapeMenuText(item.description || "Preparado con ingredientes frescos.")}
+              </p>
+
+              <div class="menu-card-price">
+                ${formatMenuPrice(item.price_mxn)}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      status.classList.add("hidden");
+
+    } catch (error) {
+      console.error("Error al cargar el menú:", error);
+
+      status.textContent =
+        "Por el momento no podemos mostrar el menú. Inténtalo de nuevo más tarde.";
+    }
+  }
+
+  // Iniciar la página
+  loadPublicMenu();
+
+  console.log("Pomelo: página pública inicializada.");
+</script>
 </body>
 </html>
