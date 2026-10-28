@@ -112,6 +112,48 @@ input, select, textarea { font-size: 16px; } /* evita el zoom automático en iPh
 .tab { white-space: nowrap; }
 .item-actions { width: 100%; }
 .item-actions .btn { flex: 1; }
+    
+/* Disponibilidad semanal de los platillos */
+.days-selector {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.day-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 8px;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--cream);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.day-option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--olive);
+  flex: 0 0 auto;
+}
+
+@media (max-width: 650px) {
+  .days-selector {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .day-option:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -218,14 +260,41 @@ input, select, textarea { font-size: 16px; } /* evita el zoom automático en iPh
     <p class="muted">Selecciona una foto JPG, PNG o WebP de máximo 5 MB.</p>
   </div>
 
-  <div class="field full">
-    <label for="item-description">Descripción</label>
-    <textarea
-      id="item-description"
-      maxlength="500"
-      placeholder="Describe los ingredientes o acompañamientos"
-    ></textarea>
+
+<div class="field full">
+  <label for="item-description">Descripción</label>
+  <textarea
+    id="item-description"
+    maxlength="500"
+    placeholder="Describe los ingredientes o acompañamientos"
+  ></textarea>
+</div>
+
+<div class="field full">
+  <label>Días en que se ofrece el platillo *</label>
+  <div class="days-selector" id="item-days">
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="1" checked>
+      Lunes
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="2" checked>
+      Martes
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="3" checked>
+      Miércoles
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="4" checked>
+      Jueves
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="5" checked>
+      Viernes
+    </label>
   </div>
+  <p class="muted">Selecciona uno o varios días. El platillo aparecerá en el menú público únicamente en los días seleccionados.</p>
 </div>
           <div class="checkline">
             <input id="item-active" type="checkbox" checked>
@@ -416,7 +485,18 @@ $("item-image-file").addEventListener("change", event => {
       <article class="item">
         <div>
           <div class="item-title">${escapeHtml(item.name)}</div>
-          <div class="muted">${escapeHtml(item.description || "Sin descripción")}</div>
+          
+<div class="muted">${escapeHtml(item.description || "Sin descripción")}</div>
+<div class="muted" style="margin-top:6px">
+  Días: ${(
+    Array.isArray(item.available_days)
+      ? item.available_days.map(Number)
+      : [1, 2, 3, 4, 5]
+  ).filter(day => day >= 1 && day <= 5)
+   .map(day => ["", "Lun", "Mar", "Mié", "Jue", "Vie"][day])
+   .join(", ") || "Sin días asignados"}
+</div>
+
           <p style="margin:8px 0">
             <strong>${money(item.price_mxn)}</strong>
             <span class="pill">${item.category === "dinner" ? "Cena opcional" : "Comida"}</span>
@@ -448,6 +528,11 @@ $("item-image-preview").removeAttribute("src");
 $("item-image-preview").classList.add("hidden");
     $("item-id").value = "";
     $("item-active").checked = true;
+    
+document.querySelectorAll('input[name="available-day"]').forEach(input => {
+  input.checked = true;
+});
+
     $("form-title").textContent = "Nuevo platillo";
     $("item-form").classList.add("hidden");
   }
@@ -463,6 +548,15 @@ $("item-image-preview").classList.add("hidden");
     $("item-image").value = item.image_url || "";
     $("item-description").value = item.description || "";
     $("item-active").checked = Boolean(item.active);
+    
+const savedDays = Array.isArray(item.available_days)
+  ? item.available_days.map(Number)
+  : [1, 2, 3, 4, 5];
+
+document.querySelectorAll('input[name="available-day"]').forEach(input => {
+  input.checked = savedDays.includes(Number(input.value));
+});
+
     $("form-title").textContent = "Editar platillo";
     $("item-form").classList.remove("hidden");
     $("item-form").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -508,13 +602,22 @@ if (selectedPhotoFile) {
   uploadedImageUrl = publicData.publicUrl;
 }
 
+const selectedDays = Array.from(
+  document.querySelectorAll('input[name="available-day"]:checked')
+).map(input => Number(input.value));
+
+if (selectedDays.length === 0) {
+  showMenuMessage("Selecciona al menos un día para el platillo.", "error");
+  return;
+}
+
     const payload = {
       name: $("item-name").value.trim(),
       description: $("item-description").value.trim(),
       image_url: uploadedImageUrl,
       price_mxn: Number($("item-price").value),
       category: $("item-category").value,
-      available_days: [1, 2, 3, 4, 5],
+      available_days: selectedDays,
       active: $("item-active").checked
     };
 
