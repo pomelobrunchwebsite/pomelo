@@ -160,10 +160,21 @@
           <h2 id="form-title">Nuevo platillo</h2>
           <input id="item-id" type="hidden">
           <div class="form-grid">
-            <div class="field">
-              <label for="item-name">Nombre del platillo *</label>
-              <input id="item-name" required maxlength="100">
-            </div>
+
+<div class="field">
+  <label for="item-image-file">Fotografía del platillo</label>
+  <input id="item-image-file" type="file" accept="image/*">
+  <input id="item-image" type="hidden">
+  <div style="margin-top:12px">
+    <img
+      id="item-image-preview"
+      alt="Vista previa del platillo"
+      class="hidden"
+      style="width:150px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #e7e5da"
+    >
+  </div>
+  <p class="muted">Selecciona una foto JPG, PNG o WebP. Máximo recomendado: 5 MB.</p>
+</div>
             <div class="field">
               <label for="item-price">Precio (MXN) *</label>
               <input id="item-price" type="number" min="0" step="0.01" required>
@@ -236,6 +247,39 @@
   const $ = id => document.getElementById(id);
   let currentUser = null;
   let menuCache = [];
+  
+let selectedPhotoFile = null;
+
+$("item-image-file").addEventListener("change", event => {
+  const file = event.target.files[0];
+  const preview = $("item-image-preview");
+
+  selectedPhotoFile = null;
+
+  if (!file) {
+    preview.classList.add("hidden");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    showMenuMessage("Selecciona un archivo de imagen.", "error");
+    event.target.value = "";
+    preview.classList.add("hidden");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    showMenuMessage("La foto supera los 5 MB. Selecciona una más ligera.", "error");
+    event.target.value = "";
+    preview.classList.add("hidden");
+    return;
+  }
+
+  selectedPhotoFile = file;
+  preview.src = URL.createObjectURL(file);
+  preview.classList.remove("hidden");
+});
+
 
   function showMessage(text, type = "") {
     const el = $("message");
@@ -365,6 +409,10 @@
 
   function resetItemForm() {
     $("item-form").reset();
+    selectedPhotoFile = null;
+$("item-image").value = "";
+$("item-image-preview").removeAttribute("src");
+$("item-image-preview").classList.add("hidden");
     $("item-id").value = "";
     $("item-active").checked = true;
     $("form-title").textContent = "Nuevo platillo";
@@ -399,10 +447,38 @@
     event.preventDefault();
 
     const id = $("item-id").value;
+    
+let uploadedImageUrl = $("item-image").value.trim() || null;
+
+if (selectedPhotoFile) {
+  const extension = selectedPhotoFile.name.split(".").pop().toLowerCase();
+  const safeExtension = /^[a-z0-9]+$/.test(extension) ? extension : "jpg";
+  const filePath = `menu/${crypto.randomUUID()}.${safeExtension}`;
+
+  const { data: uploadData, error: uploadError } = await db.storage
+    .from("menu-photos")
+    .upload(filePath, selectedPhotoFile, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: selectedPhotoFile.type
+    });
+
+  if (uploadError) {
+    showMenuMessage("No se pudo subir la foto: " + uploadError.message, "error");
+    return;
+  }
+
+  const { data: publicData } = db.storage
+    .from("menu-photos")
+    .getPublicUrl(uploadData.path);
+
+  uploadedImageUrl = publicData.publicUrl;
+}
+
     const payload = {
       name: $("item-name").value.trim(),
       description: $("item-description").value.trim(),
-      image_url: $("item-image").value.trim() || null,
+      image_url: uploadedImageUrl,
       price_mxn: Number($("item-price").value),
       category: $("item-category").value,
       available_days: [1, 2, 3, 4, 5],
