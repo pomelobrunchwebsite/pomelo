@@ -154,6 +154,59 @@ input, select, textarea { font-size: 16px; } /* evita el zoom automático en iPh
   }
 }
 
+/* Filtros del menú */
+.menu-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 18px 0 14px;
+}
+
+.menu-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.menu-filter {
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.menu-filter.active {
+  background: var(--olive);
+  border-color: var(--olive);
+  color: white;
+}
+
+.menu-filter:focus-visible {
+  outline: 2px solid var(--olive-dark);
+  outline-offset: 2px;
+}
+
+@media (max-width: 450px) {
+  .menu-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .menu-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .menu-filter {
+    padding: 9px 6px;
+  }
+}
   </style>
 </head>
 <body>
@@ -305,8 +358,28 @@ input, select, textarea { font-size: 16px; } /* evita el zoom automático en iPh
           <button class="btn" type="button" id="cancel-form-btn">Cancelar</button>
         </form>
 
-        <div id="menu-message" class="notice hidden"></div>
-        <div id="menu-list" class="list"><div class="empty">Cargando menú...</div></div>
+
+<div id="menu-message" class="notice hidden"></div>
+
+<div class="menu-toolbar">
+  <div class="menu-filters" role="group" aria-label="Filtrar platillos">
+    <button type="button" class="menu-filter active" data-menu-filter="all">
+      Todos
+    </button>
+    <button type="button" class="menu-filter" data-menu-filter="active">
+      Activos
+    </button>
+    <button type="button" class="menu-filter" data-menu-filter="inactive">
+      Inactivos
+    </button>
+  </div>
+
+  <span id="menu-count" class="muted">Cargando platillos...</span>
+</div>
+
+<div id="menu-list" class="list">
+  <div class="empty">Cargando menú...</div>
+</div>
       </section>
 
       <section id="tab-orders" class="panel hidden">
@@ -473,52 +546,12 @@ $("item-image-file").addEventListener("change", event => {
       return;
     }
 
-    menuCache = data || [];
-    $("stat-menu").textContent = menuCache.filter(item => item.active).length;
+    
+menuCache = data || [];
+$("stat-menu").textContent = menuCache.filter(item => item.active).length;
 
-    if (!menuCache.length) {
-      $("menu-list").innerHTML = '<div class="empty">Todavía no hay platillos. Usa “Nuevo platillo” para agregar el primero.</div>';
-      return;
-    }
+renderMenuList();
 
-    $("menu-list").innerHTML = menuCache.map(item => `
-      <article class="item">
-        <div>
-          <div class="item-title">${escapeHtml(item.name)}</div>
-          
-<div class="muted">${escapeHtml(item.description || "Sin descripción")}</div>
-<div class="muted" style="margin-top:6px">
-  Días: ${(
-    Array.isArray(item.available_days)
-      ? item.available_days.map(Number)
-      : [1, 2, 3, 4, 5]
-  ).filter(day => day >= 1 && day <= 5)
-   .map(day => ["", "Lun", "Mar", "Mié", "Jue", "Vie"][day])
-   .join(", ") || "Sin días asignados"}
-</div>
-
-          <p style="margin:8px 0">
-            <strong>${money(item.price_mxn)}</strong>
-            <span class="pill">${item.category === "dinner" ? "Cena opcional" : "Comida"}</span>
-            <span class="pill">${item.active ? "Activo" : "Inactivo"}</span>
-          </p>
-        </div>
-        <div class="item-actions">
-          <button class="btn" data-edit="${item.id}">Editar</button>
-          <button class="btn ${item.active ? "danger" : ""}" data-toggle="${item.id}">
-            ${item.active ? "Desactivar" : "Activar"}
-          </button>
-        </div>
-      </article>
-    `).join("");
-
-    $("menu-list").querySelectorAll("[data-edit]").forEach(button => {
-      button.addEventListener("click", () => editItem(button.dataset.edit));
-    });
-    $("menu-list").querySelectorAll("[data-toggle]").forEach(button => {
-      button.addEventListener("click", () => toggleItem(button.dataset.toggle));
-    });
-  }
 
   function resetItemForm() {
     $("item-form").reset();
@@ -647,23 +680,41 @@ if (selectedDays.length === 0) {
     await loadMenu();
   });
 
-  async function toggleItem(id) {
-    const item = menuCache.find(row => row.id === id);
-    if (!item) return;
+  
+async function toggleItem(id) {
+  const item = menuCache.find(row => row.id === id);
+  if (!item) return;
 
-    const { error } = await db
-      .from("menu_items")
-      .update({ active: !item.active })
-      .eq("id", id);
+  const action = item.active ? "desactivar" : "activar";
 
-    if (error) {
-      showMenuMessage("No se pudo cambiar la disponibilidad: " + error.message, "error");
-      return;
-    }
+  const confirmed = confirm(
+    `¿Seguro que deseas ${action} "${item.name}"?`
+  );
 
-    showMenuMessage(item.active ? "Platillo desactivado." : "Platillo activado.", "success");
-    await loadMenu();
+  if (!confirmed) return;
+
+  const { error } = await db
+    .from("menu_items")
+    .update({ active: !item.active })
+    .eq("id", id);
+
+  if (error) {
+    showMenuMessage(
+      "No se pudo cambiar la disponibilidad: " + error.message,
+      "error"
+    );
+    return;
   }
+
+  showMenuMessage(
+    item.active
+      ? "Platillo desactivado correctamente."
+      : "Platillo activado correctamente.",
+    "success"
+  );
+
+  await loadMenu();
+}
 
   async function loadOrders() {
     $("orders-list").textContent = "Cargando pedidos...";
