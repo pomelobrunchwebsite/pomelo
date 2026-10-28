@@ -382,7 +382,9 @@
   font-size: 13px;
   line-height: 1.8;
 }
-
+.hidden {
+  display: none !important;
+}
 @media (max-width: 760px) {
   .menu-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -746,13 +748,28 @@
 
       status.classList.add("hidden");
 
-    } catch (error) {
+       } catch (error) {
       console.error("Error al cargar el menú:", error);
 
-      status.textContent =
-        "Por el momento no podemos mostrar el menú. Inténtalo de nuevo más tarde.";
+      status.classList.remove("hidden");
+
+      if (
+        error.message?.includes("Failed to fetch") ||
+        error.message?.includes("NetworkError")
+      ) {
+        status.textContent =
+          "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.";
+      } else if (
+        error.code === "42501" ||
+        error.code === "PGRST301"
+      ) {
+        status.textContent =
+          "No tenemos permisos para mostrar el menú. Revisa las políticas de acceso de Supabase.";
+      } else {
+        status.textContent =
+          "No pudimos cargar el menú. Inténtalo de nuevo más tarde.";
+      }
     }
-  }
 
   // Iniciar la página
   loadPublicMenu();
