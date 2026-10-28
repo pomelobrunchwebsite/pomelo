@@ -585,9 +585,9 @@ const menuItems = data || [];
 
       Object.entries(quantities).forEach(([day, items]) => {
         Object.entries(items).forEach(([id, qty]) => {
-          const item = data.find(
-            x => String(x.id) === id && x.active
-          );
+          const item = menuItems.find(
+  x => String(x.id) === id && x.active
+);
 
           if (item) {
             total += Number(item.price_mxn || 0) * qty;
@@ -608,7 +608,7 @@ function renderSummary() {
     const items = quantities[dayNumber] || {};
 
     Object.entries(items).forEach(([id, qty]) => {
-      const item = data.find(x => String(x.id) === id && x.active);
+    const item = menuItems.find(x => String(x.id) === id && x.active);      
       if (!item || qty <= 0) return;
 
       const subtotal = Number(item.price_mxn || 0) * qty;
@@ -707,12 +707,11 @@ function renderSummary() {
         tab.tabIndex = active ? 0 : -1;
       });
 
-      const dishes = data.filter(item =>
-        !Array.isArray(item.available_days) ||
-        item.available_days.length === 0 ||
-        item.available_days.map(Number).includes(dayNumber)
-      );
-
+const dishes = menuItems.filter(item =>
+  !Array.isArray(item.available_days) ||
+  item.available_days.length === 0 ||
+  item.available_days.map(Number).includes(dayNumber)
+);
       container.innerHTML = "";
 
       const heading = document.createElement("h3");
