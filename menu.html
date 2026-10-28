@@ -425,6 +425,45 @@ footer{padding:34px var(--pad) calc(34px + env(safe-area-inset-bottom));display:
   }
 }
 
+/* Ajustes de cuenta para móvil */
+@media (max-width: 760px) {
+  .account-trigger {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  /* Ocultar nombre y flecha junto al ícono */
+  .account-trigger .account-name,
+  .account-trigger > svg:last-child {
+    display: none;
+  }
+
+  .account-trigger > svg:first-child {
+    width: 22px;
+    height: 22px;
+  }
+
+  .account-dropdown {
+    min-width: 190px;
+  }
+
+  /* Nombre dentro de la pestaña */
+  .account-dropdown::before {
+    content: attr(data-name);
+    display: block;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+}
+
 </style>
   <script>
   document.documentElement.classList.add("auth-check");
@@ -1034,7 +1073,8 @@ const dishes = menuItems.filter(item =>
       user.user_metadata?.full_name ||
       user.email?.split("@")[0] ||
       "Mi cuenta";
-
+document.getElementById("account-dropdown").dataset.name =
+  accountName.textContent;
     const trigger = document.getElementById("account-trigger");
     const dropdown = document.getElementById("account-dropdown");
     const logout = document.getElementById("account-logout");
