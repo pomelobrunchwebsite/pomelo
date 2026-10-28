@@ -307,8 +307,15 @@
             if (insertError) throw insertError;
           }
 
-          showMessage("Sesión iniciada. Abriendo administrador...", "success");
-window.location.href = "./admin.html";
+          
+if (profile?.role === "chef") {
+  showMessage("Sesión iniciada. Abriendo administrador...", "success");
+  window.location.href = "./admin.html";
+} else {
+  showMessage("Sesión iniciada correctamente.", "success");
+  window.location.href = "./index.html";
+}
+
         }
       } catch (error) {
         showMessage(error.message || "No se pudo completar la operación. Inténtalo de nuevo.", "error");
