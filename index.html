@@ -269,6 +269,81 @@ footer{padding:34px var(--pad) calc(34px + env(safe-area-inset-bottom));display:
   font-size: 13px;
   cursor: pointer;
 }
+  
+/* Controles de cantidad dentro del resumen */
+.order-summary-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.order-summary-info strong {
+  font-size: 14px;
+}
+
+.order-summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.summary-qty-button {
+  width: 32px;
+  height: 36px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.summary-qty-button:hover {
+  border-color: var(--green);
+}
+
+.summary-qty {
+  min-width: 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.order-summary-amount {
+  min-width: 82px;
+  text-align: right;
+  font-size: 13px;
+}
+
+.order-summary-row {
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  .order-summary {
+    padding: 16px;
+  }
+
+  .order-summary-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .order-summary-actions {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .order-summary-amount {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -521,52 +596,105 @@ async function loadPublicMenu() {
       return total;
     }
 
-    function renderSummary() {
-      const summary = document.getElementById("order-summary-items");
-      const totalElement = document.getElementById("order-summary-total");
-      const rows = [];
 
-      days.forEach(([dayNumber, dayName]) => {
-        const items = quantities[dayNumber] || {};
+function renderSummary() {
+  const summary = document.getElementById("order-summary-items");
+  const totalElement = document.getElementById("order-summary-total");
+  const rows = [];
 
-        Object.entries(items).forEach(([id, qty]) => {
-          const item = data.find(x => String(x.id) === id);
-          if (!item || qty <= 0) return;
+  days.forEach(([dayNumber, dayName]) => {
+    const items = quantities[dayNumber] || {};
 
-          const subtotal = Number(item.price_mxn || 0) * qty;
-          const row = document.createElement("div");
-          row.className = "order-summary-row";
+    Object.entries(items).forEach(([id, qty]) => {
+      const item = data.find(x => String(x.id) === id && x.active);
+      if (!item || qty <= 0) return;
 
-          const description = document.createElement("span");
-          description.textContent = `${item.name} × ${qty}`;
+      const subtotal = Number(item.price_mxn || 0) * qty;
+      const row = document.createElement("div");
+      row.className = "order-summary-row";
 
-          const detail = document.createElement("small");
-          detail.textContent = dayName;
-          description.appendChild(detail);
+      const info = document.createElement("div");
+      info.className = "order-summary-info";
 
-          const amount = document.createElement("strong");
-          amount.textContent = formatMenuPrice(subtotal);
+      const name = document.createElement("strong");
+      name.textContent = item.name;
 
-          row.append(description, amount);
-          rows.push(row);
-        });
+      const detail = document.createElement("small");
+      detail.textContent = `${dayName} · ${formatMenuPrice(item.price_mxn)} c/u`;
+
+      info.append(name, detail);
+
+      const actions = document.createElement("div");
+      actions.className = "order-summary-actions";
+
+      const minus = document.createElement("button");
+      minus.type = "button";
+      minus.className = "summary-qty-button";
+      minus.textContent = "−";
+      minus.setAttribute("aria-label", `Quitar una unidad de ${item.name}, ${dayName}`);
+
+      const quantity = document.createElement("span");
+      quantity.className = "summary-qty";
+      quantity.textContent = qty;
+
+      const plus = document.createElement("button");
+      plus.type = "button";
+      plus.className = "summary-qty-button";
+      plus.textContent = "+";
+      plus.setAttribute("aria-label", `Agregar una unidad de ${item.name}, ${dayName}`);
+
+      const amount = document.createElement("strong");
+      amount.className = "order-summary-amount";
+      amount.textContent = formatMenuPrice(subtotal);
+
+      minus.addEventListener("click", () => {
+        setQuantity(dayNumber, item.id, qty - 1);
+
+        const selected = document.querySelector(
+          '#day-tabs .day-tab[aria-selected="true"]'
+        );
+
+        if (selected && Number(selected.dataset.day) === dayNumber) {
+          renderDay(dayNumber);
+        }
+
+        renderSummary();
       });
 
-      summary.replaceChildren();
+      plus.addEventListener("click", () => {
+        setQuantity(dayNumber, item.id, qty + 1);
 
-      if (rows.length === 0) {
-        const empty = document.createElement("p");
-        empty.className = "order-summary-empty";
-        empty.textContent =
-          "Elige un día y agrega los platillos que necesitas.";
-        summary.appendChild(empty);
-      } else {
-        rows.forEach(row => summary.appendChild(row));
-      }
+        const selected = document.querySelector(
+          '#day-tabs .day-tab[aria-selected="true"]'
+        );
 
-      totalElement.textContent = formatMenuPrice(calculateTotal());
-    }
+        if (selected && Number(selected.dataset.day) === dayNumber) {
+          renderDay(dayNumber);
+        }
 
+        renderSummary();
+      });
+
+      actions.append(minus, quantity, plus);
+      row.append(info, actions, amount);
+      rows.push(row);
+    });
+  });
+
+  summary.replaceChildren();
+
+  if (rows.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "order-summary-empty";
+    empty.textContent =
+      "Elige un día y agrega los platillos que necesitas.";
+    summary.appendChild(empty);
+  } else {
+    rows.forEach(row => summary.appendChild(row));
+  }
+
+  totalElement.textContent = formatMenuPrice(calculateTotal());
+}
     function renderDay(dayNumber) {
       const day = days.find(d => d[0] === dayNumber);
       if (!day) return;
