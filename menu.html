@@ -18,11 +18,11 @@
 --sand: #e9e4d7;
 --pad: clamp(16px, 5vw, 76px);
 }
-
-- {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  }
-
+}
 html {
 scroll-behavior: smooth;
 scroll-padding-top: 84px;
@@ -1435,6 +1435,215 @@ transition: none !important;
 scroll-behavior: auto !important;
 }
 }
+  
+/* CORRECCIONES RESPONSIVE PARA MÓVILES */
+
+/* Evitar que grids y flexbox desborden sus contenedores */
+header,
+main,
+section,
+.hero,
+.menu-inner,
+.menu-grid,
+.menu-card,
+.menu-card-content,
+.order-summary,
+.subscription-inner,
+.features {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Tablets y celulares */
+@media (max-width: 760px) {
+  header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 14px;
+  }
+
+  .brand {
+    min-width: 0;
+    font-size: 19px;
+    overflow-wrap: anywhere;
+  }
+
+  .brand small {
+    overflow-wrap: normal;
+  }
+
+  .nav {
+    min-width: 0;
+    flex: initial;
+    gap: 0;
+  }
+
+  .nav a.nav-menu {
+    white-space: nowrap;
+    padding-inline: 8px;
+  }
+
+  .account {
+    min-width: 0;
+  }
+
+  .account-trigger {
+    width: 40px;
+    min-width: 40px;
+    padding: 0;
+  }
+
+  .account-dropdown {
+    right: 0;
+    max-width: calc(100vw - 20px);
+  }
+
+  .hero,
+  .section,
+  .subscription,
+  footer {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero > div,
+  .section-heading > div,
+  .section-description {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .eyebrow {
+    max-width: 100%;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-actions {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero-actions > *,
+  .subscription .button {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .day-tabs {
+    width: 100%;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .day-tab {
+    min-width: 0;
+    padding-inline: 1px;
+    overflow-wrap: anywhere;
+  }
+
+  .menu-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .menu-card-content {
+    overflow-wrap: anywhere;
+  }
+
+  .dish-order {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dish-order-controls {
+    gap: 7px;
+  }
+
+  .order-summary-row {
+    min-width: 0;
+  }
+
+  .order-summary-info,
+  .order-summary-amount {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .order-summary-total {
+    min-width: 0;
+  }
+
+  #order-summary-total {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+/* Teléfonos estrechos */
+@media (max-width: 360px) {
+  header {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 4px;
+    padding-inline: 9px;
+  }
+
+  .brand {
+    font-size: 17px;
+    letter-spacing: -0.8px;
+  }
+
+  .brand small {
+    font-size: 7px;
+    letter-spacing: 1.4px;
+  }
+
+  .nav a.nav-menu {
+    padding-inline: 5px;
+    font-size: 11px;
+  }
+
+  .account-trigger {
+    width: 36px;
+    min-width: 36px;
+  }
+
+  .day-tabs {
+    gap: 3px;
+  }
+
+  .day-tab {
+    font-size: 10px;
+  }
+
+  .order-summary {
+    padding-inline: 9px;
+  }
+
+  .order-summary-actions {
+    gap: 5px;
+  }
+
+  .summary-qty-button {
+    width: 32px;
+  }
+}
+
 </style>
 
   <script>  
