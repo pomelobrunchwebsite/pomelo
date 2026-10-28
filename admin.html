@@ -1,0 +1,633 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#69734b">
+  <title>Administración | Pomelo Brunch House</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --olive: #69734b;
+      --olive-dark: #424a30;
+      --cream: #f8f6ef;
+      --white: #fffefa;
+      --ink: #292b24;
+      --muted: #77796e;
+      --line: #e7e5da;
+      --danger: #a33d32;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--line);
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand { font-size: 18px; font-weight: 800; letter-spacing: -.5px; }
+    .brand span { color: var(--olive); }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .muted { color: var(--muted); font-size: 13px; }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 60px; }
+    h1 { font-size: clamp(26px, 5vw, 36px); margin: 0 0 8px; letter-spacing: -1px; }
+    h2 { font-size: 20px; margin: 0 0 18px; }
+    p { line-height: 1.5; }
+    .topline { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+    .tab, .btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 15px;
+      background: var(--white);
+      color: var(--ink);
+    }
+    .tab.active, .btn.primary { background: var(--olive); border-color: var(--olive); color: white; }
+    .btn.danger { color: var(--danger); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .panel, .stat {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .stat .number { font-size: 28px; font-weight: 800; margin-top: 8px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; padding: 11px 12px; border: 1px solid #dcdacd;
+      border-radius: 9px; background: white; color: var(--ink);
+    }
+    textarea { resize: vertical; min-height: 82px; }
+    .field { margin-bottom: 14px; }
+    .full { grid-column: 1 / -1; }
+    .checkline { display: flex; gap: 9px; align-items: center; margin: 8px 0 16px; }
+    .checkline input { width: auto; }
+    .list { display: grid; gap: 10px; }
+    .item {
+      border: 1px solid var(--line); border-radius: 12px; padding: 15px;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .item-title { font-weight: 700; margin-bottom: 5px; }
+    .item-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+    .pill { font-size: 12px; border-radius: 99px; background: #eeeee5; padding: 5px 9px; display: inline-block; }
+    .notice { padding: 12px 14px; border-radius: 10px; margin: 14px 0; background: #eeeee5; font-size: 14px; }
+    .notice.error { color: var(--danger); background: #f8e9e5; }
+    .notice.success { color: #355b36; background: #e9f1e5; }
+    .hidden { display: none !important; }
+    .empty { color: var(--muted); padding: 18px 0; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 580px; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid var(--line); text-align: left; font-size: 14px; }
+    th { color: var(--muted); font-size: 12px; }
+    @media (max-width: 650px) {
+      header { padding: 15px; }
+      .header-right .muted { display: none; }
+      main { padding: 22px 13px 40px; }
+      .stats { grid-template-columns: 1fr; }
+      .stat { padding: 15px; }
+      .stat .number { font-size: 24px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .panel { padding: 15px; }
+      .item { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">pomelo <span>brunch house.</span></div>
+    <div class="header-right">
+      <span id="user-label" class="muted">Verificando acceso...</span>
+      <button id="logout-btn" class="btn">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="message" class="notice">Verificando permisos de administrador...</div>
+
+    <div id="admin-app" class="hidden">
+      <div class="topline">
+        <div>
+          <h1>Panel de administración</h1>
+          <p class="muted">Gestiona el menú y supervisa la operación de Pomelo.</p>
+        </div>
+        <button id="refresh-btn" class="btn">Actualizar datos</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="muted">Platillos activos</div>
+          <div id="stat-menu" class="number">—</div>
+        </div>
+        <div class="stat">
+          <div class="muted">Pedidos registrados</div>
+          <div id="stat-orders" class="number">—</div>
+        </div>
+        <div class="stat">
+          <div class="muted">Suscripciones</div>
+          <div id="stat-subs" class="number">—</div>
+        </div>
+      </div>
+
+      <nav class="tabs">
+        <button class="tab active" data-tab="menu">Menú</button>
+        <button class="tab" data-tab="orders">Pedidos</button>
+        <button class="tab" data-tab="production">Producción</button>
+        <button class="tab" data-tab="subscriptions">Suscripciones</button>
+      </nav>
+
+      <section id="tab-menu" class="panel">
+        <div class="section-head">
+          <h2>Platillos del menú</h2>
+          <button id="new-item-btn" class="btn primary">+ Nuevo platillo</button>
+        </div>
+
+        <form id="item-form" class="hidden">
+          <h2 id="form-title">Nuevo platillo</h2>
+          <input id="item-id" type="hidden">
+          <div class="form-grid">
+            <div class="field">
+              <label for="item-name">Nombre del platillo *</label>
+              <input id="item-name" required maxlength="100">
+            </div>
+            <div class="field">
+              <label for="item-price">Precio (MXN) *</label>
+              <input id="item-price" type="number" min="0" step="0.01" required>
+            </div>
+            <div class="field">
+              <label for="item-category">Tipo *</label>
+              <select id="item-category">
+                <option value="meal">Comida obligatoria</option>
+                <option value="dinner">Cena opcional</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="item-image">URL de imagen (opcional)</label>
+              <input id="item-image" type="url" placeholder="https://...">
+            </div>
+            <div class="field full">
+              <label for="item-description">Descripción</label>
+              <textarea id="item-description" maxlength="500"></textarea>
+            </div>
+          </div>
+          <div class="checkline">
+            <input id="item-active" type="checkbox" checked>
+            <label for="item-active" style="margin:0">Disponible para los clientes</label>
+          </div>
+          <p class="muted">Por ahora, el platillo estará disponible de lunes a viernes.</p>
+          <button class="btn primary" type="submit">Guardar platillo</button>
+          <button class="btn" type="button" id="cancel-form-btn">Cancelar</button>
+        </form>
+
+        <div id="menu-message" class="notice hidden"></div>
+        <div id="menu-list" class="list"><div class="empty">Cargando menú...</div></div>
+      </section>
+
+      <section id="tab-orders" class="panel hidden">
+        <div class="section-head">
+          <h2>Pedidos registrados</h2>
+          <button id="orders-refresh" class="btn">Recargar</button>
+        </div>
+        <div id="orders-list" class="empty">Aún no se han consultado los pedidos.</div>
+      </section>
+
+      <section id="tab-production" class="panel hidden">
+        <div class="section-head">
+          <h2>Resumen de producción</h2>
+          <button id="production-refresh" class="btn">Calcular</button>
+        </div>
+        <div class="field" style="max-width:260px">
+          <label for="production-date">Fecha de entrega</label>
+          <input id="production-date" type="date">
+        </div>
+        <p class="muted">El resumen cuenta los artículos de pedidos no cancelados para la fecha seleccionada.</p>
+        <div id="production-list" class="empty">Selecciona una fecha y pulsa Calcular.</div>
+      </section>
+
+      <section id="tab-subscriptions" class="panel hidden">
+        <div class="section-head">
+          <h2>Suscripciones</h2>
+          <button id="subscriptions-refresh" class="btn">Recargar</button>
+        </div>
+        <div id="subscriptions-list" class="empty">Aún no se han consultado las suscripciones.</div>
+      </section>
+    </div>
+  </main>
+
+<script>
+  const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const $ = id => document.getElementById(id);
+  let currentUser = null;
+  let menuCache = [];
+
+  function showMessage(text, type = "") {
+    const el = $("message");
+    el.textContent = text;
+    el.className = "notice" + (type ? " " + type : "");
+    el.classList.remove("hidden");
+  }
+
+  function showMenuMessage(text, type = "") {
+    const el = $("menu-message");
+    el.textContent = text;
+    el.className = "notice" + (type ? " " + type : "");
+    el.classList.remove("hidden");
+  }
+
+  function money(value) {
+    return new Intl.NumberFormat("es-MX", {
+      style: "currency", currency: "MXN"
+    }).format(Number(value || 0));
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#039;"
+    })[char]);
+  }
+
+  function dateLocal(value) {
+    if (!value) return "Sin fecha";
+    const d = new Date(value + "T12:00:00");
+    return d.toLocaleDateString("es-MX", {
+      day: "2-digit", month: "short", year: "numeric"
+    });
+  }
+
+  async function verifyAccess() {
+    const { data: { session }, error } = await db.auth.getSession();
+
+    if (error || !session) {
+      showMessage("Necesitas iniciar sesión para entrar al panel. Redirigiendo al acceso...");
+      setTimeout(() => location.replace("./login.html"), 1200);
+      return;
+    }
+
+    currentUser = session.user;
+    $("user-label").textContent = session.user.email || "Usuario autenticado";
+
+    const { data: profile, error: profileError } = await db
+      .from("profiles")
+      .select("role, full_name")
+      .eq("id", session.user.id)
+      .maybeSingle();
+
+    if (profileError) {
+      showMessage("No se pudo verificar tu rol. Revisa las políticas RLS de profiles. Detalle: " + profileError.message, "error");
+      return;
+    }
+
+    if (!profile || profile.role !== "chef") {
+      showMessage("Acceso denegado: esta cuenta no tiene permisos de chef.");
+      return;
+    }
+
+    $("admin-app").classList.remove("hidden");
+    showMessage("Acceso autorizado. Bienvenido" + (profile.full_name ? ", " + profile.full_name : "") + ".", "success");
+    await loadAll();
+  }
+
+  async function loadAll() {
+    await Promise.all([
+      loadMenu(),
+      loadOrders(),
+      loadSubscriptions()
+    ]);
+  }
+
+  async function loadMenu() {
+    $("menu-list").innerHTML = '<div class="empty">Cargando menú...</div>';
+
+    const { data, error } = await db
+      .from("menu_items")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      $("menu-list").innerHTML = "";
+      showMenuMessage("No se pudo cargar el menú: " + error.message, "error");
+      return;
+    }
+
+    menuCache = data || [];
+    $("stat-menu").textContent = menuCache.filter(item => item.active).length;
+
+    if (!menuCache.length) {
+      $("menu-list").innerHTML = '<div class="empty">Todavía no hay platillos. Usa “Nuevo platillo” para agregar el primero.</div>';
+      return;
+    }
+
+    $("menu-list").innerHTML = menuCache.map(item => `
+      <article class="item">
+        <div>
+          <div class="item-title">${escapeHtml(item.name)}</div>
+          <div class="muted">${escapeHtml(item.description || "Sin descripción")}</div>
+          <p style="margin:8px 0">
+            <strong>${money(item.price_mxn)}</strong>
+            <span class="pill">${item.category === "dinner" ? "Cena opcional" : "Comida"}</span>
+            <span class="pill">${item.active ? "Activo" : "Inactivo"}</span>
+          </p>
+        </div>
+        <div class="item-actions">
+          <button class="btn" data-edit="${item.id}">Editar</button>
+          <button class="btn ${item.active ? "danger" : ""}" data-toggle="${item.id}">
+            ${item.active ? "Desactivar" : "Activar"}
+          </button>
+        </div>
+      </article>
+    `).join("");
+
+    $("menu-list").querySelectorAll("[data-edit]").forEach(button => {
+      button.addEventListener("click", () => editItem(button.dataset.edit));
+    });
+    $("menu-list").querySelectorAll("[data-toggle]").forEach(button => {
+      button.addEventListener("click", () => toggleItem(button.dataset.toggle));
+    });
+  }
+
+  function resetItemForm() {
+    $("item-form").reset();
+    $("item-id").value = "";
+    $("item-active").checked = true;
+    $("form-title").textContent = "Nuevo platillo";
+    $("item-form").classList.add("hidden");
+  }
+
+  function editItem(id) {
+    const item = menuCache.find(row => row.id === id);
+    if (!item) return;
+
+    $("item-id").value = item.id;
+    $("item-name").value = item.name || "";
+    $("item-price").value = item.price_mxn;
+    $("item-category").value = item.category || "meal";
+    $("item-image").value = item.image_url || "";
+    $("item-description").value = item.description || "";
+    $("item-active").checked = Boolean(item.active);
+    $("form-title").textContent = "Editar platillo";
+    $("item-form").classList.remove("hidden");
+    $("item-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  $("new-item-btn").addEventListener("click", () => {
+    resetItemForm();
+    $("item-form").classList.remove("hidden");
+    $("item-name").focus();
+  });
+
+  $("cancel-form-btn").addEventListener("click", resetItemForm);
+
+  $("item-form").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const id = $("item-id").value;
+    const payload = {
+      name: $("item-name").value.trim(),
+      description: $("item-description").value.trim(),
+      image_url: $("item-image").value.trim() || null,
+      price_mxn: Number($("item-price").value),
+      category: $("item-category").value,
+      available_days: [1, 2, 3, 4, 5],
+      active: $("item-active").checked
+    };
+
+    if (!payload.name || !Number.isFinite(payload.price_mxn) || payload.price_mxn < 0) {
+      showMenuMessage("Revisa el nombre y el precio del platillo.", "error");
+      return;
+    }
+
+    const submit = $("item-form").querySelector('button[type="submit"]');
+    submit.disabled = true;
+    submit.textContent = "Guardando...";
+
+    const result = id
+      ? await db.from("menu_items").update(payload).eq("id", id).select().maybeSingle()
+      : await db.from("menu_items").insert(payload).select().maybeSingle();
+
+    submit.disabled = false;
+    submit.textContent = "Guardar platillo";
+
+    if (result.error) {
+      showMenuMessage("No se pudo guardar: " + result.error.message, "error");
+      return;
+    }
+
+    showMenuMessage(id ? "Platillo actualizado." : "Platillo creado correctamente.", "success");
+    resetItemForm();
+    await loadMenu();
+  });
+
+  async function toggleItem(id) {
+    const item = menuCache.find(row => row.id === id);
+    if (!item) return;
+
+    const { error } = await db
+      .from("menu_items")
+      .update({ active: !item.active })
+      .eq("id", id);
+
+    if (error) {
+      showMenuMessage("No se pudo cambiar la disponibilidad: " + error.message, "error");
+      return;
+    }
+
+    showMenuMessage(item.active ? "Platillo desactivado." : "Platillo activado.", "success");
+    await loadMenu();
+  }
+
+  async function loadOrders() {
+    $("orders-list").textContent = "Cargando pedidos...";
+
+    const { data, error } = await db
+      .from("orders")
+      .select("id, customer_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at")
+      .order("delivery_date", { ascending: false })
+      .limit(100);
+
+    if (error) {
+      $("orders-list").textContent = "No se pudieron cargar los pedidos: " + error.message;
+      return;
+    }
+
+    $("stat-orders").textContent = (data || []).length;
+
+    if (!data?.length) {
+      $("orders-list").innerHTML = '<div class="empty">Todavía no hay pedidos registrados.</div>';
+      return;
+    }
+
+    const customerIds = [...new Set(data.map(row => row.customer_id).filter(Boolean))];
+    let profiles = {};
+
+    if (customerIds.length) {
+      const { data: people, error: peopleError } = await db
+        .from("profiles")
+        .select("id, full_name, phone")
+        .in("id", customerIds);
+
+      if (!peopleError) {
+        (people || []).forEach(person => profiles[person.id] = person);
+      }
+    }
+
+    $("orders-list").innerHTML = `
+      <div class="table-wrap"><table>
+        <thead><tr><th>Entrega</th><th>Cliente</th><th>Total</th><th>Pedido</th><th>Pago</th></tr></thead>
+        <tbody>${data.map(order => {
+          const person = profiles[order.customer_id] || {};
+          return `<tr>
+            <td>${dateLocal(order.delivery_date)}</td>
+            <td>${escapeHtml(person.full_name || "Cliente")}<br><span class="muted">${escapeHtml(person.phone || "")}</span></td>
+            <td>${money(order.total_mxn)}</td>
+            <td>${escapeHtml(order.delivery_status || "pending")}</td>
+            <td>${escapeHtml(order.payment_status || "unpaid")}</td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>`;
+  }
+
+  async function loadSubscriptions() {
+    $("subscriptions-list").textContent = "Cargando suscripciones...";
+
+    const { data, error } = await db
+      .from("subscriptions")
+      .select("id, customer_id, start_date, end_date, status, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    if (error) {
+      $("subscriptions-list").textContent = "No se pudieron cargar las suscripciones: " + error.message;
+      return;
+    }
+
+    $("stat-subs").textContent = (data || []).length;
+
+    if (!data?.length) {
+      $("subscriptions-list").innerHTML = '<div class="empty">Todavía no hay suscripciones.</div>';
+      return;
+    }
+
+    const ids = [...new Set(data.map(row => row.customer_id).filter(Boolean))];
+    let profiles = {};
+
+    if (ids.length) {
+      const { data: people } = await db.from("profiles")
+        .select("id, full_name, phone").in("id", ids);
+      (people || []).forEach(person => profiles[person.id] = person);
+    }
+
+    $("subscriptions-list").innerHTML = data.map(sub => {
+      const person = profiles[sub.customer_id] || {};
+      return `<article class="item">
+        <div>
+          <div class="item-title">${escapeHtml(person.full_name || "Cliente sin nombre")}</div>
+          <div class="muted">${escapeHtml(person.phone || "")}</div>
+          <p style="margin:8px 0">${dateLocal(sub.start_date)} — ${dateLocal(sub.end_date)}</p>
+        </div>
+        <span class="pill">${escapeHtml(sub.status)}</span>
+      </article>`;
+    }).join("");
+  }
+
+  async function loadProduction() {
+    const date = $("production-date").value;
+    if (!date) {
+      $("production-list").textContent = "Selecciona una fecha.";
+      return;
+    }
+
+    $("production-list").textContent = "Calculando producción...";
+
+    const { data: orders, error } = await db
+      .from("orders")
+      .select("id")
+      .eq("delivery_date", date)
+      .neq("delivery_status", "cancelled");
+
+    if (error) {
+      $("production-list").textContent = "No se pudo consultar la producción: " + error.message;
+      return;
+    }
+
+    if (!orders?.length) {
+      $("production-list").innerHTML = '<div class="empty">No hay pedidos para esta fecha.</div>';
+      return;
+    }
+
+    const orderIds = orders.map(order => order.id);
+    const { data: items, error: itemError } = await db
+      .from("order_items")
+      .select("item_name, meal_type, quantity")
+      .in("order_id", orderIds);
+
+    if (itemError) {
+      $("production-list").textContent = "No se pudieron consultar los platillos: " + itemError.message;
+      return;
+    }
+
+    const totals = {};
+    (items || []).forEach(item => {
+      const key = (item.meal_type || "lunch") + "||" + item.item_name;
+      if (!totals[key]) totals[key] = { name: item.item_name, type: item.meal_type, quantity: 0 };
+      totals[key].quantity += Number(item.quantity || 1);
+    });
+
+    const rows = Object.values(totals);
+    if (!rows.length) {
+      $("production-list").innerHTML = '<div class="empty">Los pedidos no tienen platillos registrados.</div>';
+      return;
+    }
+
+    $("production-list").innerHTML = `
+      <div class="table-wrap"><table>
+        <thead><tr><th>Tipo</th><th>Platillo</th><th>Porciones</th></tr></thead>
+        <tbody>${rows.map(row => `<tr>
+          <td>${row.type === "dinner" ? "Cena" : "Comida"}</td>
+          <td>${escapeHtml(row.name)}</td>
+          <td><strong>${row.quantity}</strong></td>
+        </tr>`).join("")}</tbody>
+      </table></div>`;
+  }
+
+  document.querySelectorAll("[data-tab]").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab === button));
+      ["menu", "orders", "production", "subscriptions"].forEach(name => {
+        $("tab-" + name).classList.toggle("hidden", name !== button.dataset.tab);
+      });
+    });
+  });
+
+  $("refresh-btn").addEventListener("click", loadAll);
+  $("orders-refresh").addEventListener("click", loadOrders);
+  $("subscriptions-refresh").addEventListener("click", loadSubscriptions);
+  $("production-refresh").addEventListener("click", loadProduction);
+
+  $("logout-btn").addEventListener("click", async () => {
+    await db.auth.signOut();
+    location.replace("./login.html");
+  });
+
+  $("production-date").value = new Date().toLocaleDateString("en-CA");
+  verifyAccess();
+</script>
+</body>
+</html>
