@@ -513,7 +513,30 @@
   </footer>
 
   <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";
+
+  const pomeloDB = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  // Disponible para las siguientes funciones de la aplicación.
+  window.pomeloDB = pomeloDB;
+
+  // Mantener actualizado el año del pie de página.
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+  // Verificar que la biblioteca se haya cargado.
+  console.log("Pomelo: cliente de Supabase inicializado.");
+</script>
+</body>
+</html>
+
   </script>
 </body>
 </html>
