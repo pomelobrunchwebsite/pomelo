@@ -2788,13 +2788,16 @@ if (!subscriptions.length) {
 
       if (planItemsError) throw planItemsError;
 
-const days = {
-  1: "Lunes",
-  2: "Martes",
-  3: "Miércoles",
-  4: "Jueves",
-  5: "Viernes"
-};
+
+const days = [
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+  "Domingo"
+];
 
 const items = planItems || [];
 
@@ -2805,39 +2808,38 @@ if (!items.length) {
   const groupedDays = {};
 
   items.forEach(item => {
-    const dayNumber = Number(item.day_of_week);
+    const dayName = String(item.day_of_week || "").trim();
 
-    if (!groupedDays[dayNumber]) {
-      groupedDays[dayNumber] = [];
+    if (!groupedDays[dayName]) {
+      groupedDays[dayName] = [];
     }
 
-    groupedDays[dayNumber].push(item);
+    groupedDays[dayName].push(item);
   });
 
   menuBox.innerHTML = Object.keys(groupedDays)
-    .map(Number)
-    .sort((a, b) => a - b)
-    .map(dayNumber => `
+    .sort((a, b) => days.indexOf(a) - days.indexOf(b))
+    .map(dayName => `
       <section style="
         padding:8px 0;
         border-bottom:1px solid var(--line);
       ">
         <h3 style="
-          margin:0 0 4px;
+          margin:0 0 8px;
           font-family:'Playfair Display',serif;
           font-size:19px;
           font-weight:400;
         ">
-          ${safe(days[dayNumber] || "Día programado")}
+          ${safe(dayName)}
         </h3>
 
-        ${groupedDays[dayNumber].map(item => `
+        ${groupedDays[dayName].map(item => `
           <div style="
             display:flex;
             justify-content:space-between;
             align-items:baseline;
             gap:10px;
-            padding:2px 0;
+            padding:3px 0;
           ">
             <span>${safe(item.meal_name)}</span>
             <small style="white-space:nowrap">
@@ -2848,8 +2850,7 @@ if (!items.length) {
       </section>
     `)
     .join("");
-}    }
-
+}
     status.classList.add("hidden");
 
     const { data: orders, error: ordersError } = await pomeloDB
