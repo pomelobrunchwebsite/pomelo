@@ -2010,6 +2010,46 @@ img {
 
         <div class="eyebrow">DIRECCIÓN DE ENTREGA</div>
         <p id="customer-plan-address">—</p>
+        
+<div class="pomelo-portal-divider"></div>
+
+<div class="eyebrow">MI DIRECCIÓN GUARDADA</div>
+<p id="customer-saved-address">Consultando dirección...</p>
+
+<button
+  id="customer-edit-address"
+  type="button"
+  class="pomelo-button"
+>
+  Editar dirección
+</button>
+
+<div id="customer-address-editor" class="hidden">
+  <label for="customer-address-input">Dirección de entrega</label>
+  <textarea
+    id="customer-address-input"
+    rows="2"
+    placeholder="Calle, número, colonia..."
+  ></textarea>
+
+  <label for="customer-address-notes">Indicaciones adicionales (opcional)</label>
+  <textarea
+    id="customer-address-notes"
+    rows="2"
+    placeholder="Referencias, entre calles, etc."
+  ></textarea>
+
+  <button id="customer-save-address" type="button" class="pomelo-button">
+    Guardar dirección
+  </button>
+
+  <button id="customer-cancel-edit-address" type="button">
+    Cancelar
+  </button>
+
+  <p id="customer-address-feedback" role="status"></p>
+</div>
+
       </div>
 
       <div id="portal-view-menu"
@@ -2764,6 +2804,91 @@ feedback.textContent = "Registrando tu solicitud…";
   
 }  
   
+async function setupCustomerSavedAddress(userId) {
+  const display = document.getElementById("customer-saved-address");
+  const editButton = document.getElementById("customer-edit-address");
+  const editor = document.getElementById("customer-address-editor");
+  const addressInput = document.getElementById("customer-address-input");
+  const notesInput = document.getElementById("customer-address-notes");
+  const saveButton = document.getElementById("customer-save-address");
+  const cancelButton = document.getElementById("customer-cancel-edit-address");
+  const feedback = document.getElementById("customer-address-feedback");
+
+  if (
+    !display || !editButton || !editor || !addressInput ||
+    !notesInput || !saveButton || !cancelButton || !feedback
+  ) return;
+
+  const { data: profile, error } = await pomeloDB
+    .from("profiles")
+    .select("delivery_address, delivery_notes")
+    .eq("id", userId)
+    .single();
+
+  if (error) throw error;
+
+  addressInput.value = profile.delivery_address || "";
+  notesInput.value = profile.delivery_notes || "";
+
+  const renderAddress = () => {
+    display.textContent = addressInput.value.trim() || "Todavía no has guardado una dirección.";
+  };
+
+  renderAddress();
+
+  editButton.onclick = () => {
+    feedback.textContent = "";
+    editor.classList.remove("hidden");
+    addressInput.focus();
+  };
+
+  cancelButton.onclick = () => {
+    addressInput.value = profile.delivery_address || "";
+    notesInput.value = profile.delivery_notes || "";
+    editor.classList.add("hidden");
+    feedback.textContent = "";
+    renderAddress();
+  };
+
+  saveButton.onclick = async () => {
+    const address = addressInput.value.trim();
+    const notes = notesInput.value.trim();
+
+    if (!address) {
+      feedback.textContent = "Escribe tu dirección de entrega.";
+      addressInput.focus();
+      return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Guardando...";
+
+    try {
+      const { error: saveError } = await pomeloDB
+        .from("profiles")
+        .update({
+          delivery_address: address,
+          delivery_notes: notes
+        })
+        .eq("id", userId);
+
+      if (saveError) throw saveError;
+
+      profile.delivery_address = address;
+      profile.delivery_notes = notes;
+
+      renderAddress();
+      editor.classList.add("hidden");
+      feedback.textContent = "Dirección guardada correctamente.";
+    } catch (error) {
+      feedback.textContent = "No se pudo guardar: " + error.message;
+    } finally {
+      saveButton.disabled = false;
+      saveButton.textContent = "Guardar dirección";
+    }
+  };
+}
+
 async function loadCustomerPortal(userId) {
   const status = document.getElementById("customer-portal-status");
   const content = document.getElementById("customer-portal-content");
@@ -2804,6 +2929,7 @@ async function loadCustomerPortal(userId) {
 
   try {
     status.textContent = "Consultando tu plan...";
+    await setupCustomerSavedAddress(userId);
 
 
 const { data: plans, error: planError } = await pomeloDB
