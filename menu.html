@@ -1743,6 +1743,132 @@ img {
   }
 }
 
+/* CUENTA DEL CLIENTE */
+.pomelo-account-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-width: 680px;
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.pomelo-account-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 23px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition: padding 0.2s ease;
+}
+
+.pomelo-account-button:hover {
+  padding-left: 10px;
+}
+
+.pomelo-account-arrow {
+  font-size: 19px;
+  opacity: 0.55;
+}
+
+/* VENTANA EMERGENTE */
+.pomelo-portal-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(25, 25, 22, 0.38);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.pomelo-portal-modal.hidden {
+  display: none !important;
+}
+
+.pomelo-portal-panel {
+  width: 100%;
+  max-width: 540px;
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 28px;
+  background: var(--background, #faf9f5);
+  color: var(--text, #292922);
+  border: 1px solid var(--line, #e5e2d9);
+  border-radius: 4px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.12);
+}
+
+.pomelo-portal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pomelo-portal-close {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line, #e5e2d9);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.pomelo-portal-panel > h2 {
+  margin: 22px 0 26px;
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.pomelo-portal-view h3 {
+  margin: 12px 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.pomelo-portal-view p {
+  line-height: 1.7;
+}
+
+.pomelo-portal-divider {
+  height: 1px;
+  margin: 24px 0;
+  background: var(--line, #e5e2d9);
+}
+
+@media (max-width: 600px) {
+  .pomelo-portal-panel {
+    padding: 23px 20px;
+    max-height: 86vh;
+  }
+
+  .pomelo-portal-panel > h2 {
+    font-size: 28px;
+  }
+
+  .pomelo-account-button {
+    padding: 21px 2px;
+  }
+}
+
 </style>
 
   <script>  
@@ -1822,54 +1948,92 @@ img {
 <section class="section" id="mi-portal">
   <div class="section-heading">
     <div>
-      <div class="eyebrow">Tu espacio personal</div>
-      <h2>Mi cuenta Pomelo.</h2>
+      <div class="eyebrow">TU ESPACIO PERSONAL</div>
+      <h2>Mi cuenta.</h2>
     </div>
     <p class="section-description">
-      Consulta el estado de tu plan, tus platillos programados
-      y tus próximas entregas.
+      Todo tu plan, en un solo lugar.
     </p>
   </div>
 
-  <div id="customer-portal-status" class="menu-status">
-    Cargando tu información...
-  </div>
+  <div class="pomelo-account-actions">
+    <button type="button" class="pomelo-account-button"
+      data-portal-view="plan">
+      <span>Mi suscripción</span>
+      <span class="pomelo-account-arrow">↗</span>
+    </button>
 
-  <div id="customer-portal-content" class="hidden">
-    <div class="features">
-      <article class="feature">
-        <div class="feature-number">MI SUSCRIPCIÓN</div>
+    <button type="button" class="pomelo-account-button"
+      data-portal-view="menu">
+      <span>Menú programado</span>
+      <span class="pomelo-account-arrow">↗</span>
+    </button>
+
+    <button type="button" class="pomelo-account-button"
+      data-portal-view="orders">
+      <span>Mis pedidos</span>
+      <span class="pomelo-account-arrow">↗</span>
+    </button>
+  </div>
+</section>
+
+<div id="customer-portal-modal"
+     class="pomelo-portal-modal hidden">
+
+  <div class="pomelo-portal-panel"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="pomelo-portal-title">
+
+    <div class="pomelo-portal-top">
+      <span class="eyebrow">POMELO BRUNCH HOUSE</span>
+      <button type="button"
+              id="pomelo-portal-close"
+              class="pomelo-portal-close"
+              aria-label="Cerrar">×</button>
+    </div>
+
+    <h2 id="pomelo-portal-title">Mi cuenta.</h2>
+
+    <div id="customer-portal-status" class="menu-status">
+      Cargando tu información...
+    </div>
+
+    <div id="customer-portal-content" class="hidden">
+
+      <div id="portal-view-plan" class="pomelo-portal-view">
+        <div class="eyebrow">TU PLAN</div>
         <h3 id="customer-plan-status">—</h3>
         <p id="customer-plan-dates">Consultando fechas...</p>
-      </article>
 
-      <article class="feature">
-        <div class="feature-number">ENTREGA</div>
-        <h3>Mi dirección</h3>
+        <div class="pomelo-portal-divider"></div>
+
+        <div class="eyebrow">DIRECCIÓN DE ENTREGA</div>
         <p id="customer-plan-address">—</p>
-      </article>
-    </div>
-
-    <div style="margin-top:32px">
-      <div class="eyebrow">Tu programación</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:400">
-        Mi menú programado.
-      </h3>
-      <div id="customer-plan-menu" class="menu-status">
-        Consultando tu menú...
       </div>
-    </div>
 
-    <div style="margin-top:36px">
-      <div class="eyebrow">Historial y próximas entregas</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:400">
-        Mis pedidos.
-      </h3>
-      <div id="customer-orders" class="menu-status">
-        Consultando tus pedidos...
+      <div id="portal-view-menu"
+           class="pomelo-portal-view hidden">
+        <div class="eyebrow">TU PROGRAMACIÓN</div>
+        <h3>Menú programado.</h3>
+        <div id="customer-plan-menu" class="menu-status">
+          Consultando tu menú...
+        </div>
       </div>
+
+      <div id="portal-view-orders"
+           class="pomelo-portal-view hidden">
+        <div class="eyebrow">ENTREGAS E HISTORIAL</div>
+        <h3>Mis pedidos.</h3>
+        <div id="customer-orders" class="menu-status">
+          Consultando tus pedidos...
+        </div>
+      </div>
+
     </div>
   </div>
+</div>
+
 </section>
   <div class="values">  
     <span>Ingredientes frescos</span>  
@@ -2773,6 +2937,67 @@ async function loadCustomerPortal(userId) {
     content.classList.add("hidden");
   }
 }
+
+/* INTERACCIÓN DE MI CUENTA */
+const portalModal = document.getElementById("customer-portal-modal");
+const portalTitle = document.getElementById("pomelo-portal-title");
+
+const portalViews = {
+  plan: {
+    element: document.getElementById("portal-view-plan"),
+    title: "Mi suscripción."
+  },
+  menu: {
+    element: document.getElementById("portal-view-menu"),
+    title: "Mi menú."
+  },
+  orders: {
+    element: document.getElementById("portal-view-orders"),
+    title: "Mis pedidos."
+  }
+};
+
+function openCustomerPortal(viewName) {
+  const selected = portalViews[viewName];
+  if (!selected) return;
+
+  Object.values(portalViews).forEach(view => {
+    view.element.classList.add("hidden");
+  });
+
+  selected.element.classList.remove("hidden");
+  portalTitle.textContent = selected.title;
+  portalModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCustomerPortal() {
+  portalModal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+document.querySelectorAll("[data-portal-view]").forEach(button => {
+  button.addEventListener("click", () => {
+    openCustomerPortal(button.dataset.portalView);
+  });
+});
+
+document.getElementById("pomelo-portal-close")
+  .addEventListener("click", closeCustomerPortal);
+
+/* Cerrar al tocar fuera de la ventana */
+portalModal.addEventListener("click", event => {
+  if (event.target === portalModal) {
+    closeCustomerPortal();
+  }
+});
+
+/* Cerrar con Escape */
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !portalModal.classList.contains("hidden")) {
+    closeCustomerPortal();
+  }
+});
 
 (async function checkCustomerSession() {  
   try {  
