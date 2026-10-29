@@ -827,6 +827,78 @@ tbody tr:last-child td {
     animation: none !important;
   }
 }
+    
+/* SUSCRIPCIONES COMPACTAS */
+#subscriptions-list {
+  display: grid;
+  gap: 8px;
+}
+
+#subscriptions-list > .item {
+  padding: 12px 14px;
+  gap: 10px;
+  align-items: center !important;
+  border-radius: 10px;
+}
+
+#subscriptions-list .item-title {
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
+#subscriptions-list .muted {
+  font-size: 12px;
+}
+
+#subscriptions-list p {
+  margin: 5px 0 !important;
+  font-size: 12px;
+}
+
+#subscriptions-list .pill {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+#subscriptions-list button {
+  min-height: 36px;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+#subscriptions-list .item-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px !important;
+}
+
+#subscriptions-list [id^="sub-detail-"] {
+  width: 100%;
+}
+
+#subscriptions-list [id^="sub-detail-"] .notice {
+  margin: 8px 0;
+  padding: 10px;
+  font-size: 12px;
+}
+
+#subscriptions-list [id^="sub-detail-"] h3 {
+  margin: 10px 0 6px;
+}
+
+@media (max-width: 650px) {
+  #subscriptions-list > .item {
+    padding: 11px;
+  }
+
+  #subscriptions-list .item-actions {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
   </style>
 </head>
 <body>
