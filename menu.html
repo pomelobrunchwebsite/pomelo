@@ -2012,16 +2012,6 @@ img {
             <input type="hidden" id="subscription-end-date">
           </div>
 
-          <div class="subscription-field full-width">
-            <label for="subscription-address">Dirección de entrega</label>
-            <input type="text" id="subscription-address" placeholder="Calle, número, colonia y referencias" maxlength="500" autocomplete="street-address" required>
-          </div>
-
-          <div class="subscription-field full-width">
-            <label for="subscription-notes">Indicaciones adicionales (opcional)</label>
-            <textarea id="subscription-notes" rows="3" maxlength="1000" placeholder="Referencias para encontrar tu domicilio o indicaciones de entrega"></textarea>
-          </div>
-
           <p class="form-description">
             La solicitud quedará pendiente de confirmación. El total mostrado corresponde a las cantidades seleccionadas por día, no al total de todas las entregas del periodo.
           </p>
@@ -2519,7 +2509,25 @@ async function saveCustomerAddress(userId, address, notes) {
           throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
         }
 
-        await saveCustomerAddress(userData.user.id, address, notes);
+
+        feedback.textContent = "Consultando tu dirección guardada…";
+
+        const { data: profile, error: profileError } = await pomeloDB
+          .from("profiles")
+          .select("delivery_address, delivery_notes")
+          .eq("id", userData.user.id)
+          .single();
+
+        if (profileError) throw profileError;
+
+        const address = (profile.delivery_address || "").trim();
+        const notes = (profile.delivery_notes || "").trim();
+
+        if (!address) {
+          throw new Error(
+            "Primero guarda tu dirección desde Mi cuenta antes de solicitar una suscripción."
+          );
+        }
 
         feedback.textContent = "Registrando tu solicitud…";
 
