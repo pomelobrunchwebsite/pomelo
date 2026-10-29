@@ -1332,89 +1332,117 @@ tbody tr:last-child td {
       </section>
 
 <section id="tab-weekly" class="panel hidden">
+
   <div class="section-head">
     <h2>Menú semanal</h2>
     <button id="weekly-refresh" class="btn">Actualizar</button>
   </div>
 
-  <p class="muted">
-    Crea el menú de lunes a viernes, agrega los platillos del catálogo
-    y publícalo cuando esté listo.
-  </p>
-
-  <form id="weekly-form">
-    <div class="form-grid">
-      <div class="field">
-        <label for="weekly-name">Nombre del menú</label>
-        <input id="weekly-name" required
-          value="Menú semanal" maxlength="100">
-      </div>
-
-      <div class="field">
-        <label for="weekly-start">Lunes de la semana</label>
-        <input id="weekly-start" type="date" required>
-      </div>
-
-      <div class="field">
-        <label for="weekly-end">Viernes de la semana</label>
-        <input id="weekly-end" type="date" required>
-      </div>
-    </div>
-
-    <button class="btn primary" type="submit">
-      Crear semana en borrador
+  <div class="weekly-navigation">
+    <button type="button" class="btn primary weekly-section-btn" data-weekly-section="create">
+      Menú semanal
     </button>
-  </form>
+
+    <button type="button" class="btn weekly-section-btn" data-weekly-section="items">
+      Agregar platillo
+    </button>
+
+    <button type="button" class="btn weekly-section-btn" data-weekly-section="history">
+      Semanas creadas
+    </button>
+  </div>
 
   <div id="weekly-message" class="notice hidden"></div>
 
-  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+  <!-- APARTADO 1: CREAR MENÚ -->
+  <div class="weekly-section" id="weekly-section-create">
 
-  <h2>Agregar platillos</h2>
+    <h2>Crear menú semanal</h2>
 
-  <div class="form-grid">
-    <div class="field">
-      <label for="weekly-select">Semana</label>
-      <select id="weekly-select">
-        <option value="">Selecciona una semana</option>
-      </select>
-    </div>
+    <form id="weekly-form">
+      <div class="form-grid">
 
-    <div class="field">
-      <label for="weekly-day">Día</label>
-      <select id="weekly-day">
-        <option value="1">Lunes</option>
-        <option value="2">Martes</option>
-        <option value="3">Miércoles</option>
-        <option value="4">Jueves</option>
-        <option value="5">Viernes</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="weekly-name">Nombre del menú</label>
+          <input id="weekly-name" required
+            value="Menú semanal" maxlength="100">
+        </div>
 
-    <div class="field full">
-      <label for="weekly-item">Platillo del catálogo</label>
-      <select id="weekly-item">
-        <option value="">Selecciona un platillo</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="weekly-start">Lunes de la semana</label>
+          <input id="weekly-start" type="date" required>
+        </div>
+
+        <div class="field">
+          <label for="weekly-end">Viernes de la semana</label>
+          <input id="weekly-end" type="date" required>
+        </div>
+
+      </div>
+
+      <button class="btn primary" type="submit">
+        Crear semana en borrador
+      </button>
+    </form>
+
   </div>
 
-  <button id="weekly-add-item" class="btn primary" type="button">
-    Agregar platillo al día
-  </button>
+  <!-- APARTADO 2: AGREGAR PLATILLOS -->
+  <div class="weekly-section hidden" id="weekly-section-items">
 
-  <div id="weekly-items-list" class="list" style="margin-top:18px">
-    <p class="empty">Selecciona una semana.</p>
+    <h2>Agregar platillos</h2>
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="weekly-select">Semana</label>
+        <select id="weekly-select">
+          <option value="">Selecciona una semana</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="weekly-day">Día</label>
+        <select id="weekly-day">
+          <option value="1">Lunes</option>
+          <option value="2">Martes</option>
+          <option value="3">Miércoles</option>
+          <option value="4">Jueves</option>
+          <option value="5">Viernes</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label for="weekly-item">Platillo del catálogo</label>
+        <select id="weekly-item">
+          <option value="">Selecciona un platillo</option>
+        </select>
+      </div>
+
+    </div>
+
+    <button id="weekly-add-item" class="btn primary" type="button">
+      Agregar platillo al día
+    </button>
+
+    <div id="weekly-items-list" class="list" style="margin-top:18px">
+      <p class="empty">Selecciona una semana.</p>
+    </div>
+
   </div>
 
-  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+  <!-- APARTADO 3: HISTORIAL -->
+  <div class="weekly-section hidden" id="weekly-section-history">
 
-  <h2>Semanas creadas</h2>
-  <div id="weekly-list" class="list">
-    <p class="empty">Cargando semanas...</p>
+    <h2>Semanas creadas</h2>
+
+    <div id="weekly-list" class="list">
+      <p class="empty">Cargando semanas...</p>
+    </div>
+
   </div>
+
 </section>
-
       <section id="tab-orders" class="panel hidden">
         <div class="section-head">
           <h2>Pedidos registrados</h2>
@@ -1452,6 +1480,35 @@ tbody tr:last-child td {
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const $ = id => document.getElementById(id);
+  // NAVEGACIÓN INTERNA DEL MENÚ SEMANAL
+document.querySelectorAll(".weekly-section-btn").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    const selectedSection = button.dataset.weeklySection;
+
+    // Ocultar todos los apartados
+    document.querySelectorAll(".weekly-section").forEach(section => {
+      section.classList.add("hidden");
+    });
+
+    // Mostrar el apartado seleccionado
+    const target = $("weekly-section-" + selectedSection);
+
+    if (target) {
+      target.classList.remove("hidden");
+    }
+
+    // Actualizar botón activo
+    document.querySelectorAll(".weekly-section-btn").forEach(btn => {
+      btn.classList.remove("primary");
+    });
+
+    button.classList.add("primary");
+
+  });
+
+});
   let currentUser = null;
   let menuCache = [];
   
