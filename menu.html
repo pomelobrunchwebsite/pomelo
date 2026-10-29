@@ -1958,7 +1958,7 @@ img {
   <div class="pomelo-account-actions">
     <button type="button" class="pomelo-account-button"
       data-portal-view="plan">
-      <span>Mi suscripción</span>
+      <span>Mi cuenta</span>
       <span class="pomelo-account-arrow">↗</span>
     </button>
 
@@ -2844,14 +2844,28 @@ const { data: plans, error: planError } = await pomeloDB
 
     const subscriptions = plans || [];
 
-    if (!subscriptions.length) {
-      status.textContent =
-        "Todavía no tienes una suscripción registrada. Puedes solicitar tu plan desde el menú semanal.";
+if (!subscriptions.length) {
+  status.textContent =
+    "No tienes una suscripción activa. Tu dirección guardada seguirá disponible.";
+} else {
+  content.classList.remove("hidden");
 
-      content.classList.add("hidden");
-    } else {
-      content.classList.remove("hidden");
+  document.getElementById("customer-plan-status").textContent =
+    "Sin suscripción activa";
 
+  document.getElementById("customer-plan-dates").textContent =
+    "Puedes solicitar un nuevo plan desde el menú semanal.";
+
+  document.getElementById("customer-plan-address").textContent =
+    "No hay una dirección asociada a una suscripción activa.";
+
+  document.getElementById("customer-cancel-subscription")?.remove();
+
+  menuBox.textContent =
+    "No tienes un menú programado actualmente.";
+
+} else {
+  content.classList.remove("hidden");
       const plan = subscriptions[0];
 
       document.getElementById("customer-plan-status").textContent =
@@ -3058,10 +3072,10 @@ const portalModal = document.getElementById("customer-portal-modal");
 const portalTitle = document.getElementById("pomelo-portal-title");
 
 const portalViews = {
-  plan: {
-    element: document.getElementById("portal-view-plan"),
-    title: "Mi suscripción."
-  },
+plan: {
+  element: document.getElementById("portal-view-plan"),
+  title: "Mi cuenta."
+},
   menu: {
     element: document.getElementById("portal-view-menu"),
     title: "Mi menú."
