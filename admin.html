@@ -1675,57 +1675,150 @@ async function toggleItem(id) {
   await loadMenu();
 }
 
-  async function loadOrders() {
-    $("orders-list").textContent = "Cargando pedidos...";
 
-    const { data, error } = await db
-      .from("orders")
-      .select("id, customer_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at")
-      .order("delivery_date", { ascending: false })
-      .limit(100);
+async function loadOrders() {
+  $("orders-list").textContent = "Generando pedidos del día...";
 
-    if (error) {
-      $("orders-list").textContent = "No se pudieron cargar los pedidos: " + error.message;
-      return;
-    }
+  // Generar los pedidos de las suscripciones para la fecha actual
+  const today = new Date();
+  const localDate = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0")
+  ].join("-");
 
-    $("stat-orders").textContent = (data || []).length;
+  const { data: generated, error: generateError } = await db.rpc(
+    "generate_subscription_orders",
+    { p_delivery_date: localDate }
+  );
 
-    if (!data?.length) {
-      $("orders-list").innerHTML = '<div class="empty">Todavía no hay pedidos registrados.</div>';
-      return;
-    }
-
-    const customerIds = [...new Set(data.map(row => row.customer_id).filter(Boolean))];
-    let profiles = {};
-
-    if (customerIds.length) {
-      const { data: people, error: peopleError } = await db
-        .from("profiles")
-        .select("id, full_name, phone")
-        .in("id", customerIds);
-
-      if (!peopleError) {
-        (people || []).forEach(person => profiles[person.id] = person);
-      }
-    }
-
-    $("orders-list").innerHTML = `
-      <div class="table-wrap"><table>
-        <thead><tr><th>Entrega</th><th>Cliente</th><th>Total</th><th>Pedido</th><th>Pago</th></tr></thead>
-        <tbody>${data.map(order => {
-          const person = profiles[order.customer_id] || {};
-          return `<tr>
-            <td>${dateLocal(order.delivery_date)}</td>
-            <td>${escapeHtml(person.full_name || "Cliente")}<br><span class="muted">${escapeHtml(person.phone || "")}</span></td>
-            <td>${money(order.total_mxn)}</td>
-            <td>${escapeHtml(order.delivery_status || "pending")}</td>
-            <td>${escapeHtml(order.payment_status || "unpaid")}</td>
-          </tr>`;
-        }).join("")}</tbody>
-      </table></div>`;
+  if (generateError) {
+    console.error("Error generando pedidos:", generateError);
+    $("orders-list").textContent =
+      "No se pudieron generar los pedidos de suscripciones: " +
+      generateError.message;
+    return;
   }
 
+  console.log("Pedidos nuevos generados:", generated);
+
+  $("orders-list").textContent = "Cargando pedidos...";
+
+  const { data, error } = await db
+    .from("orders")
+    .select(
+      "id, customer_id, subscription_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at"
+    )
+    .eq("delivery_date", localDate)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    $("orders-list").textContent =
+      "No se pudieron cargar los pedidos: " + error.message;
+    return;
+  }
+
+  $("stat-orders").textContent = (data || []).length;
+
+  if (!data?.length) {
+    $("orders-list").innerHTML =
+      '<div class="empty">No hay pedidos para hoy.</div>';
+    return;
+  }
+
+  const orderIds = data.map(order => order.id);
+  const customerIds = [
+    ...new Set(data.map(order => order.customer_id).filter(Boolean))
+  ];
+
+  const profiles = {};
+  const itemsByOrder = {};
+
+  if (customerIds.length) {
+    const { data: people, error: peopleError } = await db
+      .from("profiles")
+      .select("id, full_name, phone")
+      .in("id", customerIds);
+
+    if (peopleError) console.error("Error consultando clientes:", peopleError);
+
+    (people || []).forEach(person => {
+      profiles[person.id] = person;
+    });
+  }
+
+  const { data: items, error: itemsError } = await db
+    .from("order_items")
+    .select("order_id, item_name, meal_type, quantity, unit_price_mxn")
+    .in("order_id", orderIds);
+
+  if (itemsError) {
+    $("orders-list").textContent =
+      "No se pudieron cargar los platillos: " + itemsError.message;
+    return;
+  }
+
+  (items || []).forEach(item => {
+    if (!itemsByOrder[item.order_id]) {
+      itemsByOrder[item.order_id] = [];
+    }
+    itemsByOrder[item.order_id].push(item);
+  });
+
+  $("orders-list").innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Entrega</th>
+            <th>Suscriptor / Cliente</th>
+            <th>Platillos</th>
+            <th>Dirección</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Pago</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(order => {
+            const person = profiles[order.customer_id] || {};
+            const orderItems = itemsByOrder[order.id] || [];
+
+            const itemsHtml = orderItems.length
+              ? orderItems.map(item =>
+                  `<div>
+                    ${Number(item.quantity || 1)} ×
+                    ${escapeHtml(item.item_name || "Platillo")}
+                    <span class="muted">
+                      (${item.meal_type === "dinner" ? "Cena" : "Comida"})
+                    </span>
+                  </div>`
+                ).join("")
+              : '<span class="muted">Sin platillos registrados</span>';
+
+            return `
+              <tr>
+                <td>${dateLocal(order.delivery_date)}</td>
+                <td>
+                  <strong>${escapeHtml(person.full_name || "Cliente")}</strong>
+                  <br>
+                  <span class="muted">${escapeHtml(person.phone || "")}</span>
+                  ${order.subscription_id
+                    ? '<br><span class="pill">Suscripción</span>'
+                    : ""}
+                </td>
+                <td>${itemsHtml}</td>
+                <td>${escapeHtml(order.delivery_address || "Sin dirección")}</td>
+                <td>${money(order.total_mxn)}</td>
+                <td>${escapeHtml(order.delivery_status || "pending")}</td>
+                <td>${escapeHtml(order.payment_status || "unpaid")}</td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
 
 async function loadSubscriptions() {
   const container = $("subscriptions-list");
