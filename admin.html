@@ -899,6 +899,148 @@ tbody tr:last-child td {
   }
 }
 
+/* ===== SUSCRIPCIONES: DISEÑO COMPACTO ===== */
+
+#subscriptions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+#subscriptions-list > .item {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center !important;
+  gap: 12px;
+  padding: 10px 14px !important;
+  margin: 0;
+  border-radius: 10px;
+}
+
+/* Información del suscriptor */
+#subscriptions-list > .item > div:first-child {
+  min-width: 0;
+}
+
+#subscriptions-list .item-title {
+  font-size: 14px;
+  line-height: 1.3;
+  margin: 0 0 4px !important;
+  overflow-wrap: anywhere;
+}
+
+#subscriptions-list .muted {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+#subscriptions-list p {
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 3px 0 !important;
+}
+
+/* Botones a la derecha */
+#subscriptions-list .item-actions {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 5px;
+  margin: 0 !important;
+  min-width: 105px;
+}
+
+#subscriptions-list .item-actions button {
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 9px !important;
+  margin: 0 !important;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Estado más pequeño */
+#subscriptions-list .pill {
+  display: inline-block;
+  padding: 3px 7px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+/* El detalle ocupa toda la fila */
+#subscriptions-list [id^="sub-detail-"] {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: 4px;
+}
+
+#subscriptions-list [id^="sub-detail-"] .notice {
+  margin: 6px 0;
+  padding: 9px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+#subscriptions-list [id^="sub-detail-"] h3 {
+  font-size: 13px;
+  margin: 10px 0 5px;
+}
+
+/* ===== TABLET Y MÓVIL ===== */
+
+@media (max-width: 650px) {
+  #subscriptions-list {
+    gap: 8px;
+  }
+
+  #subscriptions-list > .item {
+    grid-template-columns: minmax(0, 1fr) 90px;
+    gap: 8px;
+    padding: 9px !important;
+  }
+
+  #subscriptions-list .item-title {
+    font-size: 13px;
+  }
+
+  #subscriptions-list .muted {
+    font-size: 10px;
+  }
+
+  #subscriptions-list p {
+    font-size: 11px;
+  }
+
+  #subscriptions-list .item-actions {
+    min-width: 0;
+    gap: 5px;
+  }
+
+  #subscriptions-list .item-actions button {
+    min-height: 34px;
+    padding: 6px 4px !important;
+    font-size: 10px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Móviles muy estrechos */
+@media (max-width: 380px) {
+  #subscriptions-list > .item {
+    grid-template-columns: minmax(0, 1fr) 78px;
+    gap: 6px;
+    padding: 8px !important;
+  }
+
+  #subscriptions-list .item-actions button {
+    font-size: 9px;
+    padding: 6px 3px !important;
+  }
+}
+
   </style>
 </head>
 <body>
