@@ -2715,17 +2715,30 @@ async function loadCustomerPortal(userId) {
 
     const subscriptions = plans || [];
 
-    if (!subscriptions.length) {
-      status.textContent = "No tienes una suscripción activa. Tu dirección guardada seguirá disponible.";
-      content.classList.remove("hidden");
+    
+if (!subscriptions.length) {
+  status.textContent =
+    "No tienes una suscripción activa. Tu dirección guardada seguirá disponible.";
 
-      document.getElementById("customer-plan-status").textContent = "Sin suscripción activa";
-      document.getElementById("customer-plan-dates").textContent = "Puedes solicitar un nuevo plan desde el menú semanal.";
-      document.getElementById("customer-plan-address").textContent = "No hay una dirección asociada a una suscripción activa.";
-      document.getElementById("customer-cancel-subscription")?.remove();
-      menuBox.textContent = "No tienes un menú programado actualmente.";
-    } else {
-      content.classList.remove("hidden");
+  content.classList.remove("hidden");
+
+  document.getElementById("customer-plan-status").textContent =
+    "Sin suscripción activa";
+
+  document.getElementById("customer-plan-dates").textContent =
+    "Puedes solicitar un nuevo plan desde el menú semanal.";
+
+  document.getElementById("customer-plan-address").textContent =
+    "No hay una dirección asociada a una suscripción activa.";
+
+  document.getElementById("customer-cancel-subscription")?.remove();
+
+  menuBox.textContent =
+    "No tienes un menú programado actualmente.";
+
+} else {
+  content.classList.remove("hidden");
+
       const plan = subscriptions[0];
 
       document.getElementById("customer-plan-status").textContent = statusLabel(plan.status);
