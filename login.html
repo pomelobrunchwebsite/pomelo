@@ -580,15 +580,35 @@ a.back:hover {
           });
           if (error) throw error;
 
-          if (data.session) {
-            const { error: profileError } = await db.from("profiles").upsert({
-              id: data.user.id,
-              full_name: fullName,
-              phone: phone,
-              role: "customer"
-            });
-            if (profileError) throw profileError;
-          }
+
+if (data.user) {
+  // El nombre y el teléfono se guardan en los metadatos
+  // incluso cuando Supabase exige confirmar el correo.
+  // El perfil se crea al confirmar el correo e iniciar sesión.
+  const { error: metadataError } = await db.auth.updateUser({
+    data: {
+      full_name: fullName,
+      phone: phone
+    }
+  });
+
+  if (metadataError && data.session) {
+    throw metadataError;
+  }
+
+  if (data.session) {
+    const { error: profileError } = await db
+      .from("profiles")
+      .upsert({
+        id: data.user.id,
+        full_name: fullName,
+        phone: phone,
+        role: "customer"
+      });
+
+    if (profileError) throw profileError;
+  }
+}
 
           showMessage(
             data.session
