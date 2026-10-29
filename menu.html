@@ -2814,73 +2814,58 @@ async function loadCustomerPortal(userId) {
         (plan.delivery_notes
           ? `<br><br><strong>Indicaciones:</strong><br>${safe(plan.delivery_notes)}`
           : "");
-const cancelButton = document.getElementById("customer-cancel-subscription");
 
-if (cancelButton) {
-  cancelButton.remove();
-}
+const addressElement = document.getElementById("customer-plan-address");
 
-if (["pending", "active"].includes(plan.status)) {
-  const button = document.createElement("button");
+if (addressElement) {
+  document.getElementById("customer-cancel-subscription")?.remove();
 
-  button.id = "customer-cancel-subscription";
-  button.type = "button";
-  button.textContent = "Cancelar suscripción";
+  if (["pending", "active"].includes(plan.status)) {
+    const button = document.createElement("button");
 
-  button.style.cssText = `
-    margin-top: 20px;
-    padding: 12px 18px;
-    border: 1px solid #a64b43;
-    border-radius: 4px;
-    background: transparent;
-    color: #a64b43;
-    cursor: pointer;
-  `;
+    button.id = "customer-cancel-subscription";
+    button.type = "button";
+    button.textContent = "Cancelar suscripción";
+    button.style.cssText =
+      "display:block;margin-top:20px;padding:12px 18px;" +
+      "border:1px solid #a64b43;border-radius:4px;" +
+      "background:transparent;color:#a64b43;cursor:pointer;";
 
-  document.getElementById("customer-plan-address")
-    .insertAdjacentElement("afterend", button);
+    addressElement.insertAdjacentElement("afterend", button);
 
-  button.addEventListener("click", async () => {
-    const confirmed = confirm(
-      "¿Cancelar tu suscripción?\n\n" +
-      "Se cancelarán los pedidos pendientes de hoy en adelante. " +
-      "Los pedidos en preparación o posteriores estados no se modificarán."
-    );
+    button.addEventListener("click", async () => {
+      if (!confirm(
+        "¿Cancelar tu suscripción? Se cancelarán los pedidos " +
+        "pendientes de hoy en adelante. Los pedidos que ya estén " +
+        "en preparación o más avanzados no se modificarán."
+      )) return;
 
-    if (!confirmed) return;
+      button.disabled = true;
+      button.textContent = "Cancelando...";
 
-    button.disabled = true;
-    button.textContent = "Cancelando...";
+      try {
+        const { data, error } = await pomeloDB.rpc(
+          "cancel_subscription",
+          { p_subscription_id: plan.id }
+        );
 
-    try {
-      const { data, error } = await pomeloDB.rpc(
-        "cancel_subscription",
-        { p_subscription_id: plan.id }
-      );
+        if (error) throw error;
+        if (!data?.success) throw new Error("No se confirmó la cancelación.");
 
-      if (error) throw error;
+        alert(
+          "Suscripción cancelada. Pedidos cancelados: " +
+          data.cancelled_orders
+        );
 
-      if (!data?.success) {
-        throw new Error("No se pudo confirmar la cancelación.");
+        await loadCustomerPortal(userId);
+      } catch (error) {
+        console.error("Error al cancelar:", error);
+        alert("No se pudo cancelar: " + error.message);
+        button.disabled = false;
+        button.textContent = "Cancelar suscripción";
       }
-
-      alert(
-        "Tu suscripción fue cancelada. " +
-        `Pedidos pendientes cancelados: ${data.cancelled_orders}.`
-      );
-
-      await loadCustomerPortal(userId);
-    } catch (error) {
-      console.error("Error al cancelar la suscripción:", error);
-      alert(
-        "No pudimos cancelar la suscripción: " +
-        (error.message || "Error inesperado.")
-      );
-
-      button.disabled = false;
-      button.textContent = "Cancelar suscripción";
-    }
-  });
+    });
+  }
 }
       const planIds = subscriptions.map(item => item.id);
 
