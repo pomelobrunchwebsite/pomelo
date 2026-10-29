@@ -2364,6 +2364,7 @@ function renderSummary() {
       info.append(name, detail);  
   
 
+
 const quantity = document.createElement("span");
 quantity.className = "summary-qty";
 quantity.textContent = `× ${qty}`;
@@ -2374,6 +2375,7 @@ amount.textContent = formatMenuPrice(subtotal);
 
 row.append(info, quantity, amount);
 rows.push(row);
+
     });  
   });  
   
