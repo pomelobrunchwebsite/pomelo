@@ -2239,24 +2239,55 @@ async function loadPublicMenu() {
     '<div class="menu-grid"><div class="skeleton"></div><div class="skeleton"></div></div>';  
   
   try {  
-    const { data, error } = await pomeloDB  
-      .from("menu_items")  
-      .select("id, name, description, image_url, price_mxn, category, available_days, active")  
-      .eq("active", true)  
-      .order("created_at", { ascending: true });  
+    
+const { data: publishedWeek, error: weekError } = await pomeloDB
+  .from("weekly_menus")
+  .select("id, name, start_date, end_date")
+  .eq("status", "published")
+  .gte("end_date", getLocalDateString())
+  .order("start_date", { ascending: true })
+  .limit(1)
+  .maybeSingle();
+
+if (weekError) throw weekError;
+
+if (!publishedWeek) {
+  tabsContainer.classList.add("hidden");
+  container.innerHTML = "";
+  showMenuStatus("Todavía no hay un menú semanal publicado.");
+  return;
+}
+
+const { data: weeklyItems, error: itemsError } = await pomeloDB
+  .from("weekly_menu_items")
+  .select(
+    "id, menu_item_id, name, description, image_url, price_mxn, category, day_of_week"
+  )
+  .eq("weekly_menu_id", publishedWeek.id)
+  .order("day_of_week")
+  .order("name");
+
+if (itemsError) throw itemsError;
+
+const days = [
+  [1, "Lunes"],
+  [2, "Martes"],
+  [3, "Miércoles"],
+  [4, "Jueves"],
+  [5, "Viernes"]
+];
+
+// Usamos el ID de la asignación semanal para distinguir
+// cada platillo, incluso si se repite en días diferentes.
+const menuItems = (weeklyItems || [])
+  .filter(item => item.menu_item_id)
+  .map(item => ({
+    ...item,
+    original_menu_item_id: item.menu_item_id,
+    weekly_day: Number(item.day_of_week),
+    active: true
+  }));
   
-    if (error) throw error;  
-  
-const days = [  
-[1, "Lunes"],  
-[2, "Martes"],  
-[3, "Miércoles"],  
-[4, "Jueves"],  
-[5, "Viernes"]  
-];  
-  
-// Conserva un arreglo vacío si no hay platillos activos.  
-const menuItems = data || [];  
   
     // Conserva las cantidades mientras el cliente cambia de día.  
     const quantities = {};  
@@ -2406,11 +2437,9 @@ function renderSummary() {
         tab.tabIndex = active ? 0 : -1;  
       });  
   
-const dishes = menuItems.filter(item =>  
-  !Array.isArray(item.available_days) ||  
-  item.available_days.length === 0 ||  
-  item.available_days.map(Number).includes(dayNumber)  
-);  
+const dishes = menuItems.filter(
+  item => item.weekly_day === dayNumber
+);
       container.innerHTML = "";  
   
       const heading = document.createElement("h3");  
@@ -2572,21 +2601,15 @@ function getLocalDateString() {
   return `${year}-${month}-${day}`;
 }
 
-startDateInput.min = getLocalDateString();
-endDateInput.min = getLocalDateString();
+// La solicitud debe corresponder a la semana publicada.
+startDateInput.value = publishedWeek.start_date;
+endDateInput.value = publishedWeek.end_date;
 
-startDateInput.addEventListener("change", () => {
-  endDateInput.min = startDateInput.value || getLocalDateString();
+startDateInput.min = publishedWeek.start_date;
+startDateInput.max = publishedWeek.start_date;
 
-  if (
-    endDateInput.value &&
-    startDateInput.value &&
-    endDateInput.value < startDateInput.value
-  ) {
-    endDateInput.value = startDateInput.value;
-  }
-});
-
+endDateInput.min = publishedWeek.end_date;
+endDateInput.max = publishedWeek.end_date;
 submitButton.addEventListener("click", async () => {
   feedback.textContent = "";
 
@@ -2600,40 +2623,46 @@ submitButton.addEventListener("click", async () => {
     return;
   }
 
-  if (startDate < getLocalDateString()) {
-    feedback.textContent = "La fecha de inicio no puede estar en el pasado.";
-    return;
-  }
-
-  if (endDate < startDate) {
-    feedback.textContent = "La fecha de término debe ser posterior a la de inicio.";
-    return;
-  }
-
+if (
+  startDate !== publishedWeek.start_date ||
+  endDate !== publishedWeek.end_date
+) {
+  feedback.textContent =
+    "Las fechas deben corresponder a la semana publicada.";
+  return;
+}
   if (!address) {
     feedback.textContent = "Escribe tu dirección de entrega.";
     addressInput.focus();
     return;
   }
 
-  const items = [];
 
-  Object.entries(quantities).forEach(([day, selectedItems]) => {
-    Object.entries(selectedItems).forEach(([menu_item_id, quantity]) => {
-      if (Number(quantity) > 0) {
+const items = [];
+
+Object.entries(quantities).forEach(([day, selectedItems]) => {
+  Object.entries(selectedItems).forEach(([weeklyItemId, quantity]) => {
+    if (Number(quantity) > 0) {
+      const selectedItem = menuItems.find(
+        item => String(item.id) === String(weeklyItemId)
+      );
+
+      if (selectedItem) {
         items.push({
           day: Number(day),
-          menu_item_id,
+          menu_item_id: selectedItem.original_menu_item_id,
           quantity: Number(quantity)
         });
       }
-    });
+    }
   });
+});
 
-  if (items.length === 0) {
-    feedback.textContent = "Agrega al menos un platillo antes de continuar.";
-    return;
-  }
+if (items.length === 0) {
+  feedback.textContent =
+    "Agrega al menos un platillo antes de continuar.";
+  return;
+}
 
   submitButton.disabled = true;
   submitButton.textContent = "Enviando solicitud…";
