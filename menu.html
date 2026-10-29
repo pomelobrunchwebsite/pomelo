@@ -1753,6 +1753,7 @@ img {
   <a class="brand" href="#" aria-label="Pomelo Brunch House inicio">pomelo<span>.</span><small>brunch house</small></a>  
   <nav class="nav" aria-label="Navegación principal">  
     <a class="nav-secondary" href="#menu">Menú de la semana</a>  
+    <a class="nav-secondary" href="#mi-portal">Mi plan</a>
     <a class="nav-secondary" href="#filosofia">Nuestra filosofía</a>  
     <a class="nav-secondary" href="#como-funciona">Cómo funciona</a>  
     <a class="nav-menu" href="#menu">Menú</a>  
@@ -1816,7 +1817,61 @@ img {
       <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=85" alt="Ensalada fresca con ingredientes naturales" fetchpriority="high" width="1200" height="1000">  
       <div class="image-label">Hecho con ingredientes reales.</div>  
     </div>  
-  </section>    <div class="values">  
+  </section> 
+  
+<section class="section" id="mi-portal">
+  <div class="section-heading">
+    <div>
+      <div class="eyebrow">Tu espacio personal</div>
+      <h2>Mi cuenta Pomelo.</h2>
+    </div>
+    <p class="section-description">
+      Consulta el estado de tu plan, tus platillos programados
+      y tus próximas entregas.
+    </p>
+  </div>
+
+  <div id="customer-portal-status" class="menu-status">
+    Cargando tu información...
+  </div>
+
+  <div id="customer-portal-content" class="hidden">
+    <div class="features">
+      <article class="feature">
+        <div class="feature-number">MI SUSCRIPCIÓN</div>
+        <h3 id="customer-plan-status">—</h3>
+        <p id="customer-plan-dates">Consultando fechas...</p>
+      </article>
+
+      <article class="feature">
+        <div class="feature-number">ENTREGA</div>
+        <h3>Mi dirección</h3>
+        <p id="customer-plan-address">—</p>
+      </article>
+    </div>
+
+    <div style="margin-top:32px">
+      <div class="eyebrow">Tu programación</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:400">
+        Mi menú programado.
+      </h3>
+      <div id="customer-plan-menu" class="menu-status">
+        Consultando tu menú...
+      </div>
+    </div>
+
+    <div style="margin-top:36px">
+      <div class="eyebrow">Historial y próximas entregas</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:400">
+        Mis pedidos.
+      </h3>
+      <div id="customer-orders" class="menu-status">
+        Consultando tus pedidos...
+      </div>
+    </div>
+  </div>
+</section>
+  <div class="values">  
     <span>Ingredientes frescos</span>  
     <span>Comida hecha al momento</span>  
     <span>Entrega programada</span>  
@@ -2517,6 +2572,208 @@ submitButton.addEventListener("click", async () => {
   
 }  
   
+async function loadCustomerPortal(userId) {
+  const status = document.getElementById("customer-portal-status");
+  const content = document.getElementById("customer-portal-content");
+
+  const menuBox = document.getElementById("customer-plan-menu");
+  const ordersBox = document.getElementById("customer-orders");
+
+  const money = value => formatMenuPrice(value);
+
+  const safe = value => escapeMenuText(value);
+
+  const date = value => {
+    if (!value) return "No indicada";
+    const parts = String(value).slice(0, 10).split("-");
+    if (parts.length !== 3) return safe(value);
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  };
+
+  const statusLabel = value => {
+    const labels = {
+      pending: "Pendiente de confirmación",
+      active: "Activa",
+      approved: "Aprobada",
+      cancelled: "Cancelada",
+      canceled: "Cancelada",
+      completed: "Finalizada",
+      paused: "Pausada",
+      paid: "Pagado",
+      unpaid: "Pendiente de pago",
+      delivered: "Entregado",
+      preparing: "En preparación",
+      confirmed: "Confirmado"
+    };
+
+    const key = String(value || "").toLowerCase();
+    return labels[key] || value || "Sin estado registrado";
+  };
+
+  try {
+    status.textContent = "Consultando tu plan...";
+
+    const { data: plans, error: planError } = await pomeloDB
+      .from("subscriptions")
+      .select(
+        "id, start_date, end_date, status, delivery_address, delivery_notes, delivery_fee_mxn, created_at"
+      )
+      .eq("customer_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (planError) throw planError;
+
+    const subscriptions = plans || [];
+
+    if (!subscriptions.length) {
+      status.textContent =
+        "Todavía no tienes una suscripción registrada. Puedes solicitar tu plan desde el menú semanal.";
+
+      content.classList.add("hidden");
+    } else {
+      content.classList.remove("hidden");
+
+      const plan = subscriptions[0];
+
+      document.getElementById("customer-plan-status").textContent =
+        statusLabel(plan.status);
+
+      document.getElementById("customer-plan-dates").textContent =
+        `Del ${date(plan.start_date)} al ${date(plan.end_date)}`;
+
+      document.getElementById("customer-plan-address").innerHTML =
+        `${safe(plan.delivery_address || "Sin dirección registrada")}` +
+        (plan.delivery_notes
+          ? `<br><br><strong>Indicaciones:</strong><br>${safe(plan.delivery_notes)}`
+          : "");
+
+      const planIds = subscriptions.map(item => item.id);
+
+      const { data: planItems, error: planItemsError } = await pomeloDB
+        .from("subscription_items")
+        .select("subscription_id, day_of_week, meal_name, unit_price_mxn, quantity")
+        .in("subscription_id", planIds);
+
+      if (planItemsError) throw planItemsError;
+
+      const days = {
+        1: "Lunes",
+        2: "Martes",
+        3: "Miércoles",
+        4: "Jueves",
+        5: "Viernes"
+      };
+
+      const items = planItems || [];
+
+      if (!items.length) {
+        menuBox.textContent =
+          "Tu plan todavía no tiene platillos registrados.";
+      } else {
+        menuBox.innerHTML = items
+          .slice()
+          .sort((a, b) =>
+            Number(a.day_of_week) - Number(b.day_of_week)
+          )
+          .map(item => `
+            <div style="padding:14px 0;border-bottom:1px solid var(--line)">
+              <strong>${safe(days[item.day_of_week] || "Día programado")}</strong>
+              <div>${safe(item.meal_name)}</div>
+              <small>
+                Cantidad: ${Number(item.quantity || 1)}
+                · ${money(item.unit_price_mxn)} por unidad
+              </small>
+            </div>
+          `).join("");
+      }
+    }
+
+    status.classList.add("hidden");
+
+    const { data: orders, error: ordersError } = await pomeloDB
+      .from("orders")
+      .select(
+        "id, subscription_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at"
+      )
+      .eq("customer_id", userId)
+      .order("delivery_date", { ascending: false });
+
+    if (ordersError) throw ordersError;
+
+    const orderList = orders || [];
+
+    if (!orderList.length) {
+      ordersBox.textContent =
+        "Todavía no hay pedidos generados para tu cuenta. Cuando se generen, aparecerán aquí.";
+      return;
+    }
+
+    const orderIds = orderList.map(order => order.id);
+
+    const { data: orderItems, error: orderItemsError } = await pomeloDB
+      .from("order_items")
+      .select("order_id, item_name, meal_type, quantity, unit_price_mxn")
+      .in("order_id", orderIds);
+
+    if (orderItemsError) throw orderItemsError;
+
+    const groupedItems = {};
+
+    (orderItems || []).forEach(item => {
+      if (!groupedItems[item.order_id]) {
+        groupedItems[item.order_id] = [];
+      }
+      groupedItems[item.order_id].push(item);
+    });
+
+    ordersBox.innerHTML = orderList.map(order => {
+      const items = groupedItems[order.id] || [];
+
+      const dishes = items.length
+        ? `<ul style="margin:8px 0;padding-left:20px">
+            ${items.map(item => `
+              <li>
+                ${safe(item.item_name)}
+                × ${Number(item.quantity || 1)}
+                ${item.meal_type
+                  ? `· ${safe(item.meal_type === "dinner" ? "Cena" : "Comida")}`
+                  : ""}
+              </li>
+            `).join("")}
+          </ul>`
+        : "<p>Sin platillos registrados.</p>";
+
+      return `
+        <article style="padding:20px 0;border-bottom:1px solid var(--line)">
+          <div class="feature-number">PEDIDO · ${safe(String(order.id).slice(0, 8))}</div>
+          <h3 style="margin:8px 0;font-family:'Playfair Display',serif;font-size:23px;font-weight:400">
+            Entrega: ${date(order.delivery_date)}
+          </h3>
+          <p style="margin-bottom:8px">
+            <strong>Pedido:</strong> ${safe(statusLabel(order.delivery_status))}
+            <br>
+            <strong>Pago:</strong> ${safe(statusLabel(order.payment_status))}
+          </p>
+          ${dishes}
+          <p style="margin:8px 0">
+            <strong>Total: ${money(order.total_mxn)}</strong>
+          </p>
+        </article>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Error al cargar el portal del cliente:", error);
+
+    status.classList.remove("hidden");
+    status.textContent =
+      "No pudimos cargar toda tu información: " +
+      (error.message || "Error de conexión.");
+
+    content.classList.add("hidden");
+  }
+}
+
 (async function checkCustomerSession() {  
   try {  
     const { data, error } = await pomeloDB.auth.getSession();  
@@ -2590,8 +2847,12 @@ document.getElementById("account-dropdown").dataset.name =
     });  
   
     // Mostrar la página y cargar los platillos.  
-    document.documentElement.classList.remove("auth-check");  
-    loadPublicMenu();  
+document.documentElement.classList.remove("auth-check");
+
+await Promise.all([
+  loadPublicMenu(),
+  loadCustomerPortal(user.id)
+]);  
   
   } catch (error) {  
     console.error("Error al verificar la sesión:", error);  
