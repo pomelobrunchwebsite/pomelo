@@ -2781,13 +2781,15 @@ async function loadCustomerPortal(userId) {
   try {
     status.textContent = "Consultando tu plan...";
 
-    const { data: plans, error: planError } = await pomeloDB
-      .from("subscriptions")
-      .select(
-        "id, start_date, end_date, status, delivery_address, delivery_notes, delivery_fee_mxn, created_at"
-      )
-      .eq("customer_id", userId)
-      .order("created_at", { ascending: false });
+
+const { data: plans, error: planError } = await pomeloDB
+  .from("subscriptions")
+  .select(
+    "id, start_date, end_date, status, delivery_address, delivery_notes, delivery_fee_mxn, created_at"
+  )
+  .eq("customer_id", userId)
+  .in("status", ["pending", "active"])
+  .order("created_at", { ascending: false });
 
     if (planError) throw planError;
 
@@ -2920,7 +2922,15 @@ if (addressElement) {
 
     if (ordersError) throw ordersError;
 
-    const orderList = orders || [];
+
+const activeSubscriptionIds = new Set(
+  subscriptions.map(subscription => subscription.id)
+);
+
+const orderList = (orders || []).filter(order =>
+  !order.subscription_id ||
+  activeSubscriptionIds.has(order.subscription_id)
+);
 
     if (!orderList.length) {
       ordersBox.textContent =
