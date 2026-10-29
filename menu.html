@@ -2454,27 +2454,18 @@ async function saveCustomerAddress(userId, address, notes) {
     submitButton.addEventListener("click", async () => {
       feedback.textContent = "";
 
-      const startDate = startDateInput.value;
-      const endDate = endDateInput.value;
-      const address = addressInput.value.trim();
-      const notes = notesInput.value.trim();
+const startDate = startDateInput.value;
+const endDate = endDateInput.value;
 
-      if (!startDate || !endDate) {
-        feedback.textContent = "Selecciona las fechas de inicio y término.";
-        return;
-      }
+if (!startDate || !endDate) {
+  feedback.textContent = "Selecciona las fechas de inicio y término.";
+  return;
+}
 
-      if (startDate !== publishedWeek.start_date || endDate !== publishedWeek.end_date) {
-        feedback.textContent = "Las fechas deben corresponder a la semana publicada.";
-        return;
-      }
-
-      if (!address) {
-        feedback.textContent = "Escribe tu dirección de entrega.";
-        addressInput.focus();
-        return;
-      }
-
+if (startDate !== publishedWeek.start_date || endDate !== publishedWeek.end_date) {
+  feedback.textContent = "Las fechas deben corresponder a la semana publicada.";
+  return;
+}
       const items = [];
 
       Object.entries(quantities).forEach(([day, selectedItems]) => {
