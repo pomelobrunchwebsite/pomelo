@@ -2003,65 +2003,99 @@ async function updateSubscriptionStatus(id, newStatus) {
   alert("Estado actualizado correctamente.");
   await loadSubscriptions();
 }
-  async function loadProduction() {
-    const date = $("production-date").value;
-    if (!date) {
-      $("production-list").textContent = "Selecciona una fecha.";
-      return;
-    }
 
-    $("production-list").textContent = "Calculando producción...";
+async function loadProduction() {
+  const date = $("production-date").value;
 
-    const { data: orders, error } = await db
-      .from("orders")
-      .select("id")
-      .eq("delivery_date", date)
-      .neq("delivery_status", "cancelled");
-
-    if (error) {
-      $("production-list").textContent = "No se pudo consultar la producción: " + error.message;
-      return;
-    }
-
-    if (!orders?.length) {
-      $("production-list").innerHTML = '<div class="empty">No hay pedidos para esta fecha.</div>';
-      return;
-    }
-
-    const orderIds = orders.map(order => order.id);
-    const { data: items, error: itemError } = await db
-      .from("order_items")
-      .select("item_name, meal_type, quantity")
-      .in("order_id", orderIds);
-
-    if (itemError) {
-      $("production-list").textContent = "No se pudieron consultar los platillos: " + itemError.message;
-      return;
-    }
-
-    const totals = {};
-    (items || []).forEach(item => {
-      const key = (item.meal_type || "lunch") + "||" + item.item_name;
-      if (!totals[key]) totals[key] = { name: item.item_name, type: item.meal_type, quantity: 0 };
-      totals[key].quantity += Number(item.quantity || 1);
-    });
-
-    const rows = Object.values(totals);
-    if (!rows.length) {
-      $("production-list").innerHTML = '<div class="empty">Los pedidos no tienen platillos registrados.</div>';
-      return;
-    }
-
-    $("production-list").innerHTML = `
-      <div class="table-wrap"><table>
-        <thead><tr><th>Tipo</th><th>Platillo</th><th>Porciones</th></tr></thead>
-        <tbody>${rows.map(row => `<tr>
-          <td>${row.type === "dinner" ? "Cena" : "Comida"}</td>
-          <td>${escapeHtml(row.name)}</td>
-          <td><strong>${row.quantity}</strong></td>
-        </tr>`).join("")}</tbody>
-      </table></div>`;
+  if (!date) {
+    $("production-list").textContent = "Selecciona una fecha.";
+    return;
   }
+
+  $("production-list").textContent = "Calculando producción...";
+
+  const { data: orders, error } = await db
+    .from("orders")
+    .select("id, delivery_status")
+    .eq("delivery_date", date);
+
+  if (error) {
+    $("production-list").textContent =
+      "No se pudo consultar la producción: " + error.message;
+    return;
+  }
+
+  const validOrders = (orders || []).filter(order => {
+    const status = (order.delivery_status || "").toLowerCase();
+    return !["cancelled", "canceled", "cancelado", "cancelada"].includes(status);
+  });
+
+  if (!validOrders.length) {
+    $("production-list").innerHTML =
+      '<div class="empty">No hay pedidos para esta fecha.</div>';
+    return;
+  }
+
+  const orderIds = validOrders.map(order => order.id);
+
+  const { data: items, error: itemError } = await db
+    .from("order_items")
+    .select("item_name, meal_type, quantity")
+    .in("order_id", orderIds);
+
+  if (itemError) {
+    $("production-list").textContent =
+      "No se pudieron consultar los platillos: " + itemError.message;
+    return;
+  }
+
+  const totals = {};
+
+  (items || []).forEach(item => {
+    const type = item.meal_type || "lunch";
+    const key = type + "||" + item.item_name;
+
+    if (!totals[key]) {
+      totals[key] = {
+        name: item.item_name,
+        type,
+        quantity: 0
+      };
+    }
+
+    totals[key].quantity += Number(item.quantity || 1);
+  });
+
+  const rows = Object.values(totals);
+
+  if (!rows.length) {
+    $("production-list").innerHTML =
+      '<div class="empty">Los pedidos no tienen platillos registrados.</div>';
+    return;
+  }
+
+  $("production-list").innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Platillo</th>
+            <th>Porciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(row => `
+            <tr>
+              <td>${row.type === "dinner" ? "Cena" : "Comida"}</td>
+              <td>${escapeHtml(row.name)}</td>
+              <td><strong>${row.quantity}</strong></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
 
   document.querySelectorAll("[data-tab]").forEach(button => {
     button.addEventListener("click", () => {
