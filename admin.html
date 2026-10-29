@@ -2116,18 +2116,17 @@ $("weekly-add-item").addEventListener("click", async () => {
     return;
   }
 
-  const availableDays = Array.isArray(item.available_days)
-    ? item.available_days.map(Number)
-    : [1, 2, 3, 4, 5];
+const availableDays = Array.isArray(item.available_days)
+  ? item.available_days.map(Number)
+  : [1, 2, 3, 4, 5];
 
-  if (!availableDays.includes(day)) {
-    showWeeklyMessage(
-      "Este platillo no está disponible para el día seleccionado en el catálogo.",
-      "error"
-    );
-    return;
-  }
-
+if (!availableDays.includes(day)) {
+  showWeeklyMessage(
+    "Este platillo no está disponible para el día seleccionado en el catálogo.",
+    "error"
+  );
+  return;
+}
   const duplicate = weeklyItemsCache.some(existing =>
     existing.menu_item_id === item.id &&
     Number(existing.day_of_week) === day
