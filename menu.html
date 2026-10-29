@@ -2551,6 +2551,23 @@ const addressInput = document.getElementById("subscription-address");
 const notesInput = document.getElementById("subscription-notes");
 const submitButton = document.getElementById("submit-subscription");
 const feedback = document.getElementById("subscription-feedback");
+    
+async function saveCustomerAddress(userId, address, notes) {
+  const { error } = await pomeloDB
+    .from("profiles")
+    .update({
+      delivery_address: address,
+      delivery_notes: notes
+    })
+    .eq("id", userId);
+
+  if (error) {
+    throw new Error(
+      "No se pudo guardar tu dirección: " + error.message
+    );
+  }
+}
+
 
 function getLocalDateString() {
   const now = new Date();
@@ -2648,11 +2665,18 @@ if (items.length === 0) {
     const { data: userData, error: userError } =
       await pomeloDB.auth.getUser();
 
-    if (userError || !userData.user) {
-      throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
-    }
 
-    feedback.textContent = "Registrando tu solicitud…";
+if (userError || !userData.user) {
+  throw new Error("Tu sesión expiró. Inicia sesión nuevamente.");
+}
+
+await saveCustomerAddress(
+  userData.user.id,
+  address,
+  notes
+);
+
+feedback.textContent = "Registrando tu solicitud…";
 
     const { data, error } = await pomeloDB.rpc(
       "create_subscription_request",
