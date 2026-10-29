@@ -1944,8 +1944,7 @@ img {
         <div id="customer-portal-content" class="hidden">
           <h3 id="customer-plan-status"></h3>
           <p id="customer-plan-dates"></p>
-          <div id="customer-plan-address"></div>
-          <div id="customer-plan-menu"></div>
+<div id="customer-plan-address"></div>       
         </div>
       </div>
 
@@ -2669,7 +2668,7 @@ async function setupCustomerSavedAddress(userId) {
 async function loadCustomerPortal(userId) {
   const status = document.getElementById("customer-portal-status");
   const content = document.getElementById("customer-portal-content");
-  const menuBox = document.getElementById("customer-plan-menu");
+const menuBox = document.getElementById("customer-plan-menu-view");
   const ordersBox = document.getElementById("customer-orders");
 
   const money = value => formatMenuPrice(value);
