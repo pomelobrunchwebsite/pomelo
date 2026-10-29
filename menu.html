@@ -2829,7 +2829,6 @@ if (!subscriptions.length) {
       }
     });
   }
-}
       const planIds = subscriptions.map(item => item.id);
       const { data: planItems, error: planItemsError } = await pomeloDB
         .from("subscription_items")
