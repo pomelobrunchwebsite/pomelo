@@ -2860,7 +2860,7 @@ async function loadCustomerPortal(userId) {
         "id, subscription_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at"
       )
       .eq("customer_id", userId)
-      .order("delivery_date", { ascending: false });
+      .order("delivery_date", { ascending: true });
 
     if (ordersError) throw ordersError;
 
