@@ -1041,6 +1041,119 @@ tbody tr:last-child td {
   }
 }
 
+/* ===== POMELO: SUSCRIPCIONES AGRUPADAS ===== */
+
+#subscriptions-list > .sub-customer-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px;
+  padding: 14px !important;
+  border-radius: 12px;
+}
+
+#subscriptions-list .sub-customer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#subscriptions-list .sub-customer-header .item-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+#subscriptions-list .sub-customer-summary {
+  font-size: 11px;
+  color: var(--muted, #888);
+  line-height: 1.6;
+}
+
+#subscriptions-list .sub-main {
+  padding: 12px;
+  border-radius: 9px;
+  background: var(--surface, rgba(128,128,128,.07));
+}
+
+#subscriptions-list .sub-record-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+#subscriptions-list .sub-record-info > p {
+  margin: 8px 0 !important;
+}
+
+#subscriptions-list .sub-record-info > button {
+  margin-top: 5px;
+}
+
+#subscriptions-list .sub-record-info .item-actions {
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px !important;
+}
+
+#subscriptions-list .sub-record-info .item-actions button {
+  width: auto;
+  min-width: 85px;
+}
+
+#subscriptions-list .sub-history {
+  border-top: 1px solid var(--border, #ddd);
+  padding-top: 9px;
+}
+
+#subscriptions-list .sub-history-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: inherit;
+  padding: 9px 4px;
+}
+
+#subscriptions-list .sub-history-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+#subscriptions-list .sub-history-entry {
+  padding: 11px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 9px;
+}
+
+#subscriptions-list .sub-history-entry .sub-record-top {
+  font-size: 11px;
+}
+
+#subscriptions-list .sub-history-entry .pill {
+  font-size: 10px;
+}
+
+@media (max-width: 380px) {
+  #subscriptions-list > .sub-customer-card {
+    padding: 10px !important;
+  }
+
+  #subscriptions-list .sub-customer-summary {
+    font-size: 10px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -2382,6 +2495,7 @@ async function loadOrders() {
     </div>`;
 }
 
+
 async function loadSubscriptions() {
   const container = $("subscriptions-list");
   container.textContent = "Cargando suscripciones...";
@@ -2409,16 +2523,18 @@ async function loadSubscriptions() {
     return;
   }
 
-  $("stat-subs").textContent = (subscriptions || []).length;
-
   if (!subscriptions?.length) {
+    $("stat-subs").textContent = "0";
     container.innerHTML =
       '<div class="empty">Todavía no hay suscripciones.</div>';
     return;
   }
 
+  // Obtener clientes únicos
   const customerIds = [
-    ...new Set(subscriptions.map(s => s.customer_id).filter(Boolean))
+    ...new Set(
+      subscriptions.map(s => s.customer_id).filter(Boolean)
+    )
   ];
 
   const profiles = {};
@@ -2436,48 +2552,80 @@ async function loadSubscriptions() {
     });
   }
 
-  container.innerHTML = subscriptions.map(sub => {
-    const person = profiles[sub.customer_id] || {};
+  // Agrupar suscripciones por cliente
+  const customerGroups = {};
+
+  subscriptions.forEach((sub, index) => {
+    const key = sub.customer_id
+      ? String(sub.customer_id)
+      : "sin-cliente-" + index;
+
+    if (!customerGroups[key]) {
+      customerGroups[key] = [];
+    }
+
+    customerGroups[key].push(sub);
+  });
+
+  // Contar clientes, no registros
+  $("stat-subs").textContent =
+    Object.keys(customerGroups).length;
+
+  // Prioridad de suscripciones
+  const priority = {
+    active: 1,
+    pending: 2,
+    completed: 3,
+    cancelled: 4
+  };
+
+  const statusLabels = {
+    pending: "Pendiente",
+    active: "Activa",
+    completed: "Completada",
+    cancelled: "Cancelada"
+  };
+
+  const renderSubscription = (sub, isMain = false) => {
     const status = String(sub.status || "pending").toLowerCase();
 
-    const statusLabel = {
-      pending: "Pendiente",
-      active: "Activa",
-      completed: "Completada",
-      cancelled: "Cancelada"
-    }[status] || status;
+    const statusLabel =
+      statusLabels[status] || status;
 
     return `
-      <article class="item" style="align-items:flex-start">
-        <div>
-          <div class="item-title">
-            ${escapeHtml(person.full_name || "Cliente sin nombre")}
-          </div>
+      <div class="${isMain ? "sub-main" : "sub-history-entry"}">
 
-          <div class="muted">
-            ${escapeHtml(person.phone || "")}
+        <div class="sub-record-info">
+
+          <div class="sub-record-top">
+            <strong>
+              ${isMain ? "Suscripción principal" : "Registro anterior"}
+            </strong>
+
+            <span class="pill">
+              ${escapeHtml(statusLabel)}
+            </span>
           </div>
 
           <p>
-            ${dateLocal(sub.start_date)} — ${dateLocal(sub.end_date)}
+            ${dateLocal(sub.start_date)}
+            — 
+            ${dateLocal(sub.end_date)}
           </p>
 
-          <span class="pill">${escapeHtml(statusLabel)}</span>
-
-          <div style="margin-top:12px">
-            <button class="btn"
-              data-details="${escapeHtml(sub.id)}">
-              Ver detalle
-            </button>
-          </div>
+          <button class="btn"
+            data-details="${escapeHtml(sub.id)}">
+            Ver detalle
+          </button>
 
           <div id="sub-detail-${sub.id}"
             class="hidden"
-            style="margin-top:16px">
+            style="margin-top:12px">
             Cargando detalle...
           </div>
 
-          <div class="item-actions" style="margin-top:12px">
+          <div class="item-actions">
+
             ${
               status === "pending"
                 ? `<button class="btn primary"
@@ -2497,12 +2645,131 @@ async function loadSubscriptions() {
                   </button>`
                 : ""
             }
-          </div>
-        </div>
-      </article>
-    `;
-  }).join("");
 
+          </div>
+
+        </div>
+      </div>
+    `;
+  };
+
+  // Dibujar una sola tarjeta por cliente
+  container.innerHTML = Object.entries(customerGroups)
+    .map(([key, customerSubscriptions]) => {
+
+      const person =
+        profiles[customerSubscriptions[0].customer_id] || {};
+
+      // Ordenar por estado y después por fecha
+      const ordered = [...customerSubscriptions].sort((a, b) => {
+        const statusA =
+          String(a.status || "pending").toLowerCase();
+
+        const statusB =
+          String(b.status || "pending").toLowerCase();
+
+        const priorityA = priority[statusA] || 99;
+        const priorityB = priority[statusB] || 99;
+
+        if (priorityA !== priorityB) {
+          return priorityA - priorityB;
+        }
+
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      const mainSubscription = ordered[0];
+      const history = ordered.slice(1);
+
+      const activeCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "active"
+      ).length;
+
+      const pendingCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "pending"
+      ).length;
+
+      const cancelledCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "cancelled"
+      ).length;
+
+      const completedCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "completed"
+      ).length;
+
+      const mainStatus =
+        String(mainSubscription.status || "pending").toLowerCase();
+
+      const badgeColor =
+        mainStatus === "active" ? "pill-success" :
+        mainStatus === "pending" ? "pill-warning" :
+        "";
+
+      return `
+        <article class="item sub-customer-card">
+
+          <div class="sub-customer-header">
+
+            <div>
+              <div class="item-title">
+                ${escapeHtml(person.full_name || "Cliente sin nombre")}
+              </div>
+
+              <div class="muted">
+                ${escapeHtml(person.phone || "Sin teléfono")}
+              </div>
+            </div>
+
+            <span class="pill ${badgeColor}">
+              ${escapeHtml(statusLabels[mainStatus] || mainStatus)}
+            </span>
+
+          </div>
+
+          <div class="sub-customer-summary">
+${customerSubscriptions.length} ${
+  customerSubscriptions.length === 1 ? "registro" : "registros"
+} ·
+            ${activeCount} activas ·
+            ${pendingCount} pendientes ·
+            ${cancelledCount} canceladas ·
+            ${completedCount} completadas
+          </div>
+
+          ${renderSubscription(mainSubscription, true)}
+
+          ${
+            history.length
+              ? `
+                <div class="sub-history">
+
+                  <button class="btn sub-history-toggle"
+                    data-history-toggle="${escapeHtml(key)}">
+
+                    Ver historial (${history.length})
+                    <span>＋</span>
+
+                  </button>
+
+                  <div id="sub-history-${escapeHtml(key)}"
+                    class="hidden sub-history-content">
+
+                    ${history.map(sub =>
+                      renderSubscription(sub)
+                    ).join("")}
+
+                  </div>
+
+                </div>
+              `
+              : ""
+          }
+
+        </article>
+      `;
+    }).join("");
+
+  // Botones de detalles
   container.querySelectorAll("[data-details]").forEach(button => {
     button.addEventListener("click", () => {
       toggleSubscriptionDetails(
@@ -2513,6 +2780,7 @@ async function loadSubscriptions() {
     });
   });
 
+  // Botones de activar y cancelar
   container.querySelectorAll("[data-status-id]").forEach(button => {
     button.addEventListener("click", () => {
       updateSubscriptionStatus(
@@ -2521,9 +2789,26 @@ async function loadSubscriptions() {
       );
     });
   });
-}
 
-async function toggleSubscriptionDetails(id, subscriptions, profiles) {
+  // Mostrar y ocultar historial
+  container.querySelectorAll("[data-history-toggle]").forEach(button => {
+    button.addEventListener("click", () => {
+
+      const key = button.dataset.historyToggle;
+      const history = $("sub-history-" + key);
+
+      if (!history) return;
+
+      const isHidden = history.classList.toggle("hidden");
+
+      button.innerHTML = isHidden
+        ? `Ver historial (${history.children.length}) <span>＋</span>`
+        : `Ocultar historial <span>−</span>`;
+    });
+  });
+}
+  
+  async function toggleSubscriptionDetails(id, subscriptions, profiles) {
   const detail = $("sub-detail-" + id);
   const sub = subscriptions.find(s => String(s.id) === String(id));
 
