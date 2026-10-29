@@ -1512,49 +1512,283 @@ async function toggleItem(id) {
       </table></div>`;
   }
 
-  async function loadSubscriptions() {
-    $("subscriptions-list").textContent = "Cargando suscripciones...";
 
-    const { data, error } = await db
-      .from("subscriptions")
-      .select("id, customer_id, start_date, end_date, status, created_at")
-      .order("created_at", { ascending: false })
-      .limit(100);
+async function loadSubscriptions() {
+  const container = $("subscriptions-list");
+  container.textContent = "Cargando suscripciones...";
 
-    if (error) {
-      $("subscriptions-list").textContent = "No se pudieron cargar las suscripciones: " + error.message;
-      return;
-    }
+  const { data: subscriptions, error } = await db
+    .from("subscriptions")
+    .select(`
+      id,
+      customer_id,
+      start_date,
+      end_date,
+      status,
+      created_at,
+      delivery_address,
+      delivery_notes,
+      delivery_fee_mxn
+    `)
+    .order("created_at", { ascending: false })
+    .limit(100);
 
-    $("stat-subs").textContent = (data || []).length;
-
-    if (!data?.length) {
-      $("subscriptions-list").innerHTML = '<div class="empty">Todavía no hay suscripciones.</div>';
-      return;
-    }
-
-    const ids = [...new Set(data.map(row => row.customer_id).filter(Boolean))];
-    let profiles = {};
-
-    if (ids.length) {
-      const { data: people } = await db.from("profiles")
-        .select("id, full_name, phone").in("id", ids);
-      (people || []).forEach(person => profiles[person.id] = person);
-    }
-
-    $("subscriptions-list").innerHTML = data.map(sub => {
-      const person = profiles[sub.customer_id] || {};
-      return `<article class="item">
-        <div>
-          <div class="item-title">${escapeHtml(person.full_name || "Cliente sin nombre")}</div>
-          <div class="muted">${escapeHtml(person.phone || "")}</div>
-          <p style="margin:8px 0">${dateLocal(sub.start_date)} — ${dateLocal(sub.end_date)}</p>
-        </div>
-        <span class="pill">${escapeHtml(sub.status)}</span>
-      </article>`;
-    }).join("");
+  if (error) {
+    container.textContent =
+      "No se pudieron cargar las suscripciones: " + error.message;
+    console.error(error);
+    return;
   }
 
+  $("stat-subs").textContent = (subscriptions || []).length;
+
+  if (!subscriptions?.length) {
+    container.innerHTML =
+      '<div class="empty">Todavía no hay suscripciones.</div>';
+    return;
+  }
+
+  const customerIds = [
+    ...new Set(subscriptions.map(s => s.customer_id).filter(Boolean))
+  ];
+
+  const profiles = {};
+
+  if (customerIds.length) {
+    const { data: people, error: peopleError } = await db
+      .from("profiles")
+      .select("id, full_name, phone")
+      .in("id", customerIds);
+
+    if (peopleError) console.error(peopleError);
+
+    (people || []).forEach(person => {
+      profiles[person.id] = person;
+    });
+  }
+
+  container.innerHTML = subscriptions.map(sub => {
+    const person = profiles[sub.customer_id] || {};
+    const status = String(sub.status || "pending").toLowerCase();
+
+    const statusLabel = {
+      pending: "Pendiente",
+      active: "Activa",
+      completed: "Completada",
+      cancelled: "Cancelada"
+    }[status] || status;
+
+    return `
+      <article class="item" style="align-items:flex-start">
+        <div>
+          <div class="item-title">
+            ${escapeHtml(person.full_name || "Cliente sin nombre")}
+          </div>
+
+          <div class="muted">
+            ${escapeHtml(person.phone || "")}
+          </div>
+
+          <p>
+            ${dateLocal(sub.start_date)} — ${dateLocal(sub.end_date)}
+          </p>
+
+          <span class="pill">${escapeHtml(statusLabel)}</span>
+
+          <div style="margin-top:12px">
+            <button class="btn"
+              data-details="${escapeHtml(sub.id)}">
+              Ver detalle
+            </button>
+          </div>
+
+          <div id="sub-detail-${sub.id}"
+            class="hidden"
+            style="margin-top:16px">
+            Cargando detalle...
+          </div>
+
+          <div class="item-actions" style="margin-top:12px">
+            ${
+              status === "pending"
+                ? `<button class="btn primary"
+                    data-status-id="${escapeHtml(sub.id)}"
+                    data-new-status="active">
+                    Activar
+                  </button>`
+                : ""
+            }
+
+            ${
+              status === "pending" || status === "active"
+                ? `<button class="btn danger"
+                    data-status-id="${escapeHtml(sub.id)}"
+                    data-new-status="cancelled">
+                    Cancelar
+                  </button>`
+                : ""
+            }
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  container.querySelectorAll("[data-details]").forEach(button => {
+    button.addEventListener("click", () => {
+      toggleSubscriptionDetails(
+        button.dataset.details,
+        subscriptions,
+        profiles
+      );
+    });
+  });
+
+  container.querySelectorAll("[data-status-id]").forEach(button => {
+    button.addEventListener("click", () => {
+      updateSubscriptionStatus(
+        button.dataset.statusId,
+        button.dataset.newStatus
+      );
+    });
+  });
+}
+
+async function toggleSubscriptionDetails(id, subscriptions, profiles) {
+  const detail = $("sub-detail-" + id);
+  const sub = subscriptions.find(s => String(s.id) === String(id));
+
+  if (!sub || !detail) return;
+
+  if (!detail.classList.contains("hidden")) {
+    detail.classList.add("hidden");
+    return;
+  }
+
+  detail.classList.remove("hidden");
+  detail.textContent = "Consultando platillos...";
+
+  const { data: items, error } = await db
+    .from("subscription_items")
+    .select("day_of_week, meal_name, unit_price_mxn, quantity")
+    .eq("subscription_id", id);
+
+  if (error) {
+    detail.textContent =
+      "No se pudieron cargar los platillos: " + error.message;
+    console.error(error);
+    return;
+  }
+
+  const person = profiles[sub.customer_id] || {};
+
+  const grouped = {};
+  (items || []).forEach(item => {
+    const day = item.day_of_week || "Día sin especificar";
+    if (!grouped[day]) grouped[day] = [];
+    grouped[day].push(item);
+  });
+
+  const dayOrder = [
+    "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+  ];
+
+  const days = Object.keys(grouped).sort((a, b) => {
+    const ia = dayOrder.indexOf(a);
+    const ib = dayOrder.indexOf(b);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+  detail.innerHTML = `
+    <div class="notice">
+      <strong>Dirección de entrega</strong><br>
+      ${escapeHtml(sub.delivery_address || "Sin dirección")}
+      ${
+        sub.delivery_notes
+          ? `<p><strong>Indicaciones:</strong><br>
+              ${escapeHtml(sub.delivery_notes)}</p>`
+          : ""
+      }
+      <p><strong>Teléfono:</strong>
+        ${escapeHtml(person.phone || "No registrado")}
+      </p>
+      <p><strong>Cargo de entrega:</strong>
+        ${money(sub.delivery_fee_mxn)}
+      </p>
+    </div>
+
+    <h3 style="font-size:16px">Platillos seleccionados</h3>
+
+    ${
+      days.length
+        ? days.map(day => `
+            <div style="margin-bottom:14px">
+              <strong>${escapeHtml(day)}</strong>
+              <div class="table-wrap" style="margin-top:6px">
+                <table style="min-width:0">
+                  <thead>
+                    <tr>
+                      <th>Platillo</th>
+                      <th>Cant.</th>
+                      <th>Precio</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${grouped[day].map(item => {
+                      const quantity = Number(item.quantity || 0);
+                      const price = Number(item.unit_price_mxn || 0);
+                      return `
+                        <tr>
+                          <td>${escapeHtml(item.meal_name || "Platillo")}</td>
+                          <td>${quantity}</td>
+                          <td>${money(price)}</td>
+                          <td>${money(quantity * price)}</td>
+                        </tr>
+                      `;
+                    }).join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `).join("")
+        : '<p class="empty">No se encontraron platillos para esta suscripción.</p>'
+    }
+  `;
+}
+
+async function updateSubscriptionStatus(id, newStatus) {
+  const labels = {
+    active: "activar",
+    cancelled: "cancelar"
+  };
+
+  if (!labels[newStatus]) return;
+
+  const confirmed = confirm(
+    `¿Seguro que deseas ${labels[newStatus]} esta suscripción?`
+  );
+
+  if (!confirmed) return;
+
+  const { error } = await db
+    .from("subscriptions")
+    .update({ status: newStatus })
+    .eq("id", id)
+    .eq("status", newStatus === "active" ? "pending" : newStatus === "cancelled" ? "pending" : "pending");
+
+  if (error) {
+    alert(
+      "No se pudo actualizar la suscripción: " + error.message +
+      "\n\nPuede faltar una política de permisos en Supabase."
+    );
+    console.error(error);
+    return;
+  }
+
+  alert("Estado actualizado correctamente.");
+  await loadSubscriptions();
+}
   async function loadProduction() {
     const date = $("production-date").value;
     if (!date) {
