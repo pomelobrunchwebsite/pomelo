@@ -2127,18 +2127,20 @@ if (!availableDays.includes(day)) {
   );
   return;
 }
-  const duplicate = weeklyItemsCache.some(existing =>
-    existing.menu_item_id === item.id &&
-    Number(existing.day_of_week) === day
-  );
+  
+const duplicate = weeklyItemsCache.some(existing =>
+  existing.menu_item_id === item.id &&
+  Number(existing.day_of_week) === day
+);
 
-  if (duplicate) {
-    showWeeklyMessage(
-      "Este platillo ya está asignado a ese día.",
-      "error"
-    );
-    return;
-  }
+if (duplicate) {
+  showWeeklyMessage(
+    "Este platillo ya está asignado a ese día.",
+    "error"
+  );
+  return;
+}
+
 
   const { error } = await db
     .from("weekly_menu_items")
