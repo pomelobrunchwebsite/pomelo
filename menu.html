@@ -2847,7 +2847,6 @@ const { data: plans, error: planError } = await pomeloDB
 if (!subscriptions.length) {
   status.textContent =
     "No tienes una suscripción activa. Tu dirección guardada seguirá disponible.";
-} else {
   content.classList.remove("hidden");
 
   document.getElementById("customer-plan-status").textContent =
@@ -2863,7 +2862,9 @@ if (!subscriptions.length) {
 
   menuBox.textContent =
     "No tienes un menú programado actualmente.";
-
+  
+  } else {
+  
   content.classList.remove("hidden");
       const plan = subscriptions[0];
 
