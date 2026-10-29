@@ -2077,15 +2077,22 @@ img {
 <div class="subscription-form" id="subscription-form">
   <h3>Organiza tus entregas.</h3>
   <p class="form-description">
-    Selecciona el periodo durante el cual quieres recibir tus platillos.
-    Tus días elegidos se repetirán dentro de esas fechas.
-  </p>
+Elige tus platillos para la semana publicada. Revisa las cantidades
+y comparte tu dirección para enviar tu solicitud.  </p>
 
-  <div class="subscription-fields">
-    <div class="subscription-field">
-      <label for="subscription-start-date">Fecha de inicio</label>
-      <input type="date" id="subscription-start-date" required>
+
+<div class="subscription-fields">
+  <div class="subscription-field full-width">
+    <label>Semana de entrega</label>
+    <div id="subscription-week-label" class="menu-status">
+      Cargando semana publicada...
     </div>
+  </div>
+
+  <input type="hidden" id="subscription-start-date">
+  <input type="hidden" id="subscription-end-date">
+</div>
+
 
     <div class="subscription-field">
       <label for="subscription-end-date">Fecha de término</label>
@@ -2356,60 +2363,17 @@ function renderSummary() {
   
       info.append(name, detail);  
   
-      const actions = document.createElement("div");  
-      actions.className = "order-summary-actions";  
-  
-      const minus = document.createElement("button");  
-      minus.type = "button";  
-      minus.className = "summary-qty-button";  
-      minus.textContent = "−";  
-      minus.setAttribute("aria-label", `Quitar una unidad de ${item.name}, ${dayName}`);  
-  
-      const quantity = document.createElement("span");  
-      quantity.className = "summary-qty";  
-      quantity.textContent = qty;  
-  
-      const plus = document.createElement("button");  
-      plus.type = "button";  
-      plus.className = "summary-qty-button";  
-      plus.textContent = "+";  
-      plus.setAttribute("aria-label", `Agregar una unidad de ${item.name}, ${dayName}`);  
-  
-      const amount = document.createElement("strong");  
-      amount.className = "order-summary-amount";  
-      amount.textContent = formatMenuPrice(subtotal);  
-  
-      minus.addEventListener("click", () => {  
-        setQuantity(dayNumber, item.id, qty - 1);  
-  
-        const selected = document.querySelector(  
-          '#day-tabs .day-tab[aria-selected="true"]'  
-        );  
-  
-        if (selected && Number(selected.dataset.day) === dayNumber) {  
-          renderDay(dayNumber);  
-        }  
-  
-        renderSummary();  
-      });  
-  
-      plus.addEventListener("click", () => {  
-        setQuantity(dayNumber, item.id, qty + 1);  
-  
-        const selected = document.querySelector(  
-          '#day-tabs .day-tab[aria-selected="true"]'  
-        );  
-  
-        if (selected && Number(selected.dataset.day) === dayNumber) {  
-          renderDay(dayNumber);  
-        }  
-  
-        renderSummary();  
-      });  
-  
-      actions.append(minus, quantity, plus);  
-      row.append(info, actions, amount);  
-      rows.push(row);  
+
+const quantity = document.createElement("span");
+quantity.className = "summary-qty";
+quantity.textContent = `× ${qty}`;
+
+const amount = document.createElement("strong");
+amount.className = "order-summary-amount";
+amount.textContent = formatMenuPrice(subtotal);
+
+row.append(info, quantity, amount);
+rows.push(row);
     });  
   });  
   
@@ -2604,6 +2568,21 @@ function getLocalDateString() {
 // La solicitud debe corresponder a la semana publicada.
 startDateInput.value = publishedWeek.start_date;
 endDateInput.value = publishedWeek.end_date;
+    const weekLabel = document.getElementById("subscription-week-label");
+
+const formatWeekDate = value => {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Intl.DateTimeFormat("es-MX", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC"
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+};
+
+weekLabel.textContent =
+  `${formatWeekDate(publishedWeek.start_date)} al ` +
+  formatWeekDate(publishedWeek.end_date);
 
 startDateInput.min = publishedWeek.start_date;
 startDateInput.max = publishedWeek.start_date;
