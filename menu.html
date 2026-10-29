@@ -2754,19 +2754,27 @@ const menuBox = document.getElementById("customer-plan-menu-view");
 
 const subscriptions = plans || [];
 
+// ESTADO GENERAL DE LA CUENTA
+const planStatusElement = document.getElementById("customer-plan-status");
+
+if (subscriptions.some(plan => plan.status === "active")) {
+  planStatusElement.textContent = "Activa";
+  planStatusElement.style.cssText =
+    "color:#397a45;background:#e8f3e9;padding:6px 12px;border-radius:20px;display:inline-block;";
+} else if (subscriptions.some(plan => plan.status === "pending")) {
+  planStatusElement.textContent = "Pendiente";
+  planStatusElement.style.cssText =
+    "color:#946b20;background:#fbf2dc;padding:6px 12px;border-radius:20px;display:inline-block;";
+} else {
+  planStatusElement.textContent = "Inactiva";
+  planStatusElement.style.cssText =
+    "color:#a33b32;background:#f9e9e7;padding:6px 12px;border-radius:20px;display:inline-block;";
+}
+
+document.getElementById("customer-cancel-subscription")?.remove();
+
 if (!subscriptions.length) {
-  content.classList.remove("hidden");
-
-  document.getElementById("customer-plan-status").textContent =
-    "Sin suscripción activa";
-
-  document.getElementById("customer-plan-dates").textContent =
-    "Puedes solicitar un nuevo plan desde el menú semanal.";
-
-  document.getElementById("customer-plan-address").textContent =
-    "No hay una dirección asociada a una suscripción activa.";
-
-  document.getElementById("customer-cancel-subscription")?.remove();
+  content.classList.add("hidden");
 
   menuBox.textContent =
     "No tienes un menú programado actualmente.";
@@ -2774,50 +2782,54 @@ if (!subscriptions.length) {
 } else {
   content.classList.remove("hidden");
 
-      const plan = subscriptions[0];
+  const plan = subscriptions[0];
 
-      document.getElementById("customer-plan-status").textContent = statusLabel(plan.status);
-      document.getElementById("customer-plan-dates").textContent = `Del ${date(plan.start_date)} al ${date(plan.end_date)}`;
-      document.getElementById("customer-plan-address").innerHTML =
-        `${safe(plan.delivery_address || "Sin dirección registrada")}` +
-        (plan.delivery_notes ? `<br><br><strong>Indicaciones:</strong><br>${safe(plan.delivery_notes)}` : "");
+  document.getElementById("customer-plan-dates").textContent =
+    `Del ${date(plan.start_date)} al ${date(plan.end_date)}`;
 
-      const addressElement = document.getElementById("customer-plan-address");
-      if (addressElement) {
-        document.getElementById("customer-cancel-subscription")?.remove();
+  // BOTÓN PARA CANCELAR
+  if (["pending", "active"].includes(plan.status)) {
+    const button = document.createElement("button");
 
-        if (["pending", "active"].includes(plan.status)) {
-          const button = document.createElement("button");
-          button.id = "customer-cancel-subscription";
-          button.type = "button";
-          button.textContent = "Cancelar suscripción";
-          button.style.cssText = "display:block;margin-top:20px;padding:12px 18px;border:1px solid #a64b43;border-radius:4px;background:transparent;color:#a64b43;cursor:pointer;";
+    button.id = "customer-cancel-subscription";
+    button.type = "button";
+    button.textContent = "Cancelar suscripción";
 
-          addressElement.insertAdjacentElement("afterend", button);
+    button.style.cssText =
+      "display:block;margin-top:20px;padding:12px 18px;border:1px solid #a64b43;border-radius:4px;background:transparent;color:#a64b43;cursor:pointer;";
 
-          button.addEventListener("click", async () => {
-            if (!confirm("¿Cancelar tu suscripción? Se cancelarán los pedidos pendientes de hoy en adelante.")) return;
+    document.getElementById("customer-plan-dates")
+      .insertAdjacentElement("afterend", button);
 
-            button.disabled = true;
-            button.textContent = "Cancelando...";
+    button.addEventListener("click", async () => {
+      if (!confirm("¿Cancelar tu suscripción? Se cancelarán los pedidos pendientes de hoy en adelante.")) return;
 
-            try {
-              const { data, error } = await pomeloDB.rpc("cancel_subscription", { p_subscription_id: plan.id });
-              if (error) throw error;
-              if (!data?.success) throw new Error("No se confirmó la cancelación.");
+      button.disabled = true;
+      button.textContent = "Cancelando...";
 
-              alert("Suscripción cancelada. Pedidos cancelados: " + data.cancelled_orders);
-              await loadCustomerPortal(userId);
-            } catch (error) {
-              console.error("Error al cancelar:", error);
-              alert("No se pudo cancelar: " + error.message);
-              button.disabled = false;
-              button.textContent = "Cancelar suscripción";
-            }
-          });
-        }
+      try {
+        const { data, error } = await pomeloDB.rpc(
+          "cancel_subscription",
+          { p_subscription_id: plan.id }
+        );
+
+        if (error) throw error;
+        if (!data?.success) throw new Error("No se confirmó la cancelación.");
+
+        alert("Suscripción cancelada. Pedidos cancelados: " + data.cancelled_orders);
+
+        await loadCustomerPortal(userId);
+
+      } catch (error) {
+        console.error("Error al cancelar:", error);
+        alert("No se pudo cancelar: " + error.message);
+
+        button.disabled = false;
+        button.textContent = "Cancelar suscripción";
       }
-
+    });
+  }
+}
       const planIds = subscriptions.map(item => item.id);
       const { data: planItems, error: planItemsError } = await pomeloDB
         .from("subscription_items")
