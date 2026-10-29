@@ -2713,22 +2713,10 @@ const menuBox = document.getElementById("customer-plan-menu-view");
 
     if (planError) throw planError;
 
-    const subscriptions = plans || [];
 
-    
-  document.getElementById("customer-plan-address").textContent =
-    "No tienes una suscripción activa.";
+const subscriptions = plans || [];
 
-  document.getElementById("customer-plan-dates").textContent =
-    "Puedes solicitar un nuevo plan desde el menú semanal.";
-
-  document.getElementById("customer-plan-status").textContent =
-    "Sin suscripción activa";
-
-  document.getElementById("customer-cancel-subscription")?.remove();
-
-  menuBox.textContent =
-    "No tienes un menú programado actualmente.";
+if (!subscriptions.length) {
   content.classList.remove("hidden");
 
   document.getElementById("customer-plan-status").textContent =
