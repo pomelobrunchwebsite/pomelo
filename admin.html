@@ -2064,6 +2064,7 @@ async function toggleSubscriptionDetails(id, subscriptions, profiles) {
   `;
 }
 
+
 async function updateSubscriptionStatus(id, newStatus) {
   const labels = {
     active: "activar",
@@ -2078,22 +2079,104 @@ async function updateSubscriptionStatus(id, newStatus) {
 
   if (!confirmed) return;
 
-  const { error } = await db
+  // 1. Obtener el periodo de la suscripción
+  const { data: sub, error: subError } = await db
     .from("subscriptions")
-    .update({ status: newStatus })
+    .select("id, start_date, end_date, status")
     .eq("id", id)
-    .eq("status", newStatus === "active" ? "pending" : newStatus === "cancelled" ? "pending" : "pending");
+    .maybeSingle();
 
-  if (error) {
+  if (subError || !sub) {
     alert(
-      "No se pudo actualizar la suscripción: " + error.message +
-      "\n\nPuede faltar una política de permisos en Supabase."
+      "No se pudo consultar la suscripción: " +
+      (subError?.message || "No encontrada.")
     );
-    console.error(error);
     return;
   }
 
-  alert("Estado actualizado correctamente.");
+  if (sub.status !== "pending") {
+    alert(
+      "La suscripción ya no está pendiente. " +
+      "Actualiza el panel antes de continuar."
+    );
+    await loadSubscriptions();
+    return;
+  }
+
+  // 2. Actualizar el estado
+  const { data: updated, error: updateError } = await db
+    .from("subscriptions")
+    .update({ status: newStatus })
+    .eq("id", id)
+    .eq("status", "pending")
+    .select("id")
+    .maybeSingle();
+
+  if (updateError || !updated) {
+    alert(
+      "No se pudo actualizar la suscripción: " +
+      (updateError?.message || "El estado pudo cambiar previamente.")
+    );
+    await loadSubscriptions();
+    return;
+  }
+
+  // 3. Si se activa, generar los pedidos del periodo completo
+  if (newStatus === "active") {
+    const start = new Date(sub.start_date + "T12:00:00");
+    const end = new Date(sub.end_date + "T12:00:00");
+
+    let generatedTotal = 0;
+    const errors = [];
+
+    for (
+      let date = new Date(start);
+      date <= end;
+      date.setDate(date.getDate() + 1)
+    ) {
+      const deliveryDate = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+      ].join("-");
+
+      const { data, error } = await db.rpc(
+        "generate_subscription_orders",
+        { p_delivery_date: deliveryDate }
+      );
+
+      if (error) {
+        errors.push(
+          deliveryDate + ": " + error.message
+        );
+      } else {
+        generatedTotal += Number(data || 0);
+      }
+    }
+
+    await loadSubscriptions();
+
+    if (errors.length) {
+      alert(
+        "La suscripción quedó activa, pero algunos pedidos " +
+        "no pudieron generarse.\n\n" +
+        errors.join("\n") +
+        "\n\nRevisa esos días y vuelve a generar los pedidos " +
+        "pendientes desde Producción."
+      );
+      return;
+    }
+
+    alert(
+      "Suscripción activada correctamente.\n\n" +
+      "Pedidos nuevos generados: " + generatedTotal +
+      "\nPeriodo: " + sub.start_date + " al " + sub.end_date
+    );
+
+    return;
+  }
+
+  alert("Suscripción cancelada correctamente.");
   await loadSubscriptions();
 }
 
