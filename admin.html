@@ -2105,30 +2105,61 @@ async function loadProduction() {
     return;
   }
 
-  $("production-list").textContent = "Calculando producción...";
+  $("production-list").textContent =
+    "Generando pedidos y calculando producción...";
 
+  // 1. Generar pedidos de suscripciones para la fecha seleccionada
+  const { data: generated, error: generateError } = await db.rpc(
+    "generate_subscription_orders",
+    { p_delivery_date: date }
+  );
+
+  if (generateError) {
+    console.error("Error al generar pedidos:", generateError);
+
+    $("production-list").textContent =
+      "Error al generar los pedidos: " + generateError.message;
+
+    return;
+  }
+
+  console.log("Pedidos nuevos generados:", generated);
+
+  // 2. Consultar todos los pedidos de esa fecha
   const { data: orders, error } = await db
     .from("orders")
     .select("id, delivery_status")
     .eq("delivery_date", date);
 
   if (error) {
+    console.error("Error consultando pedidos:", error);
+
     $("production-list").textContent =
-      "No se pudo consultar la producción: " + error.message;
+      "No se pudieron consultar los pedidos: " + error.message;
+
     return;
   }
 
+  // Excluir pedidos cancelados
   const validOrders = (orders || []).filter(order => {
-    const status = (order.delivery_status || "").toLowerCase();
-    return !["cancelled", "canceled", "cancelado", "cancelada"].includes(status);
+    const status = String(order.delivery_status || "").toLowerCase();
+
+    return ![
+      "cancelled",
+      "canceled",
+      "cancelado",
+      "cancelada"
+    ].includes(status);
   });
 
   if (!validOrders.length) {
     $("production-list").innerHTML =
-      '<div class="empty">No hay pedidos para esta fecha.</div>';
+      '<div class="empty">No hay pedidos para esta fecha. Comprueba que existan suscripciones activas, vigentes y con platillos programados para ese día.</div>';
+
     return;
   }
 
+  // 3. Consultar los platillos de los pedidos
   const orderIds = validOrders.map(order => order.id);
 
   const { data: items, error: itemError } = await db
@@ -2137,20 +2168,25 @@ async function loadProduction() {
     .in("order_id", orderIds);
 
   if (itemError) {
+    console.error("Error consultando platillos:", itemError);
+
     $("production-list").textContent =
       "No se pudieron consultar los platillos: " + itemError.message;
+
     return;
   }
 
+  // 4. Sumar las porciones por tipo y nombre de platillo
   const totals = {};
 
   (items || []).forEach(item => {
     const type = item.meal_type || "lunch";
-    const key = type + "||" + item.item_name;
+    const name = item.item_name || "Platillo sin nombre";
+    const key = type + "||" + name;
 
     if (!totals[key]) {
       totals[key] = {
-        name: item.item_name,
+        name,
         type,
         quantity: 0
       };
@@ -2163,10 +2199,12 @@ async function loadProduction() {
 
   if (!rows.length) {
     $("production-list").innerHTML =
-      '<div class="empty">Los pedidos no tienen platillos registrados.</div>';
+      '<div class="empty">Hay pedidos, pero no tienen platillos registrados.</div>';
+
     return;
   }
 
+  // 5. Mostrar el resumen
   $("production-list").innerHTML = `
     <div class="table-wrap">
       <table>
@@ -2189,7 +2227,6 @@ async function loadProduction() {
       </table>
     </div>`;
 }
-
   document.querySelectorAll("[data-tab]").forEach(button => {
     button.addEventListener("click", () => {
       document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab === button));
