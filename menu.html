@@ -1939,15 +1939,54 @@ img {
       <div class="pomelo-portal-divider"></div>
       
       <!-- Vistas requeridas por el JS del Portal -->
-      <div id="portal-view-plan" class="pomelo-portal-view">
-        <div id="customer-portal-status"></div>
-        <div id="customer-portal-content" class="hidden">
-          <h3 id="customer-plan-status"></h3>
-          <p id="customer-plan-dates"></p>
-<div id="customer-plan-address"></div>       
-        </div>
+<div id="portal-view-plan" class="pomelo-portal-view">
+
+  <div id="customer-portal-status"></div>
+
+  <!-- INFORMACIÓN GENERAL DE LA CUENTA -->
+  <div class="customer-account-info">
+
+    <div class="customer-account-status">
+      <span>Estado de suscripción</span>
+      <strong id="customer-plan-status">Inactiva</strong>
+    </div>
+
+    <div class="customer-account-address">
+      <h3>Dirección de entrega</h3>
+      <div id="customer-saved-address">
+        Consultando dirección...
       </div>
 
+      <button type="button" id="customer-edit-address">
+        Editar dirección
+      </button>
+
+      <div id="customer-address-editor" class="hidden">
+        <label for="customer-address-input">Dirección</label>
+        <textarea id="customer-address-input" rows="2" maxlength="500"></textarea>
+
+        <label for="customer-address-notes">Indicaciones adicionales</label>
+        <textarea id="customer-address-notes" rows="2" maxlength="1000"></textarea>
+
+        <div>
+          <button type="button" id="customer-save-address">Guardar dirección</button>
+          <button type="button" id="customer-cancel-edit-address">Cancelar</button>
+        </div>
+
+        <p id="customer-address-feedback" role="status"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- INFORMACIÓN DEL PLAN -->
+  <div id="customer-portal-content" class="hidden">
+    <h3>Detalles de tu plan</h3>
+    <p id="customer-plan-dates"></p>
+    <div id="customer-plan-address"></div>
+  </div>
+
+</div>
       <div id="portal-view-menu" class="pomelo-portal-view hidden">
         <div id="customer-plan-menu-view"></div>
       </div>
