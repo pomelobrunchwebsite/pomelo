@@ -1444,11 +1444,13 @@ $("item-image-file").addEventListener("change", event => {
     await loadAll();
   }
 
+
 async function loadAll() {
   await Promise.all([
     loadMenu(),
     loadOrders(),
-    loadSubscriptions()
+    loadSubscriptions(),
+    loadWeeklyData()
   ]);
 
   renderMenuList();
@@ -1761,6 +1763,479 @@ async function toggleItem(id) {
   await loadMenu();
 }
 
+
+const WEEKLY_DAYS = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+let weeklyMenusCache = [];
+let weeklyItemsCache = [];
+
+function showWeeklyMessage(message, type = "") {
+  const el = $("weekly-message");
+  el.textContent = message;
+  el.className = "notice" + (type ? " " + type : "");
+  el.classList.remove("hidden");
+}
+
+function dateToUTC(value) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function isMonday(value) {
+  return dateToUTC(value).getUTCDay() === 1;
+}
+
+function isFridayAfterMonday(start, end) {
+  const difference =
+    (dateToUTC(end) - dateToUTC(start)) / 86400000;
+
+  return difference === 4;
+}
+
+async function loadWeeklyData() {
+  const { data, error } = await db
+    .from("weekly_menus")
+    .select("*")
+    .order("start_date", { ascending: false });
+
+  if (error) {
+    $("weekly-list").textContent =
+      "No se pudieron cargar las semanas: " + error.message;
+    console.error(error);
+    return;
+  }
+
+  weeklyMenusCache = data || [];
+  renderWeeklyMenus();
+
+  const select = $("weekly-select");
+  const previousValue = select.value;
+
+  select.innerHTML =
+    '<option value="">Selecciona una semana</option>' +
+    weeklyMenusCache.map(week => `
+      <option value="${escapeHtml(week.id)}">
+        ${escapeHtml(week.name)} · ${dateLocal(week.start_date)}
+        · ${week.status === "published" ? "Publicada" :
+          week.status === "archived" ? "Archivada" : "Borrador"}
+      </option>
+    `).join("");
+
+  if (weeklyMenusCache.some(week => week.id === previousValue)) {
+    select.value = previousValue;
+  } else {
+    const editableWeek = weeklyMenusCache.find(
+      week => week.status === "draft"
+    );
+    if (editableWeek) select.value = editableWeek.id;
+  }
+
+  await loadWeeklyCatalog();
+  await loadWeeklyItems();
+}
+
+async function loadWeeklyCatalog() {
+  const select = $("weekly-item");
+  const { data, error } = await db
+    .from("menu_items")
+    .select("id, name, description, image_url, price_mxn, category, available_days, active")
+    .eq("active", true)
+    .order("name");
+
+  if (error) {
+    select.innerHTML =
+      '<option value="">Error al cargar el catálogo</option>';
+    console.error(error);
+    showWeeklyMessage(
+      "No se pudo cargar el catálogo: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  const items = data || [];
+  select.innerHTML =
+    '<option value="">Selecciona un platillo</option>' +
+    items.map(item => `
+      <option value="${escapeHtml(item.id)}">
+        ${escapeHtml(item.name)} · ${money(item.price_mxn)}
+      </option>
+    `).join("");
+}
+
+async function loadWeeklyItems() {
+  const weekId = $("weekly-select").value;
+  const container = $("weekly-items-list");
+
+  if (!weekId) {
+    weeklyItemsCache = [];
+    container.innerHTML =
+      '<p class="empty">Selecciona una semana.</p>';
+    return;
+  }
+
+  const { data, error } = await db
+    .from("weekly_menu_items")
+    .select("*")
+    .eq("weekly_menu_id", weekId)
+    .order("day_of_week")
+    .order("name");
+
+  if (error) {
+    container.textContent =
+      "No se pudieron cargar los platillos: " + error.message;
+    return;
+  }
+
+  weeklyItemsCache = data || [];
+  renderWeeklyItems();
+}
+
+function renderWeeklyItems() {
+  const container = $("weekly-items-list");
+  const weekId = $("weekly-select").value;
+  const week = weeklyMenusCache.find(item => item.id === weekId);
+
+  if (!week) {
+    container.innerHTML =
+      '<p class="empty">Selecciona una semana.</p>';
+    return;
+  }
+
+  if (!weeklyItemsCache.length) {
+    container.innerHTML =
+      '<p class="empty">Todavía no hay platillos asignados a esta semana.</p>';
+    return;
+  }
+
+  container.innerHTML = WEEKLY_DAYS.slice(1).map((day, index) => {
+    const dayNumber = index + 1;
+    const items = weeklyItemsCache.filter(
+      item => Number(item.day_of_week) === dayNumber
+    );
+
+    if (!items.length) return "";
+
+    return `
+      <div class="item" style="display:block">
+        <h3 style="margin:0 0 10px">${day}</h3>
+        ${items.map(item => `
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;gap:12px;padding:9px 0;
+            border-top:1px solid var(--line)">
+            <div>
+              <strong>${escapeHtml(item.name)}</strong>
+              <div class="muted">${money(item.price_mxn)}</div>
+            </div>
+            ${week.status === "draft" ? `
+              <button class="btn danger"
+                type="button"
+                data-weekly-delete="${escapeHtml(item.id)}">
+                Quitar
+              </button>
+            ` : ""}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }).join("");
+
+  container.querySelectorAll("[data-weekly-delete]").forEach(button => {
+    button.addEventListener("click", async () => {
+      if (!confirm("¿Quitar este platillo de la semana?")) return;
+
+      const { error } = await db
+        .from("weekly_menu_items")
+        .delete()
+        .eq("id", button.dataset.weeklyDelete);
+
+      if (error) {
+        showWeeklyMessage(
+          "No se pudo quitar el platillo: " + error.message,
+          "error"
+        );
+        return;
+      }
+
+      showWeeklyMessage("Platillo quitado del borrador.", "success");
+      await loadWeeklyItems();
+    });
+  });
+}
+
+function renderWeeklyMenus() {
+  const container = $("weekly-list");
+
+  if (!weeklyMenusCache.length) {
+    container.innerHTML =
+      '<p class="empty">Todavía no hay semanas creadas.</p>';
+    return;
+  }
+
+  container.innerHTML = weeklyMenusCache.map(week => {
+    const statusLabel = {
+      draft: "Borrador",
+      published: "Publicada",
+      archived: "Archivada"
+    }[week.status] || week.status;
+
+    return `
+      <article class="item">
+        <div>
+          <div class="item-title">${escapeHtml(week.name)}</div>
+          <div class="muted">
+            ${dateLocal(week.start_date)} — ${dateLocal(week.end_date)}
+          </div>
+          <p><span class="pill">${statusLabel}</span></p>
+        </div>
+        <div class="item-actions">
+          <button class="btn"
+            type="button"
+            data-week-edit="${escapeHtml(week.id)}">
+            Seleccionar
+          </button>
+          ${week.status === "draft" ? `
+            <button class="btn primary"
+              type="button"
+              data-week-publish="${escapeHtml(week.id)}">
+              Publicar
+            </button>
+          ` : ""}
+          ${week.status === "published" ? `
+            <button class="btn danger"
+              type="button"
+              data-week-archive="${escapeHtml(week.id)}">
+              Archivar
+            </button>
+          ` : ""}
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  container.querySelectorAll("[data-week-edit]").forEach(button => {
+    button.addEventListener("click", async () => {
+      $("weekly-select").value = button.dataset.weekEdit;
+      await loadWeeklyItems();
+      $("weekly-select").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
+  });
+
+  container.querySelectorAll("[data-week-publish]").forEach(button => {
+    button.addEventListener("click", () =>
+      changeWeeklyStatus(button.dataset.weekPublish, "published")
+    );
+  });
+
+  container.querySelectorAll("[data-week-archive]").forEach(button => {
+    button.addEventListener("click", () =>
+      changeWeeklyStatus(button.dataset.weekArchive, "archived")
+    );
+  });
+}
+
+$("weekly-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const name = $("weekly-name").value.trim();
+  const start = $("weekly-start").value;
+  const end = $("weekly-end").value;
+
+  if (!name || !start || !end) {
+    showWeeklyMessage("Completa el nombre y las fechas.", "error");
+    return;
+  }
+
+  if (!isMonday(start) || !isFridayAfterMonday(start, end)) {
+    showWeeklyMessage(
+      "La semana debe comenzar en lunes y terminar ese mismo viernes.",
+      "error"
+    );
+    return;
+  }
+
+  const submit = $("weekly-form").querySelector(
+    'button[type="submit"]'
+  );
+  submit.disabled = true;
+
+  const { data, error } = await db
+    .from("weekly_menus")
+    .insert({
+      name,
+      start_date: start,
+      end_date: end,
+      status: "draft"
+    })
+    .select()
+    .single();
+
+  submit.disabled = false;
+
+  if (error) {
+    showWeeklyMessage(
+      error.code === "23505"
+        ? "Ya existe una semana con esa fecha de inicio."
+        : "No se pudo crear la semana: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  showWeeklyMessage("Semana creada como borrador.", "success");
+  $("weekly-form").reset();
+  $("weekly-name").value = "Menú semanal";
+
+  await loadWeeklyData();
+  $("weekly-select").value = data.id;
+  await loadWeeklyItems();
+});
+
+$("weekly-select").addEventListener("change", loadWeeklyItems);
+
+$("weekly-add-item").addEventListener("click", async () => {
+  const weekId = $("weekly-select").value;
+  const itemId = $("weekly-item").value;
+  const day = Number($("weekly-day").value);
+
+  const week = weeklyMenusCache.find(item => item.id === weekId);
+  const item = menuCache.find(row => row.id === itemId);
+
+  if (!week || !item) {
+    showWeeklyMessage("Selecciona una semana y un platillo.", "error");
+    return;
+  }
+
+  if (week.status !== "draft") {
+    showWeeklyMessage(
+      "Solo puedes modificar semanas en borrador.",
+      "error"
+    );
+    return;
+  }
+
+  const availableDays = Array.isArray(item.available_days)
+    ? item.available_days.map(Number)
+    : [1, 2, 3, 4, 5];
+
+  if (!availableDays.includes(day)) {
+    showWeeklyMessage(
+      "Este platillo no está disponible para el día seleccionado en el catálogo.",
+      "error"
+    );
+    return;
+  }
+
+  const duplicate = weeklyItemsCache.some(existing =>
+    existing.menu_item_id === item.id &&
+    Number(existing.day_of_week) === day
+  );
+
+  if (duplicate) {
+    showWeeklyMessage(
+      "Este platillo ya está asignado a ese día.",
+      "error"
+    );
+    return;
+  }
+
+  const { error } = await db
+    .from("weekly_menu_items")
+    .insert({
+      weekly_menu_id: week.id,
+      menu_item_id: item.id,
+      day_of_week: day,
+      name: item.name,
+      description: item.description || "",
+      image_url: item.image_url || null,
+      price_mxn: item.price_mxn,
+      category: item.category
+    });
+
+  if (error) {
+    showWeeklyMessage(
+      "No se pudo agregar el platillo: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  showWeeklyMessage(
+    item.name + " agregado al " + WEEKLY_DAYS[day] + ".",
+    "success"
+  );
+  await loadWeeklyItems();
+});
+
+async function changeWeeklyStatus(id, status) {
+  const week = weeklyMenusCache.find(item => item.id === id);
+  if (!week) return;
+
+  if (status === "published") {
+    const { data: items, error: itemsError } = await db
+      .from("weekly_menu_items")
+      .select("id")
+      .eq("weekly_menu_id", id)
+      .limit(1);
+
+    if (itemsError) {
+      showWeeklyMessage(itemsError.message, "error");
+      return;
+    }
+
+    if (!items?.length) {
+      showWeeklyMessage(
+        "Agrega al menos un platillo antes de publicar.",
+        "error"
+      );
+      return;
+    }
+
+    const overlapping = weeklyMenusCache.some(other =>
+      other.id !== id &&
+      other.status === "published" &&
+      other.start_date <= week.end_date &&
+      other.end_date >= week.start_date
+    );
+
+    if (overlapping) {
+      showWeeklyMessage(
+        "Ya existe otro menú publicado con fechas que se cruzan.",
+        "error"
+      );
+      return;
+    }
+  }
+
+  const action = status === "published" ? "publicar" : "archivar";
+  if (!confirm(`¿Seguro que deseas ${action} "${week.name}"?`)) return;
+
+  const { error } = await db
+    .from("weekly_menus")
+    .update({ status })
+    .eq("id", id);
+
+  if (error) {
+    showWeeklyMessage(
+      "No se pudo actualizar el estado: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  showWeeklyMessage(
+    status === "published"
+      ? "Menú publicado."
+      : "Menú archivado.",
+    "success"
+  );
+
+  await loadWeeklyData();
+  $("weekly-select").value = id;
+  await loadWeeklyItems();
+}
 
 async function loadOrders() {
   $("orders-list").textContent = "Generando pedidos del día...";
@@ -2406,6 +2881,7 @@ async function loadProduction() {
   });
 
   $("refresh-btn").addEventListener("click", loadAll);
+  $("weekly-refresh").addEventListener("click", loadWeeklyData);
   $("orders-refresh").addEventListener("click", loadOrders);
   $("subscriptions-refresh").addEventListener("click", loadSubscriptions);
   $("production-refresh").addEventListener("click", loadProduction);
