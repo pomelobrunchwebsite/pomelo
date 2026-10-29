@@ -2417,20 +2417,21 @@ async function loadPublicMenu() {
     const submitButton = document.getElementById("submit-subscription");
     const feedback = document.getElementById("subscription-feedback");
     
-    async function saveCustomerAddress(userId, address, notes) {
-      const { error } = await pomeloDB
-        .from("profiles")
-        .update({
-          delivery_address: address,
-          delivery_notes: notes
-        })
-        .eq("id", userId);
+async function saveCustomerAddress(userId, address, notes) {
+  const { error } = await pomeloDB
+    .from("profiles")
+    .update({
+      delivery_address: address,
+      delivery_notes: notes
+    })
+    .eq("id", userId);
 
-      if (error) {
-        throw new Error("No se pudo guardar tu dirección: " + error.message);
-      }
-    }
-
+  if (error) {
+    throw new Error(
+      "No se pudo guardar tu dirección: " + error.message
+    );
+  }
+}
     function getLocalDateString() {
       const now = new Date();
       const year = now.getFullYear();
@@ -2715,10 +2716,19 @@ const menuBox = document.getElementById("customer-plan-menu-view");
     const subscriptions = plans || [];
 
     
-if (!subscriptions.length) {
-  status.textContent =
-    "No tienes una suscripción activa. Tu dirección guardada seguirá disponible.";
+  document.getElementById("customer-plan-address").textContent =
+    "No tienes una suscripción activa.";
 
+  document.getElementById("customer-plan-dates").textContent =
+    "Puedes solicitar un nuevo plan desde el menú semanal.";
+
+  document.getElementById("customer-plan-status").textContent =
+    "Sin suscripción activa";
+
+  document.getElementById("customer-cancel-subscription")?.remove();
+
+  menuBox.textContent =
+    "No tienes un menú programado actualmente.";
   content.classList.remove("hidden");
 
   document.getElementById("customer-plan-status").textContent =
