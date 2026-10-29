@@ -2790,24 +2790,67 @@ if (!subscriptions.length) {
 
       if (planItemsError) throw planItemsError;
 
-      const days = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes" };
-      const items = planItems || [];
+const days = {
+  1: "Lunes",
+  2: "Martes",
+  3: "Miércoles",
+  4: "Jueves",
+  5: "Viernes"
+};
 
-      if (!items.length) {
-        menuBox.textContent = "Tu plan todavía no tiene platillos registrados.";
-      } else {
-        menuBox.innerHTML = items
-          .slice()
-          .sort((a, b) => Number(a.day_of_week) - Number(b.day_of_week))
-          .map(item => `
-            <div style="padding:14px 0;border-bottom:1px solid var(--line)">
-              <strong>${safe(days[item.day_of_week] || "Día programado")}</strong>
-              <div>${safe(item.meal_name)}</div>
-              <small>Cantidad: ${Number(item.quantity || 1)} · ${money(item.unit_price_mxn)} por unidad</small>
-            </div>
-          `).join("");
-      }
+const items = planItems || [];
+
+if (!items.length) {
+  menuBox.textContent =
+    "Tu plan todavía no tiene platillos registrados.";
+} else {
+  const groupedDays = {};
+
+  items.forEach(item => {
+    const dayNumber = Number(item.day_of_week);
+
+    if (!groupedDays[dayNumber]) {
+      groupedDays[dayNumber] = [];
     }
+
+    groupedDays[dayNumber].push(item);
+  });
+
+  menuBox.innerHTML = Object.keys(groupedDays)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(dayNumber => `
+      <section style="
+        padding:8px 0;
+        border-bottom:1px solid var(--line);
+      ">
+        <h3 style="
+          margin:0 0 4px;
+          font-family:'Playfair Display',serif;
+          font-size:19px;
+          font-weight:400;
+        ">
+          ${safe(days[dayNumber] || "Día programado")}
+        </h3>
+
+        ${groupedDays[dayNumber].map(item => `
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:baseline;
+            gap:10px;
+            padding:2px 0;
+          ">
+            <span>${safe(item.meal_name)}</span>
+            <small style="white-space:nowrap">
+              × ${Number(item.quantity || 1)}
+            </small>
+          </div>
+        `).join("")}
+      </section>
+    `)
+    .join("");
+}    }
 
     status.classList.add("hidden");
 
