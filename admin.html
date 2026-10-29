@@ -1079,12 +1079,14 @@ tbody tr:last-child td {
         </div>
       </div>
 
-      <nav class="tabs">
-        <button class="tab active" data-tab="menu">Menú</button>
-        <button class="tab" data-tab="orders">Pedidos</button>
-        <button class="tab" data-tab="production">Producción</button>
-        <button class="tab" data-tab="subscriptions">Suscripciones</button>
-      </nav>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="menu">Platillos</button>
+  <button class="tab" data-tab="weekly">Menú semanal</button>
+  <button class="tab" data-tab="orders">Pedidos</button>
+  <button class="tab" data-tab="production">Producción</button>
+  <button class="tab" data-tab="subscriptions">Suscripciones</button>
+</nav>
 
       <section id="tab-menu" class="panel">
         <div class="section-head">
@@ -1215,6 +1217,90 @@ tbody tr:last-child td {
   <div class="empty">Cargando menú...</div>
 </div>
       </section>
+
+<section id="tab-weekly" class="panel hidden">
+  <div class="section-head">
+    <h2>Menú semanal</h2>
+    <button id="weekly-refresh" class="btn">Actualizar</button>
+  </div>
+
+  <p class="muted">
+    Crea el menú de lunes a viernes, agrega los platillos del catálogo
+    y publícalo cuando esté listo.
+  </p>
+
+  <form id="weekly-form">
+    <div class="form-grid">
+      <div class="field">
+        <label for="weekly-name">Nombre del menú</label>
+        <input id="weekly-name" required
+          value="Menú semanal" maxlength="100">
+      </div>
+
+      <div class="field">
+        <label for="weekly-start">Lunes de la semana</label>
+        <input id="weekly-start" type="date" required>
+      </div>
+
+      <div class="field">
+        <label for="weekly-end">Viernes de la semana</label>
+        <input id="weekly-end" type="date" required>
+      </div>
+    </div>
+
+    <button class="btn primary" type="submit">
+      Crear semana en borrador
+    </button>
+  </form>
+
+  <div id="weekly-message" class="notice hidden"></div>
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+
+  <h2>Agregar platillos</h2>
+
+  <div class="form-grid">
+    <div class="field">
+      <label for="weekly-select">Semana</label>
+      <select id="weekly-select">
+        <option value="">Selecciona una semana</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="weekly-day">Día</label>
+      <select id="weekly-day">
+        <option value="1">Lunes</option>
+        <option value="2">Martes</option>
+        <option value="3">Miércoles</option>
+        <option value="4">Jueves</option>
+        <option value="5">Viernes</option>
+      </select>
+    </div>
+
+    <div class="field full">
+      <label for="weekly-item">Platillo del catálogo</label>
+      <select id="weekly-item">
+        <option value="">Selecciona un platillo</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="weekly-add-item" class="btn primary" type="button">
+    Agregar platillo al día
+  </button>
+
+  <div id="weekly-items-list" class="list" style="margin-top:18px">
+    <p class="empty">Selecciona una semana.</p>
+  </div>
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+
+  <h2>Semanas creadas</h2>
+  <div id="weekly-list" class="list">
+    <p class="empty">Cargando semanas...</p>
+  </div>
+</section>
 
       <section id="tab-orders" class="panel hidden">
         <div class="section-head">
@@ -2313,8 +2399,8 @@ async function loadProduction() {
   document.querySelectorAll("[data-tab]").forEach(button => {
     button.addEventListener("click", () => {
       document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab === button));
-      ["menu", "orders", "production", "subscriptions"].forEach(name => {
-        $("tab-" + name).classList.toggle("hidden", name !== button.dataset.tab);
+["menu", "weekly", "orders", "production", "subscriptions"].forEach(name => {       
+  $("tab-" + name).classList.toggle("hidden", name !== button.dataset.tab);
       });
     });
   });
