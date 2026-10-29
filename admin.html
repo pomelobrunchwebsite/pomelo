@@ -2157,12 +2157,15 @@ function renderWeeklyMenus() {
           </div>
           <p><span class="pill">${statusLabel}</span></p>
         </div>
+
         <div class="item-actions">
+
           <button class="btn"
             type="button"
             data-week-edit="${escapeHtml(week.id)}">
             Seleccionar
           </button>
+
           ${week.status === "draft" ? `
             <button class="btn primary"
               type="button"
@@ -2170,6 +2173,7 @@ function renderWeeklyMenus() {
               Publicar
             </button>
           ` : ""}
+
           ${week.status === "published" ? `
             <button class="btn danger"
               type="button"
@@ -2177,35 +2181,74 @@ function renderWeeklyMenus() {
               Archivar
             </button>
           ` : ""}
+
+          ${week.status === "draft" || week.status === "archived" ? `
+            <button class="btn danger"
+              type="button"
+              data-week-delete="${escapeHtml(week.id)}">
+              Eliminar
+            </button>
+          ` : ""}
+
         </div>
       </article>
     `;
   }).join("");
 
+  // SELECCIONAR SEMANA
   container.querySelectorAll("[data-week-edit]").forEach(button => {
     button.addEventListener("click", async () => {
-      $("weekly-select").value = button.dataset.weekEdit;
+
+      const id = button.dataset.weekEdit;
+
+      $("weekly-select").value = id;
+
+      // Cambiar automáticamente al apartado Agregar platillo
+      document.querySelectorAll(".weekly-section").forEach(section => {
+        section.classList.add("hidden");
+      });
+
+      $("weekly-section-items").classList.remove("hidden");
+
+      document.querySelectorAll(".weekly-section-btn").forEach(btn => {
+        btn.classList.remove("primary");
+      });
+
+      document.querySelector(
+        '[data-weekly-section="items"]'
+      ).classList.add("primary");
+
       await loadWeeklyItems();
+
       $("weekly-select").scrollIntoView({
         behavior: "smooth",
         block: "center"
       });
+
     });
   });
 
+  // PUBLICAR
   container.querySelectorAll("[data-week-publish]").forEach(button => {
     button.addEventListener("click", () =>
       changeWeeklyStatus(button.dataset.weekPublish, "published")
     );
   });
 
+  // ARCHIVAR
   container.querySelectorAll("[data-week-archive]").forEach(button => {
     button.addEventListener("click", () =>
       changeWeeklyStatus(button.dataset.weekArchive, "archived")
     );
   });
-}
 
+  // ELIMINAR
+  container.querySelectorAll("[data-week-delete]").forEach(button => {
+    button.addEventListener("click", () =>
+      deleteWeeklyMenu(button.dataset.weekDelete)
+    );
+  });
+}
 $("weekly-form").addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -2339,7 +2382,67 @@ if (duplicate) {
   );
   await loadWeeklyItems();
 });
+async function deleteWeeklyMenu(id) {
+  const week = weeklyMenusCache.find(item => item.id === id);
 
+  if (!week) return;
+
+  if (!["draft", "archived"].includes(week.status)) {
+    showWeeklyMessage(
+      "Primero debes archivar la semana antes de eliminarla.",
+      "error"
+    );
+    return;
+  }
+
+  const confirmed = confirm(
+    `¿Eliminar definitivamente "${week.name}"?\n\n` +
+    "También se eliminarán todos los platillos asociados. Esta acción no se puede deshacer."
+  );
+
+  if (!confirmed) return;
+
+  // Eliminar primero los platillos asociados
+  const { error: itemsError } = await db
+    .from("weekly_menu_items")
+    .delete()
+    .eq("weekly_menu_id", id);
+
+  if (itemsError) {
+    showWeeklyMessage(
+      "No se pudieron eliminar los platillos: " + itemsError.message,
+      "error"
+    );
+    return;
+  }
+
+  // Eliminar la semana
+  const { error } = await db
+    .from("weekly_menus")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    showWeeklyMessage(
+      "No se pudo eliminar la semana: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  if ($("weekly-select").value === id) {
+    $("weekly-select").value = "";
+  }
+
+  weeklyItemsCache = [];
+
+  showWeeklyMessage(
+    "Semana eliminada correctamente.",
+    "success"
+  );
+
+  await loadWeeklyData();
+}
 async function changeWeeklyStatus(id, status) {
   const week = weeklyMenusCache.find(item => item.id === id);
   if (!week) return;
