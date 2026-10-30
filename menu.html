@@ -2391,12 +2391,12 @@ function renderDayTabs() {
 
         button.setAttribute(
           "aria-selected",
-          String(activeDayNumber === dayNumber)
+String(Number(activeDayNumber) === Number(dayNumber))      
         );
 
         button.tabIndex =
-          activeDayNumber === dayNumber ? 0 : -1;
-
+Number(activeDayNumber) === Number(dayNumber) ? 0 : -1;
+      
         button.addEventListener("click", () => {
           activeDayNumber = dayNumber;
           renderDayTabs();
