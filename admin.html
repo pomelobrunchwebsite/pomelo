@@ -2731,21 +2731,51 @@ async function loadSubscriptions() {
   $("stat-subs").textContent =
     Object.keys(customerGroups).length;
 
-  // Prioridad de suscripciones
-  const priority = {
-    active: 1,
-    pending: 2,
-    completed: 3,
-    cancelled: 4
-  };
+// Clasificación general del cliente
+function getCustomerStatus(customerSubscriptions) {
+  const today = [
+    new Date().getFullYear(),
+    String(new Date().getMonth() + 1).padStart(2, "0"),
+    String(new Date().getDate()).padStart(2, "0")
+  ].join("-");
 
-  const statusLabels = {
-    pending: "Pendiente",
-    active: "Activa",
-    completed: "Completada",
-    cancelled: "Cancelada"
-  };
+  const active = customerSubscriptions.some(sub =>
+    String(sub.status).toLowerCase() === "active" &&
+    sub.start_date <= today &&
+    sub.end_date >= today
+  );
 
+  if (active) return "active";
+
+  const pending = customerSubscriptions.some(sub =>
+    String(sub.status).toLowerCase() === "pending"
+  );
+
+  if (pending) return "pending";
+
+  const latest = [...customerSubscriptions].sort((a, b) => {
+    const dateA = a.end_date || a.created_at || "";
+    const dateB = b.end_date || b.created_at || "";
+    return dateB.localeCompare(dateA);
+  })[0];
+
+  if (
+    latest &&
+    String(latest.status).toLowerCase() === "cancelled"
+  ) {
+    return "cancelled";
+  }
+
+  return "inactive";
+}
+
+const statusLabels = {
+  pending: "Pendiente",
+  active: "Activa",
+  completed: "Completada",
+  cancelled: "Cancelada",
+  inactive: "Inactiva"
+};
   const renderSubscription = (sub, isMain = false) => {
     const status = String(sub.status || "pending").toLowerCase();
 
