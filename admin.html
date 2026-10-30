@@ -3152,28 +3152,34 @@ return `
         </article>
       `;
     }).join("");
-  // Filtros de suscriptores
+// Filtros de suscriptores
 const filterButtons = document.querySelectorAll(".subscriber-filter");
 
-filterButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    const selectedFilter = button.dataset.filter;
-
-    filterButtons.forEach(item => {
-      item.classList.toggle("active", item === button);
-    });
-
-    container.querySelectorAll(".sub-customer-card").forEach(card => {
-      const status = card.dataset.customerStatus;
-
-      card.style.display =
-        selectedFilter === "all" || status === selectedFilter
-          ? ""
-          : "none";
-    });
+function applySubscriberFilter(filter) {
+  filterButtons.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.filter === filter
+    );
   });
+
+  container.querySelectorAll(".sub-customer-card").forEach(card => {
+    const status = card.dataset.customerStatus;
+
+    card.hidden = (
+      filter !== "all" && status !== filter
+    );
+  });
+}
+
+filterButtons.forEach(button => {
+  button.onclick = () => {
+    applySubscriberFilter(button.dataset.filter);
+  };
 });
-// Desplegar información del suscriptor
+
+// Mostrar todos al cargar
+applySubscriberFilter("all");// Desplegar información del suscriptor
 container.querySelectorAll("[data-customer-toggle]").forEach(button => {
   button.addEventListener("click", () => {
     const key = button.dataset.customerToggle;
