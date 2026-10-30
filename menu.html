@@ -2369,8 +2369,11 @@ function renderWeekTabs() {
     renderDay(activeDayNumber);
     renderSummary();
   };
-}      tabsContainer.innerHTML = "";
+}
 
+function renderDayTabs() {
+  tabsContainer.innerHTML = "";
+  
       days.forEach(([dayNumber, dayName]) => {
         const button = document.createElement("button");
         button.type = "button";
