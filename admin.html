@@ -2873,6 +2873,15 @@ const statusLabels = {
             — 
             ${dateLocal(sub.end_date)}
           </p>
+          ${
+  !isMain
+    ? `<button
+        class="btn danger"
+        data-delete-history="${escapeHtml(sub.id)}">
+        Eliminar del historial
+      </button>`
+    : ""
+}
 
           <button class="btn"
             data-details="${escapeHtml(sub.id)}">
@@ -3061,7 +3070,37 @@ ${customerSubscriptions.length} ${
       );
     });
   });
+// Eliminar una suscripción del historial
+container.querySelectorAll("[data-delete-history]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const id = button.dataset.deleteHistory;
 
+    const confirmed = confirm(
+      "¿Eliminar definitivamente esta suscripción del historial?\n\n" +
+      "También se eliminarán sus pedidos, artículos y pagos relacionados.\n\n" +
+      "Las demás suscripciones del cliente permanecerán intactas."
+    );
+
+    if (!confirmed) return;
+
+    button.disabled = true;
+    button.textContent = "Eliminando...";
+
+    const { error } = await db.rpc(
+      "delete_subscription_history",
+      { p_subscription_id: id }
+    );
+
+    if (error) {
+      alert("No se pudo eliminar la suscripción:\n" + error.message);
+      await loadSubscriptions();
+      return;
+    }
+
+    alert("Suscripción eliminada correctamente.");
+    await loadSubscriptions();
+  });
+});
   // Mostrar y ocultar historial
   container.querySelectorAll("[data-history-toggle]").forEach(button => {
     button.addEventListener("click", () => {
@@ -3079,7 +3118,20 @@ ${customerSubscriptions.length} ${
     });
   });
 }
-  
+  async function deleteSubscriptionHistory(id) {
+  const { error } = await db.rpc(
+    "delete_subscription_history",
+    { p_subscription_id: id }
+  );
+
+  if (error) {
+    alert("Error al eliminar: " + error.message);
+    return false;
+  }
+
+  await loadSubscriptions();
+  return true;
+}
   async function toggleSubscriptionDetails(id, subscriptions, profiles) {
   const detail = $("sub-detail-" + id);
   const sub = subscriptions.find(s => String(s.id) === String(id));
