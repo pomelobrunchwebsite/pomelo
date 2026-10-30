@@ -2205,8 +2205,8 @@ async function loadPublicMenu() {
   const status = document.getElementById("menu-status");
   const container = document.getElementById("public-menu");
   const tabsContainer = document.getElementById("day-tabs");
-const weekTabsContainer = document.getElementById("week-select");
-  
+const weekTabsContainer = document.getElementById("week-tabs");
+const weekSelect = document.getElementById("week-select");  
   status.classList.add("hidden");
   tabsContainer.classList.add("hidden");
   weekTabsContainer.innerHTML = "";
@@ -2325,7 +2325,15 @@ const weekTabsContainer = document.getElementById("week-select");
     }
 
 function renderWeekTabs() {
-  weekTabsContainer.innerHTML = "";
+  // Oculta el selector anterior.
+  if (weekTabsContainer) {
+    weekTabsContainer.innerHTML = "";
+  }
+
+  // Llena el nuevo selector.
+  if (!weekSelect) return;
+
+  weekSelect.innerHTML = "";
 
   weeks.forEach((week, index) => {
     const option = document.createElement("option");
@@ -2335,27 +2343,24 @@ function renderWeekTabs() {
       `${week.name || `Semana ${index + 1}`} · ` +
       `${formatWeekDate(week.start_date)} al ${formatWeekDate(week.end_date)}`;
 
-    weekTabsContainer.appendChild(option);
+    weekSelect.appendChild(option);
   });
 
-  weekTabsContainer.value = String(activeWeekId);
+  weekSelect.value = String(activeWeekId);
 
-  weekTabsContainer.onchange = () => {
-    const newWeekId = weekTabsContainer.value;
+  weekSelect.onchange = () => {
+    const newWeekId = weekSelect.value;
 
     if (!newWeekId) return;
 
     activeWeekId = newWeekId;
-
-    // Conserva las semanas anteriores en el pedido.
     selectedWeekIds.add(newWeekId);
 
     renderDayTabs();
     renderDay(activeDayNumber);
     renderSummary();
   };
-}
-      tabsContainer.innerHTML = "";
+}      tabsContainer.innerHTML = "";
 
       days.forEach(([dayNumber, dayName]) => {
         const button = document.createElement("button");
