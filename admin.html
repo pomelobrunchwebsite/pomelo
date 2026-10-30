@@ -2354,7 +2354,13 @@ function renderWeeklyMenus() {
               Archivar
             </button>
           ` : ""}
-
+${week.status === "archived" ? `
+  <button class="btn primary"
+    type="button"
+    data-week-reactivate="${escapeHtml(week.id)}">
+    Reactivar
+  </button>
+` : ""}
           ${week.status === "draft" || week.status === "archived" ? `
             <button class="btn danger"
               type="button"
