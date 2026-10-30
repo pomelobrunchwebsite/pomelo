@@ -2700,8 +2700,22 @@ async function loadSubscriptions() {
     .limit(100);
 
   if (error) {
-    console.table(subscriptions);
+const debugBox = document.createElement("pre");
 
+debugBox.style.cssText =
+  "background:#eee;color:#222;padding:12px;margin:12px 0;border-radius:8px;white-space:pre-wrap;font-size:13px;";
+
+debugBox.textContent = JSON.stringify(
+  subscriptions.map(s => ({
+    status: s.status,
+    start_date: s.start_date,
+    end_date: s.end_date
+  })),
+  null,
+  2
+);
+
+container.before(debugBox);
 console.log(
   "Fecha actual:",
   new Date().getFullYear() + "-" +
