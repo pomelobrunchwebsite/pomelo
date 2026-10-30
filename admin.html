@@ -2420,7 +2420,12 @@ ${week.status === "archived" ? `
       changeWeeklyStatus(button.dataset.weekArchive, "archived")
     );
   });
-
+// REACTIVAR
+container.querySelectorAll("[data-week-reactivate]").forEach(button => {
+  button.addEventListener("click", () => {
+    changeWeeklyStatus(button.dataset.weekReactivate, "draft");
+  });
+});
   // ELIMINAR
   container.querySelectorAll("[data-week-delete]").forEach(button => {
     button.addEventListener("click", () =>
