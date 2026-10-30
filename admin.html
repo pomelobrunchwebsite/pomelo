@@ -1195,7 +1195,30 @@ tbody tr:last-child td {
 #subscriptions-list .sub-customer-detail.hidden {
   display: none !important;
 }
+.subscriber-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 0 12px;
+  margin-bottom: 8px;
+}
 
+.subscriber-filter {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.subscriber-filter.active {
+  background: var(--olive);
+  color: white;
+  border-color: var(--olive);
+}
   </style>
 </head>
 <body>
@@ -1533,6 +1556,23 @@ tbody tr:last-child td {
     <div id="stat-subs-cancelled" class="number">0</div>
   </div>
 
+</div>
+        <div class="subscriber-filters">
+  <button class="subscriber-filter active" data-filter="all">
+    Todos
+  </button>
+  <button class="subscriber-filter" data-filter="active">
+    Activos
+  </button>
+  <button class="subscriber-filter" data-filter="pending">
+    Pendientes
+  </button>
+  <button class="subscriber-filter" data-filter="cancelled">
+    Cancelados
+  </button>
+  <button class="subscriber-filter" data-filter="inactive">
+    Inactivos
+  </button>
 </div>
         <div id="subscriptions-list" class="empty">Aún no se han consultado las suscripciones.</div>
       </section>
@@ -3029,9 +3069,10 @@ const badgeColor =
   customerStatus === "pending" ? "pill-warning" :
   customerStatus === "cancelled" ? "pill-danger" :
   "";
-      return `
-        <article class="item sub-customer-card">
-
+return `
+        <article
+          class="item sub-customer-card"
+          data-customer-status="${customerStatus}">
 
           <button
             type="button"
@@ -3111,6 +3152,27 @@ const badgeColor =
         </article>
       `;
     }).join("");
+  // Filtros de suscriptores
+const filterButtons = document.querySelectorAll(".subscriber-filter");
+
+filterButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const selectedFilter = button.dataset.filter;
+
+    filterButtons.forEach(item => {
+      item.classList.toggle("active", item === button);
+    });
+
+    container.querySelectorAll(".sub-customer-card").forEach(card => {
+      const status = card.dataset.customerStatus;
+
+      card.style.display =
+        selectedFilter === "all" || status === selectedFilter
+          ? ""
+          : "none";
+    });
+  });
+});
 // Desplegar información del suscriptor
 container.querySelectorAll("[data-customer-toggle]").forEach(button => {
   button.addEventListener("click", () => {
