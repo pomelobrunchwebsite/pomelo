@@ -2198,13 +2198,20 @@ function hideDay() {
     '<p class="day-empty">Toca un día para ver los platillos.</p>';  
 }  
   
-document.addEventListener("click", event => {  
-  const open = document.querySelector('#day-tabs .day-tab[aria-selected="true"]');  
-if (open && !event.target.closest("#day-tabs, #public-menu, #order-summary, #week-selector-container")) {   
-  hideDay();  
-  }  
-});  
+document.addEventListener("click", event => {
+  const open = document.querySelector(
+    '#day-tabs .day-tab[aria-selected="true"]'
+  );
 
+  if (
+    open &&
+    !event.target.closest(
+      "#day-tabs, #public-menu, #order-summary, #week-selector-container, .week-selector-dropdown"
+    )
+  ) {
+    hideDay();
+  }
+});
 document.addEventListener("keydown", event => {  
   const open = document.querySelector('#day-tabs .day-tab[aria-selected="true"]');  
   if (event.key === "Escape" && open) hideDay();  
@@ -2378,6 +2385,7 @@ function renderDayTabs() {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "day-tab";
+        
         button.dataset.day = dayNumber;
         button.textContent = dayName;
 
