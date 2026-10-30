@@ -2879,6 +2879,10 @@ const ordered = [...customerSubscriptions].sort((a, b) => {
 
 const mainSubscription = ordered[0];
 const history = ordered.slice(1);
+      // Estado general del cliente
+const customerStatus = getCustomerStatus(customerSubscriptions);
+const customerStatusLabel =
+  statusLabels[customerStatus] || customerStatus;
       const activeCount = customerSubscriptions.filter(
         s => String(s.status).toLowerCase() === "active"
       ).length;
@@ -2898,11 +2902,11 @@ const history = ordered.slice(1);
       const mainStatus =
         String(mainSubscription.status || "pending").toLowerCase();
 
-      const badgeColor =
-        mainStatus === "active" ? "pill-success" :
-        mainStatus === "pending" ? "pill-warning" :
-        "";
-
+const badgeColor =
+  customerStatus === "active" ? "pill-success" :
+  customerStatus === "pending" ? "pill-warning" :
+  customerStatus === "cancelled" ? "pill-danger" :
+  "";
       return `
         <article class="item sub-customer-card">
 
@@ -2919,8 +2923,8 @@ const history = ordered.slice(1);
             </div>
 
             <span class="pill ${badgeColor}">
-              ${escapeHtml(statusLabels[mainStatus] || mainStatus)}
-            </span>
+        ${escapeHtml(customerStatusLabel)}    
+        </span>
 
           </div>
 
