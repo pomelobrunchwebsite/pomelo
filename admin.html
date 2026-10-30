@@ -3213,24 +3213,34 @@ async function updateSubscriptionStatus(id, newStatus) {
     return;
   }
 
-  if (sub.status !== "pending") {
-    alert(
-      "La suscripción ya no está pendiente. " +
-      "Actualiza el panel antes de continuar."
-    );
-    await loadSubscriptions();
-    return;
-  }
+if (newStatus === "active" && sub.status !== "pending") {
+  alert("Solo puedes activar suscripciones pendientes.");
+  await loadSubscriptions();
+  return;
+}
 
+if (
+  newStatus === "cancelled" &&
+  !["pending", "active", "completed"].includes(
+    String(sub.status || "").toLowerCase()
+  )
+) {
+  alert("Esta suscripción ya está cancelada.");
+  await loadSubscriptions();
+  return;
+}
   // 2. Actualizar el estado
-  const { data: updated, error: updateError } = await db
-    .from("subscriptions")
-    .update({ status: newStatus })
-    .eq("id", id)
-    .eq("status", "pending")
-    .select("id")
-    .maybeSingle();
+let updateQuery = db
+  .from("subscriptions")
+  .update({ status: newStatus })
+  .eq("id", id);
 
+if (newStatus === "active") {
+  updateQuery = updateQuery.eq("status", "pending");
+}
+
+const { data: updated, error: updateError } =
+  await updateQuery.select("id").maybeSingle();
   if (updateError || !updated) {
     alert(
       "No se pudo actualizar la suscripción: " +
