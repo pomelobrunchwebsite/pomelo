@@ -2929,6 +2929,7 @@ const statusLabels = {
 
       const person =
         profiles[customerSubscriptions[0].customer_id] || {};
+      const customerId = customerSubscriptions[0].customer_id;
 
 // Calcular estado general del cliente
 const customerStatus = getCustomerStatus(customerSubscriptions);
@@ -3016,7 +3017,15 @@ ${customerSubscriptions.length} ${
             ${cancelledCount} canceladas ·
             ${completedCount} completadas
           </div>
-
+          ${
+            customerId
+              ? `<button
+                   class="btn danger"
+                   data-delete-subscriber="${escapeHtml(customerId)}">
+                   Eliminar suscriptor
+                 </button>`
+              : ""
+          }
           ${renderSubscription(mainSubscription, true)}
 
           ${
@@ -3098,6 +3107,56 @@ container.querySelectorAll("[data-delete-history]").forEach(button => {
     }
 
     alert("Suscripción eliminada correctamente.");
+    await loadSubscriptions();
+  });
+});
+  // Eliminar suscriptor completo
+container.querySelectorAll("[data-delete-subscriber]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const customerId = button.dataset.deleteSubscriber;
+
+    const confirmed = confirm(
+      "¿Eliminar definitivamente a este suscriptor?\n\n" +
+      "Se borrarán su perfil, cuenta de acceso, todas sus suscripciones, " +
+      "pedidos, artículos y pagos relacionados.\n\n" +
+      "Esta acción es irreversible y no afectará a otros clientes."
+    );
+
+    if (!confirmed) return;
+
+    const confirmationWord = prompt(
+      'Para confirmar, escribe exactamente: ELIMINAR'
+    );
+
+    if (confirmationWord !== "ELIMINAR") {
+      alert("Eliminación cancelada.");
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Eliminando...";
+
+    const { data, error } = await db.functions.invoke(
+      "delete-subscriber",
+      {
+        body: {
+          customer_id: customerId
+        }
+      }
+    );
+
+    if (error || !data?.success) {
+      console.error("Error al eliminar suscriptor:", error || data);
+      alert(
+        "No se pudo completar la eliminación.\n\n" +
+        (data?.error || error?.message || "Error desconocido.")
+      );
+
+      await loadSubscriptions();
+      return;
+    }
+
+    alert("Suscriptor eliminado correctamente.");
     await loadSubscriptions();
   });
 });
