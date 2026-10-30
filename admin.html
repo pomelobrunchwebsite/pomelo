@@ -2700,6 +2700,14 @@ async function loadSubscriptions() {
     .limit(100);
 
   if (error) {
+    console.table(subscriptions);
+
+console.log(
+  "Fecha actual:",
+  new Date().getFullYear() + "-" +
+  String(new Date().getMonth() + 1).padStart(2, "0") + "-" +
+  String(new Date().getDate()).padStart(2, "0")
+);
     container.textContent =
       "No se pudieron cargar las suscripciones: " + error.message;
     console.error(error);
