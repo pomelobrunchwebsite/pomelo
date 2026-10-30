@@ -18,6 +18,8 @@
   --line: #e5e2d8;
   --white: #fffefa;
   --sand: #e9e4d7;
+  --grapefruit: #e88772;
+  --grapefruit-soft: #f8e7e1;
   --pad: clamp(16px, 5vw, 76px);
 }
 *,
@@ -1875,6 +1877,140 @@ img {
     padding: 21px 2px;
   }
 }
+
+
+/* ── REFINAMIENTO VISUAL POMELO · MOBILE FIRST ── */
+:root {
+  --grapefruit: #e88772;
+  --grapefruit-soft: #f8e7e1;
+  --line: #e8e4da;
+}
+::selection { background: var(--grapefruit-soft); color: var(--dark); }
+button, input, textarea, select { font: inherit; }
+
+/* Entrada discreta de secciones al desplazarse */
+@keyframes pomeloRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pomeloModalIn {
+  from { opacity: 0; transform: translateY(12px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.hero > div, .section-heading, .pomelo-account-actions, .menu-grid,
+.subscription-grid { animation: pomeloRise .55s ease both; }
+.pomelo-account-actions { animation-delay: .06s; }
+
+/* Menos aire vacío y mejor jerarquía */
+.section { padding-top: clamp(48px, 7vw, 88px); padding-bottom: clamp(48px, 7vw, 88px); }
+.section-heading { gap: 18px; margin-bottom: clamp(20px, 3vw, 32px); }
+.eyebrow { color: var(--green); }
+.section-heading h2 { letter-spacing: -.045em; }
+
+/* Botones de entrada a Mi cuenta */
+.pomelo-account-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.pomelo-account-button {
+  min-width: 0;
+  min-height: 112px;
+  padding: 20px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  text-align: left;
+  color: var(--dark);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+}
+.pomelo-account-button > span:first-child { display: flex; flex-direction: column; gap: 7px; }
+.pomelo-account-button strong { font-size: 15px; font-weight: 650; letter-spacing: -.02em; }
+.pomelo-account-button small { max-width: 190px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.pomelo-account-button .pomelo-account-arrow {
+  flex: 0 0 28px; width: 28px; height: 28px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--grapefruit-soft); color: #a94e3c; font-size: 16px;
+  transition: transform .22s ease, background .22s ease;
+}
+.pomelo-account-button:hover { padding-left: 18px; border-color: #e9b5a8; transform: translateY(-3px); box-shadow: 0 12px 28px rgba(37,41,31,.06); }
+.pomelo-account-button:hover .pomelo-account-arrow { transform: translate(2px,-2px); background: #f2d2c8; }
+.pomelo-account-button:active { transform: scale(.985); }
+
+/* Modal: tarjeta limpia, cómoda y usable con una mano */
+.pomelo-portal-modal {
+  padding: 14px;
+  background: rgba(31, 34, 27, .42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pomelo-portal-panel {
+  width: min(100%, 600px);
+  max-height: min(88dvh, 820px);
+  padding: clamp(18px, 4vw, 30px);
+  background: #fcfbf7;
+  border: 1px solid rgba(255,255,255,.75);
+  border-radius: 22px;
+  box-shadow: 0 24px 90px rgba(20,24,17,.2);
+  overscroll-behavior: contain;
+  animation: pomeloModalIn .24s ease both;
+}
+.pomelo-portal-top { position: sticky; top: -1px; z-index: 2; padding: 2px 0 12px; background: #fcfbf7; }
+#pomelo-portal-title { margin: 0; font-family: "DM Sans", system-ui, sans-serif; font-size: clamp(23px, 5vw, 29px); font-weight: 650; letter-spacing: -.045em; }
+.pomelo-portal-close { flex: 0 0 40px; width: 40px; height: 40px; background: #f1efe7; border: 0; font-size: 24px; transition: background .2s ease, transform .2s ease; }
+.pomelo-portal-close:hover { background: var(--grapefruit-soft); transform: rotate(4deg); }
+.pomelo-portal-divider { margin: 8px 0 20px; background: var(--line); }
+.pomelo-portal-view { animation: pomeloRise .24s ease both; }
+.pomelo-portal-view h3 { margin: 22px 0 10px; font-family: "DM Sans", system-ui, sans-serif; font-size: 17px; font-weight: 650; letter-spacing: -.025em; }
+.pomelo-portal-view p { line-height: 1.55; }
+.customer-account-info { display: grid; gap: 14px; }
+.customer-account-status, .customer-account-address,
+#customer-portal-content, #customer-plan-menu-view > *, #customer-orders > * {
+  padding: 17px; background: #fffefa; border: 1px solid var(--line); border-radius: 15px;
+}
+.customer-account-status { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.customer-account-status > span { color: var(--muted); font-size: 13px; }
+#customer-plan-status { padding: 5px 10px; border-radius: 30px; background: var(--grapefruit-soft); color: #a34d3d; font-size: 12px; font-weight: 700; }
+.customer-account-address h3 { margin: 0 0 9px; }
+#customer-saved-address { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+#customer-edit-address, #customer-save-address, #customer-cancel-edit-address {
+  min-height: 42px; margin-top: 12px; padding: 10px 15px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--line); transition: transform .18s ease, background .18s ease;
+}
+#customer-edit-address, #customer-save-address { background: var(--green); color: white; border-color: var(--green); }
+#customer-cancel-edit-address { background: #f1efe7; color: var(--dark); }
+#customer-edit-address:hover, #customer-save-address:hover, #customer-cancel-edit-address:hover { transform: translateY(-1px); }
+#customer-address-editor { margin-top: 16px; padding-top: 15px; border-top: 1px solid var(--line); }
+#customer-address-editor label { display: block; margin: 12px 0 6px; font-size: 13px; font-weight: 650; }
+#customer-address-editor textarea { width: 100%; min-height: 76px; resize: vertical; padding: 12px; border: 1px solid #dedbd0; border-radius: 10px; background: #fff; color: var(--dark); outline: none; }
+#customer-address-editor textarea:focus { border-color: var(--grapefruit); box-shadow: 0 0 0 3px var(--grapefruit-soft); }
+#customer-address-feedback { margin: 10px 0 0; font-size: 13px; }
+#customer-plan-dates { color: var(--muted); }
+
+/* Reduce movimiento si el dispositivo lo solicita */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+@media (max-width: 720px) {
+  .pomelo-account-actions { grid-template-columns: 1fr; gap: 9px; }
+  .pomelo-account-button { min-height: 76px; padding: 15px 16px; align-items: center; border-radius: 14px; }
+  .pomelo-account-button:hover { padding-left: 16px; }
+  .pomelo-account-button > span:first-child { gap: 3px; }
+  .pomelo-account-button small { max-width: none; font-size: 12px; }
+  .section-heading { align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .pomelo-portal-modal { align-items: flex-end; padding: 8px; }
+  .pomelo-portal-panel { width: 100%; max-height: 91dvh; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); border-radius: 22px 22px 14px 14px; }
+  .pomelo-portal-divider { margin: 5px 0 15px; }
+  .customer-account-status, .customer-account-address { padding: 15px; }
+  #customer-address-editor textarea { font-size: 16px; } /* evita zoom automático en iOS */
+}
+
 </style>
 
 <script>  
@@ -1888,7 +2024,7 @@ img {
   <a class="brand" href="#" aria-label="Pomelo Brunch House inicio">pomelo<span>.</span><small>brunch house</small></a>  
   <nav class="nav" aria-label="Navegación principal">  
     <a class="nav-secondary" href="#menu">Menú de la semana</a>  
-    <a class="nav-secondary" href="#mi-portal">Mi plan</a>
+    <a class="nav-secondary" href="#mi-portal">Mi cuenta</a>
     <a class="nav-secondary" href="#filosofia">Nuestra filosofía</a>  
     <a class="nav-secondary" href="#como-funciona">Cómo funciona</a>  
     <a class="nav-menu" href="#menu">Menú</a>  
@@ -1940,26 +2076,26 @@ img {
   <section class="section" id="mi-portal">
     <div class="section-heading">
       <div>
-        <h2>Mi cuenta.</h2>
+        <h2>Tu espacio.</h2>
       </div>
       <p class="section-description">
-        Todo tu plan, en un solo lugar.
+        Tu plan, tus entregas y tus datos, en un solo lugar.
       </p>
     </div>
 
     <div class="pomelo-account-actions">
       <button type="button" class="pomelo-account-button" data-portal-view="plan">
-        <span>Mi cuenta</span>
+        <span><strong>Mi cuenta</strong><small>Suscripción, dirección y datos</small></span>
         <span class="pomelo-account-arrow">↗</span>
       </button>
 
       <button type="button" class="pomelo-account-button" data-portal-view="menu">
-        <span>Menú programado</span>
+        <span><strong>Mi menú</strong><small>Consulta tus platillos programados</small></span>
         <span class="pomelo-account-arrow">↗</span>
       </button>
 
       <button type="button" class="pomelo-account-button" data-portal-view="orders">
-        <span>Mis pedidos</span>
+        <span><strong>Mis pedidos</strong><small>Revisa el estado de tus entregas</small></span>
         <span class="pomelo-account-arrow">↗</span>
       </button>
     </div>
