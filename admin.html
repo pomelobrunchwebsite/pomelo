@@ -3015,7 +3015,18 @@ const statusLabels = {
 
 // Calcular estado general del cliente
 const customerStatus = getCustomerStatus(customerSubscriptions);
-
+console.log(
+  "Cliente:",
+  person.full_name,
+  "| Estatus calculado:",
+  customerStatus,
+  "| Suscripciones:",
+  customerSubscriptions.map(s => ({
+    status: s.status,
+    start_date: s.start_date,
+    end_date: s.end_date
+  }))
+);
 // Seleccionar la suscripción principal
 const ordered = [...customerSubscriptions].sort((a, b) => {
   const statusA = String(a.status || "").toLowerCase();
