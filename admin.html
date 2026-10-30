@@ -3024,15 +3024,18 @@ const statusLabels = {
             ${dateLocal(sub.end_date)}
           </p>
           ${
-  !isMain
+${
+  (
+    !isMain ||
+    ["cancelled", "completed"].includes(status)
+  )
     ? `<button
         class="btn danger"
         data-delete-history="${escapeHtml(sub.id)}">
-        Eliminar del historial
+        ${isMain ? "Eliminar suscripción" : "Eliminar del historial"}
       </button>`
     : ""
 }
-
           <button class="btn"
             data-details="${escapeHtml(sub.id)}">
             Ver detalle
