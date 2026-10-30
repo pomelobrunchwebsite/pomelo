@@ -2768,14 +2768,12 @@ const today = [
 
 // Clasificación general del cliente
 function getCustomerStatus(customerSubscriptions) {
-  const active = customerSubscriptions.some(sub =>
-    String(sub.status).toLowerCase() === "active" &&
-    sub.start_date <= today &&
-    sub.end_date >= today
-  );
+const active = customerSubscriptions.some(sub =>
+  String(sub.status || "").toLowerCase() === "active" &&
+  sub.end_date >= today
+);
 
-  if (active) return "active";
-
+if (active) return "active";
   const pending = customerSubscriptions.some(sub =>
     String(sub.status).toLowerCase() === "pending"
   );
