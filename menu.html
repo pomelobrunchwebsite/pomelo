@@ -2008,6 +2008,12 @@ img {
         <p class="section-description">Consulta qué opciones tenemos para cada día de la semana.</p>  
       </div>  
       <div id="menu-status" class="menu-status hidden" role="status" aria-live="polite"></div>  
+      <div class="week-selector-dropdown" id="week-selector-container">
+  <label for="week-select">Selecciona una semana</label>
+  <select id="week-select">
+    <option value="">Cargando semanas disponibles...</option>
+  </select>
+</div>
       <div id="day-tabs" class="day-tabs hidden" role="tablist" aria-label="Días de la semana">  
         <button class="day-tab" role="tab" type="button" data-day="1"><span class="full">Lunes</span><span class="short">Lun</span></button>  
         <button class="day-tab" role="tab" type="button" data-day="2"><span class="full">Martes</span><span class="short">Mar</span></button>  
@@ -2040,14 +2046,6 @@ img {
           </p>
 
           <div class="subscription-fields">
-  <div class="subscription-field full-width">
-    <div class="week-selector">
-      <p class="selector-label">Elige tu semana</p>
-      <div id="week-tabs" class="week-tabs" aria-label="Semanas disponibles">
-        <span class="menu-status">Cargando semanas disponibles...</span>
-      </div>
-    </div>
-  </div>
 
   <input type="hidden" id="subscription-start-date">
   <input type="hidden" id="subscription-end-date">          </div>
