@@ -1153,6 +1153,48 @@ tbody tr:last-child td {
     font-size: 10px;
   }
 }
+    /* SUSCRIPTORES DESPLEGABLES */
+
+#subscriptions-list .sub-customer-toggle {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--white);
+  color: var(--ink);
+  text-align: left;
+}
+
+#subscriptions-list .sub-customer-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+#subscriptions-list .sub-customer-arrow {
+  color: var(--olive);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+#subscriptions-list .sub-customer-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 4px 4px;
+}
+
+#subscriptions-list .sub-customer-detail.hidden {
+  display: none !important;
+}
 
   </style>
 </head>
@@ -2990,44 +3032,55 @@ const badgeColor =
       return `
         <article class="item sub-customer-card">
 
-          <div class="sub-customer-header">
 
-            <div>
-              <div class="item-title">
-                ${escapeHtml(person.full_name || "Cliente sin nombre")}
-              </div>
+          <button
+            type="button"
+            class="sub-customer-toggle"
+            data-customer-toggle="${escapeHtml(key)}"
+            aria-expanded="false"
+            aria-controls="sub-customer-detail-${escapeHtml(key)}">
 
-              <div class="muted">
-                ${escapeHtml(person.phone || "Sin teléfono")}
-              </div>
-            </div>
+            <span class="sub-customer-name">
+              ${escapeHtml(person.full_name || "Cliente sin nombre")}
+            </span>
 
             <span class="pill ${badgeColor}">
-        ${escapeHtml(customerStatusLabel)}    
-        </span>
+              ${escapeHtml(customerStatusLabel)}
+            </span>
 
-          </div>
+            <span class="sub-customer-arrow">＋</span>
+          </button>
 
-          <div class="sub-customer-summary">
-${customerSubscriptions.length} ${
-  customerSubscriptions.length === 1 ? "registro" : "registros"
-} ·
-            ${activeCount} activas ·
-            ${pendingCount} pendientes ·
-            ${cancelledCount} canceladas ·
-            ${completedCount} completadas
-          </div>
-          ${
-            customerId
-              ? `<button
-                   class="btn danger"
-                   data-delete-subscriber="${escapeHtml(customerId)}">
-                   Eliminar suscriptor
-                 </button>`
-              : ""
-          }
-          ${renderSubscription(mainSubscription, true)}
+          <div
+            id="sub-customer-detail-${escapeHtml(key)}"
+            class="hidden sub-customer-detail">
 
+            <div class="muted">
+              ${escapeHtml(person.phone || "Sin teléfono")}
+            </div>
+
+            <div class="sub-customer-summary">
+              ${customerSubscriptions.length} ${
+                customerSubscriptions.length === 1 ? "registro" : "registros"
+              } ·
+              ${activeCount} activas ·
+              ${pendingCount} pendientes ·
+              ${cancelledCount} canceladas ·
+              ${completedCount} completadas
+            </div>
+
+            ${
+              customerId
+                ? `<button
+                     class="btn danger"
+                     data-delete-subscriber="${escapeHtml(customerId)}">
+                     Eliminar suscriptor
+                   </button>`
+                : ""
+            }
+
+            ${renderSubscription(mainSubscription, true)}
+            
           ${
             history.length
               ? `
@@ -3054,11 +3107,28 @@ ${customerSubscriptions.length} ${
               `
               : ""
           }
-
+          </div>
         </article>
       `;
     }).join("");
+// Desplegar información del suscriptor
+container.querySelectorAll("[data-customer-toggle]").forEach(button => {
+  button.addEventListener("click", () => {
+    const key = button.dataset.customerToggle;
+    const detail = $("sub-customer-detail-" + key);
 
+    if (!detail) return;
+
+    const isHidden = detail.classList.toggle("hidden");
+
+    button.setAttribute("aria-expanded", String(!isHidden));
+
+    const arrow = button.querySelector(".sub-customer-arrow");
+    if (arrow) {
+      arrow.textContent = isHidden ? "＋" : "−";
+    }
+  });
+});
   // Botones de detalles
   container.querySelectorAll("[data-details]").forEach(button => {
     button.addEventListener("click", () => {
