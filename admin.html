@@ -2737,6 +2737,44 @@ async function loadSubscriptions() {
 
   // Agrupar suscripciones por cliente
   const customerGroups = {};
+  // Fecha actual local
+const today = [
+  new Date().getFullYear(),
+  String(new Date().getMonth() + 1).padStart(2, "0"),
+  String(new Date().getDate()).padStart(2, "0")
+].join("-");
+
+// Clasificación general del cliente
+function getCustomerStatus(customerSubscriptions) {
+  const active = customerSubscriptions.some(sub =>
+    String(sub.status).toLowerCase() === "active" &&
+    sub.start_date <= today &&
+    sub.end_date >= today
+  );
+
+  if (active) return "active";
+
+  const pending = customerSubscriptions.some(sub =>
+    String(sub.status).toLowerCase() === "pending"
+  );
+
+  if (pending) return "pending";
+
+  const latest = [...customerSubscriptions].sort((a, b) => {
+    const dateA = a.end_date || a.created_at || "";
+    const dateB = b.end_date || b.created_at || "";
+    return dateB.localeCompare(dateA);
+  })[0];
+
+  if (
+    latest &&
+    String(latest.status).toLowerCase() === "cancelled"
+  ) {
+    return "cancelled";
+  }
+
+  return "inactive";
+}
 
   subscriptions.forEach((sub, index) => {
     const key = sub.customer_id
@@ -2781,44 +2819,6 @@ $("stat-subs-inactive").textContent =
 $("stat-subs-cancelled").textContent =
   customerStatusCounts.cancelled;
 // Clasificación general del cliente
-// Fecha actual local
-const today = [
-  new Date().getFullYear(),
-  String(new Date().getMonth() + 1).padStart(2, "0"),
-  String(new Date().getDate()).padStart(2, "0")
-].join("-");
-
-// Clasificación general del cliente
-function getCustomerStatus(customerSubscriptions) {  
-  const active = customerSubscriptions.some(sub =>
-    String(sub.status).toLowerCase() === "active" &&
-    sub.start_date <= today &&
-    sub.end_date >= today
-  );
-
-  if (active) return "active";
-
-  const pending = customerSubscriptions.some(sub =>
-    String(sub.status).toLowerCase() === "pending"
-  );
-
-  if (pending) return "pending";
-
-  const latest = [...customerSubscriptions].sort((a, b) => {
-    const dateA = a.end_date || a.created_at || "";
-    const dateB = b.end_date || b.created_at || "";
-    return dateB.localeCompare(dateA);
-  })[0];
-
-  if (
-    latest &&
-    String(latest.status).toLowerCase() === "cancelled"
-  ) {
-    return "cancelled";
-  }
-
-  return "inactive";
-}
 
 const statusLabels = {
   pending: "Pendiente",
