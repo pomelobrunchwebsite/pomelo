@@ -433,7 +433,43 @@ h2 {
 .menu-status .button {
   margin-top: 12px;
 }
+/* SELECTOR DE SEMANA */
+.week-selector-dropdown {
+  max-width: 560px;
+  margin: 0 0 22px;
+}
 
+.week-selector-dropdown label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dark);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.week-select {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--cream);
+  color: var(--dark);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.week-select:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+.week-selector-hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
 .day-tabs {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -2007,7 +2043,18 @@ img {
         </div>
         <p class="section-description">Consulta qué opciones tenemos para cada día de la semana.</p>  
       </div>  
-      <div id="menu-status" class="menu-status hidden" role="status" aria-live="polite"></div>  
+      <div id="menu-status" class="menu-status hidden" role="status" aria-live="polite"></div> 
+      <div class="week-selector-dropdown" id="week-selector-container">
+  <label for="week-select">Elige tu semana</label>
+
+  <select id="week-select" class="week-select">
+    <option value="">Cargando semanas disponibles...</option>
+  </select>
+
+  <p class="week-selector-hint">
+    Agrega tus platillos y cambia de semana para seguir armando tu pedido.
+  </p>
+</div>
       <div id="day-tabs" class="day-tabs hidden" role="tablist" aria-label="Días de la semana">  
         <button class="day-tab" role="tab" type="button" data-day="1"><span class="full">Lunes</span><span class="short">Lun</span></button>  
         <button class="day-tab" role="tab" type="button" data-day="2"><span class="full">Martes</span><span class="short">Mar</span></button>  
