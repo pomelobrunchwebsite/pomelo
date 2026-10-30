@@ -2781,12 +2781,15 @@ $("stat-subs-inactive").textContent =
 $("stat-subs-cancelled").textContent =
   customerStatusCounts.cancelled;
 // Clasificación general del cliente
-function getCustomerStatus(customerSubscriptions) {
+// Fecha actual local
 const today = [
   new Date().getFullYear(),
   String(new Date().getMonth() + 1).padStart(2, "0"),
   String(new Date().getDate()).padStart(2, "0")
 ].join("-");
+
+// Clasificación general del cliente
+function getCustomerStatus(customerSubscriptions) {  
   const active = customerSubscriptions.some(sub =>
     String(sub.status).toLowerCase() === "active" &&
     sub.start_date <= today &&
@@ -2928,8 +2931,6 @@ const ordered = [...customerSubscriptions].sort((a, b) => {
 
 const mainSubscription = ordered[0];
 const history = ordered.slice(1);
-      // Estado general del cliente
-const customerStatus = getCustomerStatus(customerSubscriptions);
 const customerStatusLabel =
   statusLabels[customerStatus] || customerStatus;
       const activeCount = customerSubscriptions.filter(
