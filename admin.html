@@ -1,3923 +1,3477 @@
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#69734b">
-  <title>Administración | Pomelo Brunch House</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">  
+<meta name="theme-color" content="#f8f6ef">  
+<meta name="description" content="Pomelo Brunch House. Comida real, fresca y preparada para acompañar tu semana.">  
+<title>Pomelo Brunch House | Comida real, todos los días</title>  
+<link rel="preconnect" href="https://fonts.googleapis.com">  
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">  
+<style>  
 :root {
-  --olive: #69734b;
-  --olive-dark: #424a30;
   --cream: #f8f6ef;
+  --green: #536247;
+  --dark: #25291f;
+  --muted: #6b6d61;
+  --line: #e5e2d8;
   --white: #fffefa;
-  --ink: #292b24;
-  --muted: #77796e;
-  --line: #e7e5da;
-  --danger: #a33d32;
+  --sand: #e9e4d7;
+  --grapefruit: #e88772;
+  --grapefruit-soft: #f8e7e1;
+  --pad: clamp(16px, 5vw, 76px);
 }
-
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
-
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 18px;
+  scroll-padding-top: 84px;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   background: var(--cream);
-  color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.55;
+  color: var(--dark);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-wrap: break-word;
+  overflow-x: clip;
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
+a {
+  color: inherit;
+  text-decoration: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--olive);
-  outline-offset: 2px;
+h1, h2, h3, h4, p {
+  margin-top: 0;
 }
 
-/* ENCABEZADO */
-
-header {
-  background: rgba(255, 254, 250, 0.97);
-  border-bottom: 1px solid var(--line);
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-}
-
-.brand {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.35;
-}
-
-.brand span {
-  color: var(--olive);
-}
-
-.header-right {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.muted {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-/* CONTENIDO */
-
-main {
-  width: 100%;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 30px 20px 60px;
-}
-
-h1 {
-  font-size: clamp(26px, 4vw, 36px);
-  line-height: 1.2;
-  margin: 0 0 8px;
-  letter-spacing: -1px;
-}
-
-h2 {
-  font-size: 20px;
-  line-height: 1.3;
-  margin: 0 0 18px;
-}
-
-p {
-  line-height: 1.6;
-}
-
-/* BOTONES */
-
-button,
-.btn,
-.tab {
-  min-height: 44px;
-}
-
-.btn,
-.tab {
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 10px 15px;
-  background: var(--white);
-  color: var(--ink);
-  font-size: 13px;
-  line-height: 1.4;
-  transition: background 0.18s, border-color 0.18s;
-}
-
-.btn.primary,
-.tab.active {
-  background: var(--olive);
-  border-color: var(--olive);
-  color: white;
-}
-
-.btn.danger {
-  color: var(--danger);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* INTRODUCCIÓN */
-
-.topline {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
-}
-
-.topline p {
-  margin: 0;
-}
-
-#refresh-btn {
-  flex-shrink: 0;
-}
-
-/* ESTADÍSTICAS */
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.stat,
-.panel {
-  min-width: 0;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 15px;
-  padding: 20px;
-}
-
-.stat .number {
-  font-size: 28px;
-  font-weight: 800;
-  line-height: 1.2;
-  margin-top: 8px;
-  overflow-wrap: anywhere;
-}
-
-/* PESTAÑAS */
-
-.tabs {
-  display: flex;
-  gap: 8px;
-  margin: 20px 0;
-  padding-bottom: 3px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
-}
-
-.tab {
-  flex: 0 0 auto;
-  white-space: nowrap;
-}
-
-/* ENCABEZADOS DE SECCIÓN */
-
-.section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-.section-head h2 {
-  margin: 0;
-}
-
-/* FORMULARIOS */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.field {
-  min-width: 0;
-  margin-bottom: 14px;
-}
-
-label {
+img {
   display: block;
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 7px;
+  max-width: 100%;
 }
 
-input,
-select,
-textarea {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  min-height: 46px;
-  padding: 11px 12px;
-  border: 1px solid #dcdacd;
-  border-radius: 9px;
-  background: white;
-  color: var(--ink);
-  font-size: 16px;
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--olive);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(105, 115, 75, 0.12);
+button, a {
+  -webkit-touch-callout: none;
 }
 
-input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  min-height: 18px;
-  padding: 0;
-  accent-color: var(--olive);
-  flex: 0 0 auto;
-}
-
-input[type="file"] {
-  padding: 9px;
-  font-size: 13px;
-}
-
-textarea {
-  min-height: 90px;
-  resize: vertical;
-}
-
-.full {
-  grid-column: 1 / -1;
-}
-
-.checkline {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin: 8px 0 18px;
-}
-
-.checkline label {
-  margin: 0;
-}
-
-#item-form {
-  margin-bottom: 22px;
-  padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #fcfbf6;
-}
-
-#item-form h2 {
-  margin-bottom: 20px;
-}
-
-#item-form button {
-  margin: 4px 6px 0 0;
-}
-
-/* DÍAS DISPONIBLES */
-
-.days-selector {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.day-option {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  min-width: 0;
-  min-height: 44px;
-  padding: 8px;
-  margin: 0;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: var(--cream);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.day-option input {
-  width: 16px;
-  height: 16px;
-  min-height: 16px;
-  margin: 0;
-}
-
-/* FILTROS DEL MENÚ */
-
-.menu-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 18px 0 14px;
-}
-
-.menu-filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.menu-filter {
-  min-height: 42px;
-  padding: 9px 14px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: var(--white);
-  color: var(--ink);
-  font-size: 13px;
-  white-space: nowrap;
-}
-
-.menu-filter.active {
-  background: var(--olive);
-  border-color: var(--olive);
-  color: white;
-}
-
-.menu-filter:focus-visible {
-  outline: 2px solid var(--olive-dark);
-  outline-offset: 2px;
-}
-
-/* LISTAS Y PLATILLOS */
-
-.list {
-  display: grid;
-  gap: 10px;
-}
-
-.item {
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  background: var(--white);
-}
-
-.item > div:first-child {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.item-title {
-  font-weight: 700;
-  margin-bottom: 5px;
-  overflow-wrap: anywhere;
-}
-
-.item p {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 7px;
-}
-
-.item-actions {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-  flex: 0 0 auto;
-}
-
-.item-actions .btn {
-  min-width: 78px;
-}
-
-.pill {
-  font-size: 12px;
-  border-radius: 99px;
-  background: #eeeee5;
-  padding: 5px 9px;
-  display: inline-block;
-  line-height: 1.5;
-}
-
-/* AVISOS */
-
-.notice {
-  padding: 12px 14px;
-  border-radius: 10px;
-  margin: 14px 0;
-  background: #eeeee5;
-  font-size: 14px;
-  overflow-wrap: anywhere;
-}
-
-.notice.error {
-  color: var(--danger);
-  background: #f8e9e5;
-}
-
-.notice.success {
-  color: #355b36;
-  background: #e9f1e5;
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
 }
 
 .hidden {
   display: none !important;
 }
 
-.empty {
-  color: var(--muted);
-  padding: 18px 0;
-  overflow-wrap: anywhere;
+html.auth-check body {
+  visibility: hidden;
 }
 
-/* TABLAS DE PEDIDOS Y PRODUCCIÓN */
-
-.table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
+/* AVISO SUPERIOR */
+.announcement {
+  padding: 9px 14px;
+  background: var(--green);
+  color: white;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  line-height: 1.5;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 580px;
-  background: var(--white);
-}
-
-th,
-td {
-  padding: 12px 10px;
+/* ENCABEZADO */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 72px;
+  padding: 0 var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: rgba(248, 246, 239, .96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
-  text-align: left;
-  vertical-align: top;
-  font-size: 13px;
 }
 
-th {
-  color: var(--muted);
-  font-size: 12px;
-  background: #f6f5ee;
-  white-space: nowrap;
-}
-
-tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-/* TABLET */
-
-@media (max-width: 850px) {
-  main {
-    padding: 24px 16px 45px;
-  }
-
-  .stats {
-    gap: 9px;
-  }
-
-  .stat {
-    padding: 16px;
-  }
-
-  .stat .number {
-    font-size: 25px;
-  }
-
-  .item {
-    align-items: flex-start;
-  }
-
-  .item-actions {
-    flex-direction: column;
-  }
-
-  .item-actions .btn {
-    width: 100%;
-  }
-}
-
-/* MÓVIL */
-
-@media (max-width: 650px) {
-  header {
-    padding: 13px 15px;
-    gap: 10px;
-  }
-
-  .brand {
-    max-width: 150px;
-    font-size: 16px;
-    line-height: 1.4;
-  }
-
-  .header-right {
-    gap: 8px;
-  }
-
-  .header-right .muted {
-    display: none;
-  }
-
-  #logout-btn {
-    padding: 9px 11px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  main {
-    padding: 22px 13px 38px;
-  }
-
-  .topline {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-
-  .topline h1 {
-    font-size: 28px;
-  }
-
-  .topline p {
-    font-size: 13px;
-  }
-
-  #refresh-btn {
-    width: 100%;
-  }
-
-  .stats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 7px;
-    margin-bottom: 15px;
-  }
-
-  .stat {
-    padding: 12px 9px;
-    border-radius: 11px;
-  }
-
-  .stat .muted {
-    font-size: 10px;
-    line-height: 1.4;
-  }
-
-  .stat .number {
-    font-size: 22px;
-    margin-top: 7px;
-  }
-
-  .tabs {
-    gap: 7px;
-    margin: 17px 0;
-    padding-bottom: 5px;
-  }
-
-  .tab {
-    min-height: 43px;
-    padding: 10px 13px;
-    font-size: 12px;
-  }
-
-  .panel {
-    padding: 15px;
-    border-radius: 12px;
-  }
-
-  .section-head {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .section-head h2 {
-    font-size: 19px;
-  }
-
-  .section-head .btn {
-    width: 100%;
-  }
-
-  .form-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-
-  .full {
-    grid-column: auto;
-  }
-
-  #item-form {
-    padding: 13px;
-  }
-
-  #item-form button {
-    width: 100%;
-    margin: 5px 0 0;
-  }
-
-  #item-image-preview {
-    max-width: 100%;
-    height: auto;
-    aspect-ratio: 5 / 4;
-    object-fit: cover;
-  }
-
-  .days-selector {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .day-option:last-child {
-    grid-column: 1 / -1;
-  }
-
-  .menu-toolbar {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 11px;
-  }
-
-  .menu-filters {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 100%;
-    gap: 6px;
-  }
-
-  .menu-filter {
-    width: 100%;
-    padding: 9px 5px;
-    font-size: 12px;
-  }
-
-  #menu-count {
-    font-size: 12px;
-    line-height: 1.6;
-  }
-
-  .item {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding: 13px;
-  }
-
-  .item-title {
-    font-size: 14px;
-  }
-
-  .item .muted {
-    font-size: 12px;
-    line-height: 1.65;
-  }
-
-  .item p {
-    gap: 7px;
-  }
-
-  .item-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-    gap: 8px;
-  }
-
-  .item-actions .btn {
-    width: 100%;
-    min-width: 0;
-    padding: 9px 7px;
-    font-size: 12px;
-  }
-
-  .notice {
-    font-size: 13px;
-    padding: 11px 12px;
-  }
-
-  th,
-  td {
-    padding: 10px 9px;
-    font-size: 12px;
-  }
-
-  .table-wrap {
-    border-radius: 8px;
-  }
-}
-
-/* TELÉFONOS MUY PEQUEÑOS */
-
-@media (max-width: 360px) {
-  header {
-    padding-inline: 11px;
-  }
-
-  .brand {
-    font-size: 15px;
-    max-width: 130px;
-  }
-
-  #logout-btn {
-    padding-inline: 8px;
-    font-size: 11px;
-  }
-
-  main {
-    padding-inline: 10px;
-  }
-
-  .stats {
-    gap: 5px;
-  }
-
-  .stat {
-    padding: 10px 6px;
-  }
-
-  .stat .muted {
-    font-size: 9px;
-  }
-
-  .stat .number {
-    font-size: 20px;
-  }
-
-  .panel {
-    padding: 12px;
-  }
-
-  .menu-filter {
-    font-size: 11px;
-  }
-}
-
-/* ACCESIBILIDAD */
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    transition: none !important;
-    animation: none !important;
-  }
-}
-    
-/* SUSCRIPCIONES COMPACTAS */
-#subscriptions-list {
-  display: grid;
-  gap: 8px;
-}
-
-#subscriptions-list > .item {
-  padding: 12px 14px;
-  gap: 10px;
-  align-items: center !important;
-  border-radius: 10px;
-}
-
-#subscriptions-list .item-title {
-  margin-bottom: 2px;
-  font-size: 14px;
-}
-
-#subscriptions-list .muted {
-  font-size: 12px;
-}
-
-#subscriptions-list p {
-  margin: 5px 0 !important;
-  font-size: 12px;
-}
-
-#subscriptions-list .pill {
-  padding: 3px 8px;
-  font-size: 11px;
-}
-
-#subscriptions-list button {
-  min-height: 36px;
-  padding: 7px 11px;
-  font-size: 12px;
-}
-
-#subscriptions-list .item-actions {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px !important;
-}
-
-#subscriptions-list [id^="sub-detail-"] {
-  width: 100%;
-}
-
-#subscriptions-list [id^="sub-detail-"] .notice {
-  margin: 8px 0;
-  padding: 10px;
-  font-size: 12px;
-}
-
-#subscriptions-list [id^="sub-detail-"] h3 {
-  margin: 10px 0 6px;
-}
-
-@media (max-width: 650px) {
-  #subscriptions-list > .item {
-    padding: 11px;
-  }
-
-  #subscriptions-list .item-actions {
-    display: flex;
-    flex-direction: row;
-  }
-}
-
-/* ===== SUSCRIPCIONES: DISEÑO COMPACTO ===== */
-
-#subscriptions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-#subscriptions-list > .item {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center !important;
-  gap: 12px;
-  padding: 10px 14px !important;
-  margin: 0;
-  border-radius: 10px;
-}
-
-/* Información del suscriptor */
-#subscriptions-list > .item > div:first-child {
-  min-width: 0;
-}
-
-#subscriptions-list .item-title {
-  font-size: 14px;
-  line-height: 1.3;
-  margin: 0 0 4px !important;
-  overflow-wrap: anywhere;
-}
-
-#subscriptions-list .muted {
-  font-size: 11px;
-  line-height: 1.4;
-}
-
-#subscriptions-list p {
-  font-size: 12px;
-  line-height: 1.4;
-  margin: 3px 0 !important;
-}
-
-/* Botones a la derecha */
-#subscriptions-list .item-actions {
-  display: flex !important;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: 5px;
-  margin: 0 !important;
-  min-width: 105px;
-}
-
-#subscriptions-list .item-actions button {
-  width: 100%;
-  min-height: 32px;
-  padding: 6px 9px !important;
-  margin: 0 !important;
-  font-size: 11px;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-/* Estado más pequeño */
-#subscriptions-list .pill {
+.brand {
   display: inline-block;
-  padding: 3px 7px;
-  font-size: 10px;
-  line-height: 1.3;
+  flex-shrink: 0;
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1.1;
 }
 
-/* El detalle ocupa toda la fila */
-#subscriptions-list [id^="sub-detail-"] {
-  grid-column: 1 / -1;
+.brand span {
+  color: var(--green);
+}
+
+.brand small {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 2.6px;
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(12px, 2vw, 30px);
   min-width: 0;
-  margin-top: 4px;
-}
-
-#subscriptions-list [id^="sub-detail-"] .notice {
-  margin: 6px 0;
-  padding: 9px;
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
-
-#subscriptions-list [id^="sub-detail-"] h3 {
   font-size: 13px;
-  margin: 10px 0 5px;
 }
 
-/* ===== TABLET Y MÓVIL ===== */
-
-@media (max-width: 650px) {
-  #subscriptions-list {
-    gap: 8px;
-  }
-
-  #subscriptions-list > .item {
-    grid-template-columns: minmax(0, 1fr) 90px;
-    gap: 8px;
-    padding: 9px !important;
-  }
-
-  #subscriptions-list .item-title {
-    font-size: 13px;
-  }
-
-  #subscriptions-list .muted {
-    font-size: 10px;
-  }
-
-  #subscriptions-list p {
-    font-size: 11px;
-  }
-
-  #subscriptions-list .item-actions {
-    min-width: 0;
-    gap: 5px;
-  }
-
-  #subscriptions-list .item-actions button {
-    min-height: 34px;
-    padding: 6px 4px !important;
-    font-size: 10px;
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
-}
-
-/* Móviles muy estrechos */
-@media (max-width: 380px) {
-  #subscriptions-list > .item {
-    grid-template-columns: minmax(0, 1fr) 78px;
-    gap: 6px;
-    padding: 8px !important;
-  }
-
-  #subscriptions-list .item-actions button {
-    font-size: 9px;
-    padding: 6px 3px !important;
-  }
-}
-
-/* ===== POMELO: SUSCRIPCIONES AGRUPADAS ===== */
-
-#subscriptions-list > .sub-customer-card {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 10px;
-  padding: 14px !important;
-  border-radius: 12px;
-}
-
-#subscriptions-list .sub-customer-header {
-  display: flex;
+.nav a {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
+  min-height: 44px;
+  white-space: nowrap;
 }
 
-#subscriptions-list .sub-customer-header .item-title {
-  font-size: 15px;
-  font-weight: 700;
+.nav a:hover {
+  color: var(--green);
 }
 
-#subscriptions-list .sub-customer-summary {
-  font-size: 11px;
-  color: var(--muted, #888);
-  line-height: 1.6;
+.nav .nav-button {
+  padding: 0 18px;
+  background: var(--green);
+  color: white;
+  border-radius: 3px;
 }
 
-#subscriptions-list .sub-main {
-  padding: 12px;
-  border-radius: 9px;
-  background: var(--surface, rgba(128,128,128,.07));
+.nav .nav-button:hover {
+  color: white;
+  opacity: .9;
 }
 
-#subscriptions-list .sub-record-top {
-  display: flex;
+.nav a.nav-menu {
+  display: none;
+}
+
+/* CUENTA */
+.account {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.account-trigger {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 8px;
-  flex-wrap: wrap;
-  font-size: 12px;
-}
-
-#subscriptions-list .sub-record-info > p {
-  margin: 8px 0 !important;
-}
-
-#subscriptions-list .sub-record-info > button {
-  margin-top: 5px;
-}
-
-#subscriptions-list .sub-record-info .item-actions {
-  display: flex !important;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px !important;
-}
-
-#subscriptions-list .sub-record-info .item-actions button {
-  width: auto;
-  min-width: 85px;
-}
-
-#subscriptions-list .sub-history {
-  border-top: 1px solid var(--border, #ddd);
-  padding-top: 9px;
-}
-
-#subscriptions-list .sub-history-toggle {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
   background: transparent;
-  border: none;
-  font-size: 12px;
-  color: inherit;
-  padding: 9px 4px;
-}
-
-#subscriptions-list .sub-history-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-#subscriptions-list .sub-history-entry {
-  padding: 11px;
-  border: 1px solid var(--border, #ddd);
-  border-radius: 9px;
-}
-
-#subscriptions-list .sub-history-entry .sub-record-top {
-  font-size: 11px;
-}
-
-#subscriptions-list .sub-history-entry .pill {
-  font-size: 10px;
-}
-
-@media (max-width: 380px) {
-  #subscriptions-list > .sub-customer-card {
-    padding: 10px !important;
-  }
-
-  #subscriptions-list .sub-customer-summary {
-    font-size: 10px;
-  }
-}
-    /* SUSCRIPTORES DESPLEGABLES */
-
-#subscriptions-list .sub-customer-toggle {
-  width: 100%;
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 9px 12px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: var(--white);
-  color: var(--ink);
-  text-align: left;
-}
-
-#subscriptions-list .sub-customer-name {
-  flex: 1;
-  min-width: 0;
-  font-size: 14px;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
-
-#subscriptions-list .sub-customer-arrow {
-  color: var(--olive);
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-#subscriptions-list .sub-customer-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 4px 4px;
-}
-
-#subscriptions-list .sub-customer-detail.hidden {
-  display: none !important;
-}
-.subscriber-filters {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 8px 0 12px;
-  margin-bottom: 8px;
-}
-
-.subscriber-filter {
-  flex-shrink: 0;
-  padding: 8px 14px;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  background: var(--white);
-  color: var(--ink);
+  color: var(--dark);
+  font: inherit;
   font-size: 13px;
   cursor: pointer;
 }
 
-.subscriber-filter.active {
-  background: var(--olive);
-  color: white;
-  border-color: var(--olive);
+.account-trigger svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
 }
-    #subscriptions-list > .sub-customer-card[hidden] {
+
+.account-name {
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 200;
+  width: max-content;
+  min-width: 190px;
+  max-width: min(280px, calc(100vw - 24px));
+  padding: 6px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  box-shadow: 0 10px 30px rgba(37, 41, 31, .12);
+}
+
+.account-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--dark);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-logout:hover {
+  background: var(--cream);
+}
+
+.account-logout:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+/* PORTADA */
+.hero {
+  max-width: 1600px;
+  margin: auto;
+  padding: clamp(38px, 6vw, 76px) var(--pad) clamp(46px, 7vw, 84px);
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  align-items: center;
+  gap: 6%;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  flex-shrink: 0;
+  background: var(--green);
+}
+
+h1 {
+  margin: 20px 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(42px, 5.7vw, 78px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -1.8px;
+}
+
+h1 em {
+  color: var(--green);
+  font-style: italic;
+}
+
+.hero-copy {
+  max-width: 440px;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+  margin-top: 28px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid var(--green);
+  border-radius: 2px;
+  background: var(--green);
+  color: white;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s;
+}
+
+.button:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  border-bottom: 1px solid #a7aa9d;
+}
+
+.hero-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 4.2;
+  overflow: hidden;
+  background: var(--sand);
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-label {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  max-width: calc(100% - 28px);
+  padding: 10px 13px;
+  background: var(--white);
+  font-size: 12px;
+}
+
+/* BENEFICIOS */
+.values {
+  padding: 22px var(--pad);
+  border-block: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.values span::before {
+  content: "✳";
+  color: var(--green);
+  margin-right: 8px;
+}
+
+/* SECCIONES */
+.section {
+  max-width: 1600px;
+  margin: auto;
+  padding: clamp(54px, 8vw, 96px) var(--pad);
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+h2 {
+  margin: 14px 0 0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(32px, 4vw, 50px);
+  font-weight: 400;
+  line-height: 1.13;
+  letter-spacing: -.8px;
+}
+
+.section-description {
+  max-width: 360px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* MENÚ DINÁMICO */
+.menu-section {
+  max-width: none;
+  background: var(--white);
+  border-block: 1px solid var(--line);
+}
+
+.menu-inner {
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
+  min-width: 0;
+}
+
+.menu-status {
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: var(--cream);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.menu-status .button {
+  margin-top: 12px;
+}
+/* SELECTOR DE SEMANA */
+.week-selector-dropdown {
+  max-width: 560px;
+  margin: 0 0 22px;
+}
+
+.week-selector-dropdown label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dark);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.week-select {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--cream);
+  color: var(--dark);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.week-select:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+.week-selector-hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.day-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.day-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 48px;
+  padding: 8px 6px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--cream);
+  color: var(--dark);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+
+.day-tab:hover {
+  border-color: var(--green);
+}
+
+.day-tab[aria-selected="true"] {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+
+.day-tab .short {
+  display: none;
+}
+
+.week-menu,
+#public-menu {
+  min-width: 0;
+  scroll-margin-top: 100px;
+}
+
+.day-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 400;
+}
+
+.day-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.day-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: var(--cream);
+  border-radius: 2px;
+  transition: border-color .2s;
+}
+
+.menu-card:hover {
+  border-color: #b9bdad;
+}
+
+.menu-card-image {
+  width: 94px;
+  height: 94px;
+  flex: 0 0 94px;
+  align-self: center;
+  border-radius: 3px;
+  object-fit: cover;
+  background: var(--sand);
+}
+
+.menu-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+
+.menu-card-category {
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.menu-card h4 {
+  margin: 4px 0;
+  font-family: "Playfair Display", serif;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.menu-card-description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.menu-card-price {
+  margin-top: 7px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* CANTIDADES */
+.dish-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.dish-order-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.dish-order-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dish-order-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dish-order-controls button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.dish-order-controls button:hover:not(:disabled) {
+  border-color: var(--green);
+}
+
+.dish-order-qty {
+  min-width: 20px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.dish-order-subtotal {
+  display: block;
+  margin-top: 5px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.skeleton {
+  min-width: 0;
+  height: 110px;
+  border: 1px solid var(--line);
+  background: linear-gradient(
+    90deg,
+    var(--cream) 25%,
+    #efece1 50%,
+    var(--cream) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* RESUMEN DEL PEDIDO */
+.order-summary {
+  margin-top: 28px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  background: var(--cream);
+  min-width: 0;
+}
+
+.order-summary h3 {
+  margin: 0 0 16px;
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.order-summary-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.order-summary-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.order-summary-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.order-summary-info strong {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.order-summary-row small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.order-summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.summary-qty-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+.summary-qty-button:hover {
+  border-color: var(--green);
+}
+
+.summary-qty {
+  min-width: 18px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.order-summary-amount {
+  min-width: 80px;
+  text-align: right;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.order-summary-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+#order-summary-total {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.order-summary-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 18px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.order-summary-clear:hover {
+  border-color: var(--green);
+}
+
+/* FILOSOFÍA */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.feature {
+  min-width: 0;
+  padding: 28px;
+  border: 1px solid var(--line);
+  background: rgba(255, 254, 250, .6);
+}
+
+.feature-number {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+.feature h3 {
+  margin: 24px 0 10px;
+  font-family: "Playfair Display", serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.feature p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+/* SUSCRIPCIÓN */
+.subscription {
+  padding: clamp(48px, 7vw, 76px) var(--pad);
+  background: #e9ebdf;
+}
+
+.subscription-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 36px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.subscription-inner > div {
+  min-width: 0;
+}
+
+.subscription h2 {
+  max-width: 570px;
+}
+
+.subscription p {
+  max-width: 520px;
+  margin: 16px 0 0;
+  color: #5a5f52;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* AVISO Y PIE */
+.notice {
+  padding: 18px;
+  background: #eeeee5;
+  color: var(--green);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px 24px;
+  padding: 32px var(--pad) calc(32px + env(safe-area-inset-bottom));
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* TABLETS Y PANTALLAS MEDIANAS */
+@media (max-width: 1000px) {
+  .nav {
+    gap: 12px;
+  }
+
+  .nav .nav-secondary {
+    display: none;
+  }
+
+  .nav a.nav-menu {
+    display: inline-flex;
+    padding: 0 10px;
+  }
+
+  .hero {
+    gap: 30px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .feature {
+    padding: 24px;
+  }
+
+  .feature h3 {
+    margin-top: 16px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* MÓVILES */
+@media (max-width: 760px) {
+  html {
+    scroll-padding-top: 74px;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  .announcement {
+    padding: 8px 10px;
+    font-size: 9px;
+    letter-spacing: .8px;
+  }
+
+  header {
+    min-height: 62px;
+    height: auto;
+    padding: 8px 15px;
+    gap: 8px;
+  }
+
+  .brand {
+    font-size: 20px;
+    letter-spacing: -1px;
+  }
+
+  .brand small {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+
+  .nav {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .nav .nav-secondary,
+  .nav .nav-button {
+    display: none;
+  }
+
+  .nav a.nav-menu {
+    display: inline-flex;
+    min-height: 42px;
+    padding: 0 9px;
+    font-size: 13px;
+  }
+
+  .account-trigger {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .account-trigger .account-name,
+  .account-trigger > svg:last-child {
+    display: none;
+  }
+
+  .account-trigger > svg:first-child {
+    width: 22px;
+    height: 22px;
+  }
+
+  .account-dropdown {
+    min-width: 190px;
+    max-width: calc(100vw - 24px);
+  }
+
+  .account-dropdown::before {
+    content: attr(data-name);
+    display: block;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  /* PORTADA MÓVIL */
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 25px;
+    padding: 38px 18px 36px;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+  }
+
+  h1 {
+    margin: 17px 0;
+    font-size: clamp(39px, 10vw, 54px);
+    line-height: 1.08;
+    letter-spacing: -1.4px;
+  }
+
+  .hero-copy {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin-top: 22px;
+  }
+
+  .hero-actions .button,
+  .hero-actions .text-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .image-label {
+    bottom: 10px;
+    left: 10px;
+    padding: 9px 11px;
+    font-size: 11px;
+  }
+
+  /* BENEFICIOS MÓVIL */
+  .values {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px 10px;
+    padding: 19px 18px;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .values span::before {
+    margin-right: 5px;
+  }
+
+  /* SECCIONES MÓVIL */
+  .section {
+    padding: 48px 18px;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  h2 {
+    margin-top: 12px;
+    font-size: clamp(30px, 8vw, 39px);
+    line-height: 1.15;
+    letter-spacing: -.6px;
+  }
+
+  .section-description {
+    font-size: 13px;
+    line-height: 1.75;
+  }
+
+  /* MENÚ Y DÍAS */
+  .menu-section {
+    padding: 42px 14px;
+  }
+
+  .menu-section .section-heading {
+    padding: 0 4px;
+  }
+
+  .day-tabs {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+
+  .day-tab {
+    min-height: 46px;
+    padding: 6px 2px;
+    font-size: 12px;
+  }
+
+  .day-tab .full {
+    display: none;
+  }
+
+  .day-tab .short {
+    display: inline;
+  }
+
+  .day-title {
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 25px;
+  }
+
+  .menu-status {
+    padding: 14px;
+    font-size: 13px;
+  }
+
+  /* TARJETAS DE PLATILLOS */
+  .menu-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  .menu-card {
+    align-items: flex-start;
+    gap: 11px;
+    padding: 10px;
+  }
+
+  .menu-card-image {
+    width: 76px;
+    height: 76px;
+    flex-basis: 76px;
+    margin-top: 2px;
+  }
+
+  .menu-card-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .menu-card-category {
+    font-size: 9px;
+    letter-spacing: .8px;
+  }
+
+  .menu-card h4 {
+    margin: 3px 0 5px;
+    font-size: 17px;
+    line-height: 1.25;
+  }
+
+  .menu-card-description {
+    font-size: 12px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .menu-card-price {
+    margin-top: 6px;
+    font-size: 15px;
+  }
+
+  /* CONTROLES TÁCTILES */
+  .dish-order {
+    align-items: center;
+    gap: 8px;
+    margin-top: 9px;
+    padding-top: 9px;
+  }
+
+  .dish-order-label {
+    font-size: 11px;
+  }
+
+  .dish-order-controls {
+    gap: 9px;
+  }
+
+  .dish-order-controls button {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* RESUMEN MÓVIL */
+  .order-summary {
+    margin-top: 22px;
+    padding: 16px 13px;
+  }
+
+  .order-summary h3 {
+    margin-bottom: 12px;
+    font-size: 24px;
+  }
+
+  .order-summary-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    padding: 13px 0;
+  }
+
+  .order-summary-info {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .order-summary-info strong {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .order-summary-row small {
+    font-size: 11px;
+  }
+
+  .order-summary-actions {
+    grid-column: 1;
+    grid-row: 2;
+    gap: 8px;
+  }
+
+  .summary-qty-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .order-summary-amount {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    min-width: 0;
+    max-width: 110px;
+    font-size: 12px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .order-summary-total {
+    gap: 10px;
+    margin-top: 17px;
+    font-size: 16px;
+  }
+
+  .order-summary-clear {
+    width: 100%;
+    min-height: 46px;
+    margin-top: 15px;
+  }
+
+  /* FILOSOFÍA */
+  .features {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .feature {
+    padding: 21px;
+  }
+
+  .feature h3 {
+    margin: 16px 0 8px;
+    font-size: 23px;
+  }
+
+  .feature p {
+    font-size: 13px;
+  }
+
+  /* SUSCRIPCIÓN */
+  .subscription {
+    padding: 43px 18px;
+  }
+
+  .subscription-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 22px;
+  }
+
+  .subscription h2 {
+    font-size: 33px;
+  }
+
+  .subscription p {
+    font-size: 13px;
+    line-height: 1.75;
+  }
+
+  .subscription .button {
+    width: 100%;
+  }
+
+  .notice {
+    padding: 15px;
+    font-size: 13px;
+  }
+
+  /* PIE DE PÁGINA */
+  footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 13px;
+    padding: 28px 18px calc(28px + env(safe-area-inset-bottom));
+    font-size: 12px;
+  }
+}
+
+/* TELÉFONOS MUY ESTRECHOS */
+@media (max-width: 380px) {
+  header {
+    padding-inline: 10px;
+    gap: 4px;
+  }
+
+  .brand {
+    font-size: 18px;
+  }
+
+  .brand small {
+    font-size: 7px;
+    letter-spacing: 1.7px;
+  }
+
+  .nav a.nav-menu {
+    padding-inline: 6px;
+    font-size: 12px;
+  }
+
+  .account-trigger {
+    width: 38px;
+    min-width: 38px;
+  }
+
+  .hero {
+    padding-inline: 15px;
+  }
+
+  .values {
+    padding-inline: 15px;
+    font-size: 10px;
+  }
+
+  .section {
+    padding-inline: 15px;
+  }
+
+  .menu-section {
+    padding-inline: 10px;
+  }
+
+  .day-tab {
+    font-size: 11px;
+  }
+
+  .menu-card {
+    gap: 9px;
+    padding: 8px;
+  }
+
+  .menu-card-image {
+    width: 64px;
+    height: 64px;
+    flex-basis: 64px;
+  }
+
+  .menu-card h4 {
+    font-size: 16px;
+  }
+
+  .menu-card-description {
+    font-size: 11px;
+  }
+
+  .order-summary {
+    padding-inline: 11px;
+  }
+
+  .order-summary-actions {
+    gap: 6px;
+  }
+
+  .summary-qty-button {
+    width: 34px;
+    height: 36px;
+  }
+}
+
+/* ACCESIBILIDAD */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* CORRECCIONES RESPONSIVE PARA MÓVILES */
+header,
+main,
+section,
+.hero,
+.menu-inner,
+.menu-grid,
+.menu-card,
+.menu-card-content,
+.order-summary,
+.subscription-inner,
+.features {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 760px) {
+  header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 14px;
+  }
+
+  .brand {
+    min-width: 0;
+    font-size: 19px;
+    overflow-wrap: anywhere;
+  }
+
+  .brand small {
+    overflow-wrap: normal;
+  }
+
+  .nav {
+    min-width: 0;
+    flex: initial;
+    gap: 0;
+  }
+
+  .nav a.nav-menu {
+    white-space: nowrap;
+    padding-inline: 8px;
+  }
+
+  .account {
+    min-width: 0;
+  }
+
+  .account-trigger {
+    width: 40px;
+    min-width: 40px;
+    padding: 0;
+  }
+
+  .account-dropdown {
+    right: 0;
+    max-width: calc(100vw - 20px);
+  }
+
+  .hero,
+  .section,
+  .subscription,
+  footer {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero > div,
+  .section-heading > div,
+  .section-description {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .eyebrow {
+    max-width: 100%;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-actions {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero-actions > *,
+  .subscription .button {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .day-tabs {
+    width: 100%;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .day-tab {
+    min-width: 0;
+    padding-inline: 1px;
+    overflow-wrap: anywhere;
+  }
+
+  .menu-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .menu-card-content {
+    overflow-wrap: anywhere;
+  }
+
+  .dish-order {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dish-order-controls {
+    gap: 7px;
+  }
+
+  .order-summary-row {
+    min-width: 0;
+  }
+
+  .order-summary-info,
+  .order-summary-amount {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .order-summary-total {
+    min-width: 0;
+  }
+
+  #order-summary-total {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 360px) {
+  header {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 4px;
+    padding-inline: 9px;
+  }
+
+  .brand {
+    font-size: 17px;
+    letter-spacing: -0.8px;
+  }
+
+  .brand small {
+    font-size: 7px;
+    letter-spacing: 1.4px;
+  }
+
+  .nav a.nav-menu {
+    padding-inline: 5px;
+    font-size: 11px;
+  }
+
+  .account-trigger {
+    width: 36px;
+    min-width: 36px;
+  }
+
+  .day-tabs {
+    gap: 3px;
+  }
+
+  .day-tab {
+    font-size: 10px;
+  }
+
+  .order-summary {
+    padding-inline: 9px;
+  }
+
+  .order-summary-actions {
+    gap: 5px;
+  }
+
+  .summary-qty-button {
+    width: 32px;
+  }
+}
+
+/* FORMULARIO DE SUSCRIPCIÓN */
+.subscription-form {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid var(--line);
+}
+
+.subscription-form h3 {
+  margin: 0 0 8px;
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.form-description {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.subscription-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.subscription-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.subscription-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.subscription-field label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.subscription-field input,
+.subscription-field textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 14px;
+}
+
+.subscription-field textarea {
+  resize: vertical;
+}
+
+.subscription-field input:focus,
+.subscription-field textarea:focus {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.subscription-submit {
+  width: 100%;
+}
+
+.subscription-submit:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.subscription-feedback {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.subscription-feedback:empty {
+  display: none;
+}
+
+@media (max-width: 500px) {
+  .subscription-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+
+  .subscription-field.full-width {
+    grid-column: auto;
+  }
+}
+
+/* CUENTA DEL CLIENTE */
+.pomelo-account-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-width: 680px;
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.pomelo-account-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 23px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition: padding 0.2s ease;
+}
+
+.pomelo-account-button:hover {
+  padding-left: 10px;
+}
+
+.pomelo-account-arrow {
+  font-size: 19px;
+  opacity: 0.55;
+}
+
+/* VENTANA EMERGENTE */
+.pomelo-portal-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(25, 25, 22, 0.38);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.pomelo-portal-modal.hidden {
   display: none !important;
 }
 
-/* FINANZAS */
-.finance-toolbar { display:grid; grid-template-columns: minmax(0,2fr) minmax(180px,1fr); gap:12px; margin:18px 0; }
-.finance-account { background:var(--white); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:12px; }
-.finance-account-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
-.finance-account-name { font-weight:800; font-size:16px; }
-.finance-account-meta { color:var(--muted); font-size:13px; margin-top:5px; }
-.finance-account-bottom { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px solid var(--line); }
-.finance-balance { font-size:20px; font-weight:800; }
-.finance-pill { display:inline-block; border-radius:20px; padding:5px 10px; font-size:12px; font-weight:700; background:#f1f0e9; }
-.finance-pill.pending { background:#fbf2dc; color:#946b20; }
-.finance-pill.partial { background:#e8eff8; color:#365d8a; }
-.finance-pill.paid { background:#e8f3e9; color:#397a45; }
-.finance-pill.cancelled { background:#f8e9e7; color:#a34438; }
-@media(max-width:650px) { .finance-toolbar { grid-template-columns:1fr; } #tab-finance .stats { grid-template-columns:1fr; } }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="brand">pomelo <span>brunch house.</span></div>
-    <div class="header-right">
-      <span id="user-label" class="muted">Verificando acceso...</span>
-      <button id="logout-btn" class="btn">Cerrar sesión</button>
+.pomelo-portal-panel {
+  width: 100%;
+  max-width: 540px;
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 28px;
+  background: var(--background, #faf9f5);
+  color: var(--text, #292922);
+  border: 1px solid var(--line, #e5e2d9);
+  border-radius: 4px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.12);
+}
+
+.pomelo-portal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pomelo-portal-close {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line, #e5e2d9);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.pomelo-portal-panel > h2 {
+  margin: 22px 0 26px;
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.pomelo-portal-view h3 {
+  margin: 12px 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.pomelo-portal-view p {
+  line-height: 1.7;
+}
+
+.pomelo-portal-divider {
+  height: 1px;
+  margin: 24px 0;
+  background: var(--line, #e5e2d9);
+}
+
+@media (max-width: 600px) {
+  .pomelo-portal-panel {
+    padding: 23px 20px;
+    max-height: 86vh;
+  }
+
+  .pomelo-portal-panel > h2 {
+    font-size: 28px;
+  }
+
+  .pomelo-account-button {
+    padding: 21px 2px;
+  }
+}
+
+
+/* ── REFINAMIENTO VISUAL POMELO · MOBILE FIRST ── */
+:root {
+  --grapefruit: #e88772;
+  --grapefruit-soft: #f8e7e1;
+  --line: #e8e4da;
+}
+::selection { background: var(--grapefruit-soft); color: var(--dark); }
+button, input, textarea, select { font: inherit; }
+
+/* Entrada discreta de secciones al desplazarse */
+@keyframes pomeloRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pomeloModalIn {
+  from { opacity: 0; transform: translateY(12px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.hero > div, .section-heading, .pomelo-account-actions, .menu-grid,
+.subscription-grid { animation: pomeloRise .55s ease both; }
+.pomelo-account-actions { animation-delay: .06s; }
+
+/* Menos aire vacío y mejor jerarquía */
+.section { padding-top: clamp(48px, 7vw, 88px); padding-bottom: clamp(48px, 7vw, 88px); }
+.section-heading { gap: 18px; margin-bottom: clamp(20px, 3vw, 32px); }
+.eyebrow { color: var(--green); }
+.section-heading h2 { letter-spacing: -.045em; }
+
+/* Botones de entrada a Mi cuenta */
+.pomelo-account-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.pomelo-account-button {
+  min-width: 0;
+  min-height: 112px;
+  padding: 20px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  text-align: left;
+  color: var(--dark);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+}
+.pomelo-account-button > span:first-child { display: flex; flex-direction: column; gap: 7px; }
+.pomelo-account-button strong { font-size: 15px; font-weight: 650; letter-spacing: -.02em; }
+.pomelo-account-button small { max-width: 190px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.pomelo-account-button .pomelo-account-arrow {
+  flex: 0 0 28px; width: 28px; height: 28px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--grapefruit-soft); color: #a94e3c; font-size: 16px;
+  transition: transform .22s ease, background .22s ease;
+}
+.pomelo-account-button:hover { padding-left: 18px; border-color: #e9b5a8; transform: translateY(-3px); box-shadow: 0 12px 28px rgba(37,41,31,.06); }
+.pomelo-account-button:hover .pomelo-account-arrow { transform: translate(2px,-2px); background: #f2d2c8; }
+.pomelo-account-button:active { transform: scale(.985); }
+
+/* Modal: tarjeta limpia, cómoda y usable con una mano */
+.pomelo-portal-modal {
+  padding: 14px;
+  background: rgba(31, 34, 27, .42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pomelo-portal-panel {
+  width: min(100%, 600px);
+  max-height: min(88dvh, 820px);
+  padding: clamp(18px, 4vw, 30px);
+  background: #fcfbf7;
+  border: 1px solid rgba(255,255,255,.75);
+  border-radius: 22px;
+  box-shadow: 0 24px 90px rgba(20,24,17,.2);
+  overscroll-behavior: contain;
+  animation: pomeloModalIn .24s ease both;
+}
+.pomelo-portal-top { position: sticky; top: -1px; z-index: 2; padding: 2px 0 12px; background: #fcfbf7; }
+#pomelo-portal-title { margin: 0; font-family: "DM Sans", system-ui, sans-serif; font-size: clamp(23px, 5vw, 29px); font-weight: 650; letter-spacing: -.045em; }
+.pomelo-portal-close { flex: 0 0 40px; width: 40px; height: 40px; background: #f1efe7; border: 0; font-size: 24px; transition: background .2s ease, transform .2s ease; }
+.pomelo-portal-close:hover { background: var(--grapefruit-soft); transform: rotate(4deg); }
+.pomelo-portal-divider { margin: 8px 0 20px; background: var(--line); }
+.pomelo-portal-view { animation: pomeloRise .24s ease both; }
+.pomelo-portal-view h3 { margin: 22px 0 10px; font-family: "DM Sans", system-ui, sans-serif; font-size: 17px; font-weight: 650; letter-spacing: -.025em; }
+.pomelo-portal-view p { line-height: 1.55; }
+.customer-account-info { display: grid; gap: 14px; }
+.customer-account-status, .customer-account-address,
+#customer-portal-content, #customer-plan-menu-view > *, #customer-orders > * {
+  padding: 17px; background: #fffefa; border: 1px solid var(--line); border-radius: 15px;
+}
+.customer-account-status { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.customer-account-status > span { color: var(--muted); font-size: 13px; }
+#customer-plan-status { padding: 5px 10px; border-radius: 30px; background: var(--grapefruit-soft); color: #a34d3d; font-size: 12px; font-weight: 700; }
+.customer-account-address h3 { margin: 0 0 9px; }
+#customer-saved-address { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+#customer-edit-address, #customer-save-address, #customer-cancel-edit-address {
+  min-height: 42px; margin-top: 12px; padding: 10px 15px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--line); transition: transform .18s ease, background .18s ease;
+}
+#customer-edit-address, #customer-save-address { background: var(--green); color: white; border-color: var(--green); }
+#customer-cancel-edit-address { background: #f1efe7; color: var(--dark); }
+#customer-edit-address:hover, #customer-save-address:hover, #customer-cancel-edit-address:hover { transform: translateY(-1px); }
+#customer-address-editor { margin-top: 16px; padding-top: 15px; border-top: 1px solid var(--line); }
+#customer-address-editor label { display: block; margin: 12px 0 6px; font-size: 13px; font-weight: 650; }
+#customer-address-editor textarea { width: 100%; min-height: 76px; resize: vertical; padding: 12px; border: 1px solid #dedbd0; border-radius: 10px; background: #fff; color: var(--dark); outline: none; }
+#customer-address-editor textarea:focus { border-color: var(--grapefruit); box-shadow: 0 0 0 3px var(--grapefruit-soft); }
+#customer-address-feedback { margin: 10px 0 0; font-size: 13px; }
+#customer-plan-dates { color: var(--muted); }
+
+/* Reduce movimiento si el dispositivo lo solicita */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+@media (max-width: 720px) {
+  .pomelo-account-actions { grid-template-columns: 1fr; gap: 9px; }
+  .pomelo-account-button { min-height: 76px; padding: 15px 16px; align-items: center; border-radius: 14px; }
+  .pomelo-account-button:hover { padding-left: 16px; }
+  .pomelo-account-button > span:first-child { gap: 3px; }
+  .pomelo-account-button small { max-width: none; font-size: 12px; }
+  .section-heading { align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .pomelo-portal-modal { align-items: flex-end; padding: 8px; }
+  .pomelo-portal-panel { width: 100%; max-height: 91dvh; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); border-radius: 22px 22px 14px 14px; }
+  .pomelo-portal-divider { margin: 5px 0 15px; }
+  .customer-account-status, .customer-account-address { padding: 15px; }
+  #customer-address-editor textarea { font-size: 16px; } /* evita zoom automático en iOS */
+}
+
+</style>
+
+<script>  
+  document.documentElement.classList.add("auth-check");  
+</script>  
+</head>  
+<body>  
+<div class="announcement">COMIDA REAL · PREPARADA FRESCA · DE LUNES A VIERNES</div>  
+
+<header>  
+  <a class="brand" href="#" aria-label="Pomelo Brunch House inicio">pomelo<span>.</span><small>brunch house</small></a>  
+  <nav class="nav" aria-label="Navegación principal">  
+    <a class="nav-secondary" href="#menu">Menú de la semana</a>  
+    <a class="nav-secondary" href="#mi-portal">Mi cuenta</a>
+    <a class="nav-secondary" href="#filosofia">Nuestra filosofía</a>  
+    <a class="nav-secondary" href="#como-funciona">Cómo funciona</a>  
+    <a class="nav-menu" href="#menu">Menú</a>  
+    <a class="nav-button" href="#suscripciones">Conoce el plan ↗</a>  
+  </nav>  
+
+  <div class="account">  
+    <button type="button" class="account-trigger" id="account-trigger" aria-expanded="false" aria-controls="account-dropdown">  
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">  
+        <circle cx="12" cy="8" r="4"></circle>  
+        <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>  
+      </svg>  
+      <span class="account-name" id="account-name">Mi cuenta</span>  
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">  
+        <path d="m7 10 5 5 5-5"></path>  
+      </svg>  
+    </button>  
+
+    <div class="account-dropdown hidden" id="account-dropdown">  
+      <button type="button" class="account-logout" id="account-logout">  
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">  
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>  
+          <path d="M16 17l5-5-5-5"></path>  
+          <path d="M21 12H9"></path>  
+        </svg>  
+        <span>Cerrar sesión</span>  
+      </button>  
+    </div>  
+  </div>  
+</header>  
+
+<main>  
+  <section class="hero">  
+    <div>  
+      <div class="eyebrow">Bien comer, vivir mejor</div>  
+      <h1>Tu semana,<br>bien <em>alimentada.</em></h1>  
+      <p class="hero-copy">Comida real, ingredientes frescos y platos preparados con intención. Nosotros nos encargamos de tu comida; tú, de disfrutar tu día.</p>  
+      <div class="hero-actions">  
+        <a class="button" href="#menu">Ver el menú ↗</a>  
+        <a class="text-link" href="#filosofia">Conoce nuestra idea</a>  
+      </div>  
+    </div>  
+    <div class="hero-image">  
+      <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=85" alt="Ensalada fresca con ingredientes naturales" fetchpriority="high" width="1200" height="1000">  
+      <div class="image-label">Hecho con ingredientes reales.</div>  
+    </div>  
+  </section> 
+  
+  <section class="section" id="mi-portal">
+    <div class="section-heading">
+      <div>
+        <h2>Tu espacio.</h2>
+      </div>
+      <p class="section-description">
+        Tu plan, tus entregas y tus datos, en un solo lugar.
+      </p>
     </div>
-  </header>
 
-  <main>
-    <div id="message" class="notice">Verificando permisos de administrador...</div>
-
-    <div id="admin-app" class="hidden">
-      <div class="topline">
-        <div>
-          <h1>Panel de administración</h1>
-          <p class="muted">Gestiona el menú, supervisa la operación y consulta las finanzas de Pomelo.</p>
-        </div>
-        <button id="refresh-btn" class="btn">Actualizar datos</button>
-      </div>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="muted">Platillos activos</div>
-          <div id="stat-menu" class="number">—</div>
-        </div>
-        <div class="stat">
-          <div class="muted">Pedidos registrados</div>
-          <div id="stat-orders" class="number">—</div>
-        </div>
-        <div class="stat">
-          <div class="muted">Suscripciones</div>
-          <div id="stat-subs" class="number">—</div>
-        </div>
-      </div>
-
-
-<nav class="tabs">
-  <button class="tab active" data-tab="menu">Platillos</button>
-  <button class="tab" data-tab="weekly">Menú semanal</button>
-  <button class="tab" data-tab="orders">Pedidos</button>
-  <button class="tab" data-tab="production">Producción</button>
-  <button class="tab" data-tab="subscriptions">Suscripciones</button>
-  <button class="tab" data-tab="finance">Finanzas</button>
-</nav>
-
-      <section id="tab-menu" class="panel">
-        <div class="section-head">
-          <h2>Platillos del menú</h2>
-          <button id="new-item-btn" class="btn primary">+ Nuevo platillo</button>
-        </div>
-
-        <form id="item-form" class="hidden">
-          <h2 id="form-title">Nuevo platillo</h2>
-          <input id="item-id" type="hidden">
-
-
-<div class="form-grid">
-  <div class="field">
-    <label for="item-name">Nombre del platillo *</label>
-    <input
-      id="item-name"
-      type="text"
-      required
-      maxlength="100"
-      placeholder="Ej. Chilaquiles verdes"
-    >
-  </div>
-
-  <div class="field">
-    <label for="item-price">Precio (MXN) *</label>
-    <input
-      id="item-price"
-      type="number"
-      min="0"
-      step="0.01"
-      required
-      placeholder="Ej. 150"
-    >
-  </div>
-
-  <div class="field">
-    <label for="item-category">Tipo *</label>
-    <select id="item-category" required>
-      <option value="meal">Comida obligatoria</option>
-      <option value="dinner">Cena opcional</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="item-image-file">Fotografía del platillo</label>
-    <input id="item-image-file" type="file" accept="image/jpeg,image/png,image/webp">
-
-    <input id="item-image" type="hidden">
-
-    <div style="margin-top:12px">
-      <img
-        id="item-image-preview"
-        alt="Vista previa del platillo"
-        class="hidden"
-        style="width:150px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #e7e5da"
-      >
-    </div>
-
-    <p class="muted">Selecciona una foto JPG, PNG o WebP de máximo 5 MB.</p>
-  </div>
-
-
-<div class="field full">
-  <label for="item-description">Descripción</label>
-  <textarea
-    id="item-description"
-    maxlength="500"
-    placeholder="Describe los ingredientes o acompañamientos"
-  ></textarea>
-</div>
-
-<div class="field full">
-  <label>Días en que se ofrece el platillo *</label>
-  <div class="days-selector" id="item-days">
-    <label class="day-option">
-      <input type="checkbox" name="available-day" value="1" checked>
-      Lunes
-    </label>
-    <label class="day-option">
-      <input type="checkbox" name="available-day" value="2" checked>
-      Martes
-    </label>
-    <label class="day-option">
-      <input type="checkbox" name="available-day" value="3" checked>
-      Miércoles
-    </label>
-    <label class="day-option">
-      <input type="checkbox" name="available-day" value="4" checked>
-      Jueves
-    </label>
-    <label class="day-option">
-      <input type="checkbox" name="available-day" value="5" checked>
-      Viernes
-    </label>
-  </div>
-  <p class="muted">Selecciona uno o varios días. El platillo aparecerá en el menú público únicamente en los días seleccionados.</p>
-</div>
-</div>
-          <div class="checkline">
-            <input id="item-active" type="checkbox" checked>
-            <label for="item-active" style="margin:0">Disponible para los clientes</label>
-          </div>
-          <button class="btn primary" type="submit">Guardar platillo</button>
-          <button class="btn" type="button" id="cancel-form-btn">Cancelar</button>
-        </form>
-
-
-<div id="menu-message" class="notice hidden"></div>
-
-<div class="menu-toolbar">
-  <div class="menu-filters" role="group" aria-label="Filtrar platillos">
-    <button type="button" class="menu-filter active" data-menu-filter="all">
-      Todos
-    </button>
-    <button type="button" class="menu-filter" data-menu-filter="active">
-      Activos
-    </button>
-    <button type="button" class="menu-filter" data-menu-filter="inactive">
-      Inactivos
-    </button>
-  </div>
-
-  <span id="menu-count" class="muted">Cargando platillos...</span>
-</div>
-
-<div id="menu-list" class="list">
-  <div class="empty">Cargando menú...</div>
-</div>
-      </section>
-
-<section id="tab-weekly" class="panel hidden">
-
-  <div class="section-head">
-    <h2>Menú semanal</h2>
-    <button id="weekly-refresh" class="btn">Actualizar</button>
-  </div>
-
-  <div class="weekly-navigation">
-    <button type="button" class="btn primary weekly-section-btn" data-weekly-section="create">
-      Menú semanal
-    </button>
-
-    <button type="button" class="btn weekly-section-btn" data-weekly-section="items">
-      Agregar platillo
-    </button>
-
-    <button type="button" class="btn weekly-section-btn" data-weekly-section="history">
-      Semanas creadas
-    </button>
-  </div>
-
-  <div id="weekly-message" class="notice hidden"></div>
-
-  <!-- APARTADO 1: CREAR MENÚ -->
-  <div class="weekly-section" id="weekly-section-create">
-
-    <h2>Crear menú semanal</h2>
-
-    <form id="weekly-form">
-      <div class="form-grid">
-
-        <div class="field">
-          <label for="weekly-name">Nombre del menú</label>
-          <input id="weekly-name" required
-            value="Menú semanal" maxlength="100">
-        </div>
-
-        <div class="field">
-          <label for="weekly-start">Lunes de la semana</label>
-          <input id="weekly-start" type="date" required>
-        </div>
-
-        <div class="field">
-          <label for="weekly-end">Viernes de la semana</label>
-          <input id="weekly-end" type="date" required>
-        </div>
-
-      </div>
-
-      <button class="btn primary" type="submit">
-        Crear semana en borrador
+    <div class="pomelo-account-actions">
+      <button type="button" class="pomelo-account-button" data-portal-view="plan">
+        <span><strong>Mi cuenta</strong><small>Suscripción, dirección y datos</small></span>
+        <span class="pomelo-account-arrow">↗</span>
       </button>
-    </form>
 
-  </div>
+      <button type="button" class="pomelo-account-button" data-portal-view="menu">
+        <span><strong>Mi menú</strong><small>Consulta tus platillos programados</small></span>
+        <span class="pomelo-account-arrow">↗</span>
+      </button>
 
-  <!-- APARTADO 2: AGREGAR PLATILLOS -->
-  <div class="weekly-section hidden" id="weekly-section-items">
+      <button type="button" class="pomelo-account-button" data-portal-view="orders">
+        <span><strong>Mis pedidos</strong><small>Revisa el estado de tus entregas</small></span>
+        <span class="pomelo-account-arrow">↗</span>
+      </button>
+    </div>
+  </section>
 
-    <h2>Agregar platillos</h2>
+  <!-- MODAL CORREGIDO Y ESTRUCTURADO -->
+  <div id="customer-portal-modal" class="pomelo-portal-modal hidden">
+    <div class="pomelo-portal-panel" role="dialog" aria-modal="true" aria-labelledby="pomelo-portal-title">
+      <div class="pomelo-portal-top">
+        <h2 id="pomelo-portal-title">Mi cuenta</h2>
+        <button type="button" class="pomelo-portal-close" id="pomelo-portal-close" aria-label="Cerrar ventana">&times;</button>
+      </div>
+      <div class="pomelo-portal-divider"></div>
+      
+      <!-- Vistas requeridas por el JS del Portal -->
+<div id="portal-view-plan" class="pomelo-portal-view">
 
-    <div class="form-grid">
+  <div id="customer-portal-status"></div>
 
-      <div class="field">
-        <label for="weekly-select">Semana</label>
-        <select id="weekly-select">
-          <option value="">Selecciona una semana</option>
-        </select>
+  <!-- INFORMACIÓN GENERAL DE LA CUENTA -->
+  <div class="customer-account-info">
+
+    <div class="customer-account-status">
+      <span>Estado de suscripción</span>
+      <strong id="customer-plan-status">Inactiva</strong>
+    </div>
+
+    <div class="customer-account-address">
+      <h3>Dirección de entrega</h3>
+      <div id="customer-saved-address">
+        Consultando dirección...
       </div>
 
-      <div class="field">
-        <label for="weekly-day">Día</label>
-        <select id="weekly-day">
-          <option value="1">Lunes</option>
-          <option value="2">Martes</option>
-          <option value="3">Miércoles</option>
-          <option value="4">Jueves</option>
-          <option value="5">Viernes</option>
-        </select>
-      </div>
+      <button type="button" id="customer-edit-address">
+        Editar dirección
+      </button>
 
-      <div class="field full">
-        <label for="weekly-item">Platillo del catálogo</label>
-        <select id="weekly-item">
-          <option value="">Selecciona un platillo</option>
-        </select>
-      </div>
+      <div id="customer-address-editor" class="hidden">
+        <label for="customer-address-input">Dirección</label>
+        <textarea id="customer-address-input" rows="2" maxlength="500"></textarea>
 
-    </div>
+        <label for="customer-address-notes">Indicaciones adicionales</label>
+        <textarea id="customer-address-notes" rows="2" maxlength="1000"></textarea>
 
-    <button id="weekly-add-item" class="btn primary" type="button">
-      Agregar platillo al día
-    </button>
-
-    <div id="weekly-items-list" class="list" style="margin-top:18px">
-      <p class="empty">Selecciona una semana.</p>
-    </div>
-
-  </div>
-
-  <!-- APARTADO 3: HISTORIAL -->
-  <div class="weekly-section hidden" id="weekly-section-history">
-
-    <h2>Semanas creadas</h2>
-
-    <div id="weekly-list" class="list">
-      <p class="empty">Cargando semanas...</p>
-    </div>
-
-  </div>
-
-</section>
-      <section id="tab-orders" class="panel hidden">
-        <div class="section-head">
-          <h2>Pedidos registrados</h2>
-          <button id="orders-refresh" class="btn">Recargar</button>
-        </div>
-        <div id="orders-list" class="empty">Aún no se han consultado los pedidos.</div>
-      </section>
-
-      <section id="tab-production" class="panel hidden">
-        <div class="section-head">
-          <h2>Resumen de producción</h2>
-          <button id="production-refresh" class="btn">Calcular</button>
-        </div>
-        <div class="field" style="max-width:260px">
-          <label for="production-date">Fecha de entrega</label>
-          <input id="production-date" type="date">
-        </div>
-        <p class="muted">El resumen cuenta los artículos de pedidos no cancelados para la fecha seleccionada.</p>
-        <div id="production-list" class="empty">Selecciona una fecha y pulsa Calcular.</div>
-      </section>
-
-      <section id="tab-subscriptions" class="panel hidden">
-        <div class="section-head">
-          <h2>Suscripciones</h2>
-          <button id="subscriptions-refresh" class="btn">Recargar</button>
-        </div>
-        <div class="stats" id="subscription-status-stats">
-
-  <div class="stat">
-    <div class="muted">Clientes activos</div>
-    <div id="stat-subs-active" class="number">0</div>
-  </div>
-
-  <div class="stat">
-    <div class="muted">Pendientes</div>
-    <div id="stat-subs-pending" class="number">0</div>
-  </div>
-
-  <div class="stat">
-    <div class="muted">Inactivos</div>
-    <div id="stat-subs-inactive" class="number">0</div>
-  </div>
-
-  <div class="stat">
-    <div class="muted">Cancelados</div>
-    <div id="stat-subs-cancelled" class="number">0</div>
-  </div>
-
-</div>
-        <div class="subscriber-filters">
-  <button class="subscriber-filter active" data-filter="all">
-    Todos
-  </button>
-  <button class="subscriber-filter" data-filter="active">
-    Activos
-  </button>
-  <button class="subscriber-filter" data-filter="pending">
-    Pendientes
-  </button>
-  <button class="subscriber-filter" data-filter="cancelled">
-    Cancelados
-  </button>
-  <button class="subscriber-filter" data-filter="inactive">
-    Inactivos
-  </button>
-</div>
-        <div id="subscriptions-list" class="empty">Aún no se han consultado las suscripciones.</div>
-      </section>
-
-      <section id="tab-finance" class="panel hidden">
-        <div class="section-head">
-          <div>
-            <h2>Finanzas</h2>
-            <p class="muted">Ingresos recibidos, cuentas por cobrar y créditos de clientes.</p>
-          </div>
-          <button id="finance-refresh" class="btn">Actualizar</button>
-        </div>
-
-        <div class="stats">
-          <div class="stat">
-            <div class="muted">Ingresos netos este mes</div>
-            <div id="finance-income" class="number">—</div>
-          </div>
-          <div class="stat">
-            <div class="muted">Saldo por cobrar</div>
-            <div id="finance-pending" class="number">—</div>
-          </div>
-          <div class="stat">
-            <div class="muted">Crédito disponible</div>
-            <div id="finance-credit" class="number">—</div>
-          </div>
-        </div>
-
-        <div id="finance-message" class="notice hidden"></div>
-
-        <div class="finance-toolbar">
-          <div class="field">
-            <label for="finance-search">Buscar cliente</label>
-            <input id="finance-search" type="search" placeholder="Nombre o teléfono">
-          </div>
-          <div class="field">
-            <label for="finance-filter">Estado de cuenta</label>
-            <select id="finance-filter">
-              <option value="all">Todas</option>
-              <option value="pending">Pendientes</option>
-              <option value="partial">Parciales</option>
-              <option value="paid">Liquidadas</option>
-              <option value="cancelled">Canceladas</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="section-head"><h2>Cuentas financieras</h2></div>
-        <div id="finance-accounts" class="list">
-          <div class="empty">Pulsa Actualizar para consultar las cuentas.</div>
-        </div>
-      </section>
-    </div>
-  </main>
-
-<script>
-  const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  const $ = id => document.getElementById(id);
-  // NAVEGACIÓN INTERNA DEL MENÚ SEMANAL
-document.querySelectorAll(".weekly-section-btn").forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    const selectedSection = button.dataset.weeklySection;
-
-    // Ocultar todos los apartados
-    document.querySelectorAll(".weekly-section").forEach(section => {
-      section.classList.add("hidden");
-    });
-
-    // Mostrar el apartado seleccionado
-    const target = $("weekly-section-" + selectedSection);
-
-    if (target) {
-      target.classList.remove("hidden");
-    }
-
-    // Actualizar botón activo
-    document.querySelectorAll(".weekly-section-btn").forEach(btn => {
-      btn.classList.remove("primary");
-    });
-
-    button.classList.add("primary");
-
-  });
-
-});
-  let currentUser = null;
-  let menuCache = [];
-  
-
-let selectedPhotoFile = null;
-
-$("item-image-file").addEventListener("change", event => {
-  const file = event.target.files[0];
-  const preview = $("item-image-preview");
-
-  selectedPhotoFile = null;
-
-  if (!file) {
-    preview.classList.add("hidden");
-    return;
-  }
-
-  if (!file.type.startsWith("image/")) {
-    showMenuMessage("Selecciona un archivo de imagen.", "error");
-    event.target.value = "";
-    preview.classList.add("hidden");
-    return;
-  }
-
-  if (file.size > 5 * 1024 * 1024) {
-    showMenuMessage("La foto supera los 5 MB. Selecciona una más ligera.", "error");
-    event.target.value = "";
-    preview.classList.add("hidden");
-    return;
-  }
-
-  selectedPhotoFile = file;
-  preview.src = URL.createObjectURL(file);
-  preview.classList.remove("hidden");
-});
-
-
-  function showMessage(text, type = "") {
-    const el = $("message");
-    el.textContent = text;
-    el.className = "notice" + (type ? " " + type : "");
-    el.classList.remove("hidden");
-  }
-
-  function showMenuMessage(text, type = "") {
-    const el = $("menu-message");
-    el.textContent = text;
-    el.className = "notice" + (type ? " " + type : "");
-    el.classList.remove("hidden");
-  }
-
-  function money(value) {
-    return new Intl.NumberFormat("es-MX", {
-      style: "currency", currency: "MXN"
-    }).format(Number(value || 0));
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? "").replace(/[&<>"']/g, char => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;",
-      '"': "&quot;", "'": "&#039;"
-    })[char]);
-  }
-
-  function dateLocal(value) {
-    if (!value) return "Sin fecha";
-    const d = new Date(value + "T12:00:00");
-    return d.toLocaleDateString("es-MX", {
-      day: "2-digit", month: "short", year: "numeric"
-    });
-  }
-
-  async function verifyAccess() {
-    const { data: { session }, error } = await db.auth.getSession();
-
-    if (error || !session) {
-      showMessage("Necesitas iniciar sesión para entrar al panel. Redirigiendo al acceso...");
-      setTimeout(() => location.replace("./login.html"), 1200);
-      return;
-    }
-
-    currentUser = session.user;
-    $("user-label").textContent = session.user.email || "Usuario autenticado";
-
-    const { data: profile, error: profileError } = await db
-      .from("profiles")
-      .select("role, full_name")
-      .eq("id", session.user.id)
-      .maybeSingle();
-
-    if (profileError) {
-      showMessage("No se pudo verificar tu rol. Revisa las políticas RLS de profiles. Detalle: " + profileError.message, "error");
-      return;
-    }
-
-    if (!profile || profile.role !== "chef") {
-      showMessage("Acceso denegado: esta cuenta no tiene permisos de chef.");
-      return;
-    }
-
-    $("admin-app").classList.remove("hidden");
-    showMessage("Acceso autorizado. Bienvenido" + (profile.full_name ? ", " + profile.full_name : "") + ".", "success");
-    await loadAll();
-  }
-
-
-async function loadAll() {
-  await Promise.all([
-    loadMenu(),
-    loadOrders(),
-    loadSubscriptions(),
-    loadWeeklyData()
-  ]);
-
-  renderMenuList();
-}
-  
-
-async function loadMenu() {
-  $("menu-list").innerHTML =
-    '<div class="empty">Cargando menú...</div>';
-  $("menu-count").textContent = "Consultando platillos...";
-
-  const { data, error } = await db
-    .from("menu_items")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    $("menu-list").innerHTML =
-      '<div class="empty">No se pudieron cargar los platillos.</div>';
-
-    $("menu-count").textContent = "Error de consulta";
-
-    showMenuMessage(
-      "Error al cargar el menú: " + error.message,
-      "error"
-    );
-
-    console.error("Error al cargar menu_items:", error);
-    return;
-  }
-
-  menuCache = data || [];
-
-  $("stat-menu").textContent =
-    menuCache.filter(item => item.active === true).length;
-
-  renderMenuList();
-
-  console.log("Platillos recibidos de Supabase:", menuCache.length);
-}
-
-let menuFilter = "all";
-
-function renderMenuList() {
-  const filteredItems = menuCache.filter(item => {
-    if (menuFilter === "active") return item.active === true;
-    if (menuFilter === "inactive") return item.active === false;
-    return true;
-  });
-
-  const activeCount = menuCache.filter(item => item.active === true).length;
-  const inactiveCount = menuCache.filter(item => item.active === false).length;
-
-  $("menu-count").textContent =
-    `${filteredItems.length} mostrados · ${activeCount} activos · ${inactiveCount} inactivos`;
-
-  if (!filteredItems.length) {
-    const messages = {
-      all: "Todavía no hay platillos registrados.",
-      active: "No hay platillos activos.",
-      inactive: "No hay platillos inactivos."
-    };
-
-    $("menu-list").innerHTML =
-      `<div class="empty">${messages[menuFilter]}</div>`;
-    return;
-  }
-
-  $("menu-list").innerHTML = filteredItems.map(item => {
-    const days = Array.isArray(item.available_days)
-      ? item.available_days.map(Number)
-      : [1, 2, 3, 4, 5];
-
-    const dayNames = days
-      .filter(day => day >= 1 && day <= 5)
-      .map(day => ["", "Lun", "Mar", "Mié", "Jue", "Vie"][day])
-      .join(", ");
-
-    return `
-      <article class="item">
         <div>
-          <div class="item-title">${escapeHtml(item.name)}</div>
-          <div class="muted">${escapeHtml(item.description || "Sin descripción")}</div>
-
-          <div class="muted" style="margin-top:6px">
-            Días: ${dayNames || "Sin días asignados"}
-          </div>
-
-          <p style="margin:8px 0">
-            <strong>${money(item.price_mxn)}</strong>
-            <span class="pill">
-              ${item.category === "dinner" ? "Cena opcional" : "Comida"}
-            </span>
-            <span class="pill">
-              ${item.active ? "Activo" : "Inactivo"}
-            </span>
-          </p>
+          <button type="button" id="customer-save-address">Guardar dirección</button>
+          <button type="button" id="customer-cancel-edit-address">Cancelar</button>
         </div>
 
-        <div class="item-actions">
-          <button class="btn" data-edit="${item.id}">Editar</button>
-
-          <button
-            class="btn ${item.active ? "danger" : ""}"
-            data-toggle="${item.id}"
-          >
-            ${item.active ? "Desactivar" : "Activar"}
-          </button>
-        </div>
-      </article>
-    `;
-  }).join("");
-
-  $("menu-list").querySelectorAll("[data-edit]").forEach(button => {
-    button.addEventListener("click", () => {
-      editItem(button.dataset.edit);
-    });
-  });
-
-  $("menu-list").querySelectorAll("[data-toggle]").forEach(button => {
-    button.addEventListener("click", () => {
-      toggleItem(button.dataset.toggle);
-    });
-  });
-}
-
-document.querySelectorAll("[data-menu-filter]").forEach(button => {
-  button.addEventListener("click", () => {
-    menuFilter = button.dataset.menuFilter;
-
-    document.querySelectorAll("[data-menu-filter]").forEach(filterButton => {
-      filterButton.classList.toggle("active", filterButton === button);
-    });
-
-    renderMenuList();
-  });
-});
-
-
-  function resetItemForm() {
-    $("item-form").reset();
-    selectedPhotoFile = null;
-$("item-image").value = "";
-$("item-image-preview").removeAttribute("src");
-$("item-image-preview").classList.add("hidden");
-    $("item-id").value = "";
-    $("item-active").checked = true;
-    
-document.querySelectorAll('input[name="available-day"]').forEach(input => {
-  input.checked = true;
-});
-
-    $("form-title").textContent = "Nuevo platillo";
-    $("item-form").classList.add("hidden");
-  }
-
-  function editItem(id) {
-    const item = menuCache.find(row => row.id === id);
-    if (!item) return;
-
-    $("item-id").value = item.id;
-    $("item-name").value = item.name || "";
-    $("item-price").value = item.price_mxn;
-    $("item-category").value = item.category || "meal";
-$("item-image").value = item.image_url || "";
-
-selectedPhotoFile = null;
-$("item-image-file").value = "";
-
-if (item.image_url) {
-  $("item-image-preview").src = item.image_url;
-  $("item-image-preview").classList.remove("hidden");
-} else {
-  $("item-image-preview").removeAttribute("src");
-  $("item-image-preview").classList.add("hidden");
-}    $("item-description").value = item.description || "";
-    $("item-active").checked = Boolean(item.active);
-    
-const savedDays = Array.isArray(item.available_days)
-  ? item.available_days.map(Number)
-  : [1, 2, 3, 4, 5];
-
-document.querySelectorAll('input[name="available-day"]').forEach(input => {
-  input.checked = savedDays.includes(Number(input.value));
-});
-
-    $("form-title").textContent = "Editar platillo";
-    $("item-form").classList.remove("hidden");
-    $("item-form").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  $("new-item-btn").addEventListener("click", () => {
-    resetItemForm();
-    $("item-form").classList.remove("hidden");
-    $("item-name").focus();
-  });
-
-  $("cancel-form-btn").addEventListener("click", resetItemForm);
-
-  $("item-form").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const id = $("item-id").value;
-    
-let uploadedImageUrl = $("item-image").value.trim() || null;
-
-if (selectedPhotoFile) {
-  const extension = selectedPhotoFile.name.split(".").pop().toLowerCase();
-  const safeExtension = /^[a-z0-9]+$/.test(extension) ? extension : "jpg";
-  const filePath = `menu/${crypto.randomUUID()}.${safeExtension}`;
-
-  const { data: uploadData, error: uploadError } = await db.storage
-    .from("menu-photos")
-    .upload(filePath, selectedPhotoFile, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: selectedPhotoFile.type
-    });
-
-  if (uploadError) {
-    showMenuMessage("No se pudo subir la foto: " + uploadError.message, "error");
-    return;
-  }
-
-  const { data: publicData } = db.storage
-    .from("menu-photos")
-    .getPublicUrl(uploadData.path);
-
-  uploadedImageUrl = publicData.publicUrl;
-}
-
-const selectedDays = Array.from(
-  document.querySelectorAll('input[name="available-day"]:checked')
-).map(input => Number(input.value));
-
-if (selectedDays.length === 0) {
-  showMenuMessage("Selecciona al menos un día para el platillo.", "error");
-  return;
-}
-
-    const payload = {
-      name: $("item-name").value.trim(),
-      description: $("item-description").value.trim(),
-      image_url: uploadedImageUrl,
-      price_mxn: Number($("item-price").value),
-      category: $("item-category").value,
-      available_days: selectedDays,
-      active: $("item-active").checked
-    };
-
-    if (!payload.name || !Number.isFinite(payload.price_mxn) || payload.price_mxn < 0) {
-      showMenuMessage("Revisa el nombre y el precio del platillo.", "error");
-      return;
-    }
-
-    const submit = $("item-form").querySelector('button[type="submit"]');
-    submit.disabled = true;
-    submit.textContent = "Guardando...";
-
-    const result = id
-      ? await db.from("menu_items").update(payload).eq("id", id).select().maybeSingle()
-      : await db.from("menu_items").insert(payload).select().maybeSingle();
-
-    submit.disabled = false;
-    submit.textContent = "Guardar platillo";
-
-    if (result.error) {
-      showMenuMessage("No se pudo guardar: " + result.error.message, "error");
-      return;
-    }
-
-    showMenuMessage(id ? "Platillo actualizado." : "Platillo creado correctamente.", "success");
-    resetItemForm();
-    await loadMenu();
-  });
-
-  
-async function toggleItem(id) {
-  const item = menuCache.find(row => row.id === id);
-  if (!item) return;
-
-  const action = item.active ? "desactivar" : "activar";
-
-  const confirmed = confirm(
-    `¿Seguro que deseas ${action} "${item.name}"?`
-  );
-
-  if (!confirmed) return;
-
-  const { error } = await db
-    .from("menu_items")
-    .update({ active: !item.active })
-    .eq("id", id);
-
-  if (error) {
-    showMenuMessage(
-      "No se pudo cambiar la disponibilidad: " + error.message,
-      "error"
-    );
-    return;
-  }
-
-  showMenuMessage(
-    item.active
-      ? "Platillo desactivado correctamente."
-      : "Platillo activado correctamente.",
-    "success"
-  );
-
-  await loadMenu();
-}
-
-
-const WEEKLY_DAYS = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-let weeklyMenusCache = [];
-let weeklyItemsCache = [];
-
-function showWeeklyMessage(message, type = "") {
-  const el = $("weekly-message");
-  el.textContent = message;
-  el.className = "notice" + (type ? " " + type : "");
-  el.classList.remove("hidden");
-}
-
-function dateToUTC(value) {
-  const [year, month, day] = value.split("-").map(Number);
-  return new Date(Date.UTC(year, month - 1, day));
-}
-
-function isMonday(value) {
-  return dateToUTC(value).getUTCDay() === 1;
-}
-
-function isFridayAfterMonday(start, end) {
-  const difference =
-    (dateToUTC(end) - dateToUTC(start)) / 86400000;
-
-  return difference === 4;
-}
-
-async function loadWeeklyData() {
-  const { data, error } = await db
-    .from("weekly_menus")
-    .select("*")
-    .order("start_date", { ascending: false });
-
-  if (error) {
-    $("weekly-list").textContent =
-      "No se pudieron cargar las semanas: " + error.message;
-    console.error(error);
-    return;
-  }
-
-  weeklyMenusCache = data || [];
-  renderWeeklyMenus();
-
-  const select = $("weekly-select");
-  const previousValue = select.value;
-
-  select.innerHTML =
-    '<option value="">Selecciona una semana</option>' +
-    weeklyMenusCache.map(week => `
-      <option value="${escapeHtml(week.id)}">
-        ${escapeHtml(week.name)} · ${dateLocal(week.start_date)}
-        · ${week.status === "published" ? "Publicada" :
-          week.status === "archived" ? "Archivada" : "Borrador"}
-      </option>
-    `).join("");
-
-  if (weeklyMenusCache.some(week => week.id === previousValue)) {
-    select.value = previousValue;
-  } else {
-    const editableWeek = weeklyMenusCache.find(
-      week => week.status === "draft"
-    );
-    if (editableWeek) select.value = editableWeek.id;
-  }
-
-  await loadWeeklyCatalog();
-  await loadWeeklyItems();
-}
-
-async function loadWeeklyCatalog() {
-  const select = $("weekly-item");
-  const { data, error } = await db
-    .from("menu_items")
-    .select("id, name, description, image_url, price_mxn, category, available_days, active")
-    .eq("active", true)
-    .order("name");
-
-  if (error) {
-    select.innerHTML =
-      '<option value="">Error al cargar el catálogo</option>';
-    console.error(error);
-    showWeeklyMessage(
-      "No se pudo cargar el catálogo: " + error.message,
-      "error"
-    );
-    return;
-  }
-
-  const items = data || [];
-  select.innerHTML =
-    '<option value="">Selecciona un platillo</option>' +
-    items.map(item => `
-      <option value="${escapeHtml(item.id)}">
-        ${escapeHtml(item.name)} · ${money(item.price_mxn)}
-      </option>
-    `).join("");
-}
-
-async function loadWeeklyItems() {
-  const weekId = $("weekly-select").value;
-  const container = $("weekly-items-list");
-
-  if (!weekId) {
-    weeklyItemsCache = [];
-    container.innerHTML =
-      '<p class="empty">Selecciona una semana.</p>';
-    return;
-  }
-
-  const { data, error } = await db
-    .from("weekly_menu_items")
-    .select("*")
-    .eq("weekly_menu_id", weekId)
-    .order("day_of_week")
-    .order("name");
-
-  if (error) {
-    container.textContent =
-      "No se pudieron cargar los platillos: " + error.message;
-    return;
-  }
-
-  weeklyItemsCache = data || [];
-  renderWeeklyItems();
-}
-
-function renderWeeklyItems() {
-  const container = $("weekly-items-list");
-  const weekId = $("weekly-select").value;
-  const week = weeklyMenusCache.find(item => item.id === weekId);
-
-  if (!week) {
-    container.innerHTML =
-      '<p class="empty">Selecciona una semana.</p>';
-    return;
-  }
-
-  if (!weeklyItemsCache.length) {
-    container.innerHTML =
-      '<p class="empty">Todavía no hay platillos asignados a esta semana.</p>';
-    return;
-  }
-
-  container.innerHTML = WEEKLY_DAYS.slice(1).map((day, index) => {
-    const dayNumber = index + 1;
-    const items = weeklyItemsCache.filter(
-      item => Number(item.day_of_week) === dayNumber
-    );
-
-    if (!items.length) return "";
-
-    return `
-      <div class="item" style="display:block">
-        <h3 style="margin:0 0 10px">${day}</h3>
-        ${items.map(item => `
-          <div style="display:flex;justify-content:space-between;
-            align-items:center;gap:12px;padding:9px 0;
-            border-top:1px solid var(--line)">
-            <div>
-              <strong>${escapeHtml(item.name)}</strong>
-              <div class="muted">${money(item.price_mxn)}</div>
-            </div>
-            ${week.status === "draft" ? `
-              <button class="btn danger"
-                type="button"
-                data-weekly-delete="${escapeHtml(item.id)}">
-                Quitar
-              </button>
-            ` : ""}
-          </div>
-        `).join("")}
+        <p id="customer-address-feedback" role="status"></p>
       </div>
-    `;
-  }).join("");
+    </div>
 
-  container.querySelectorAll("[data-weekly-delete]").forEach(button => {
-    button.addEventListener("click", async () => {
-      if (!confirm("¿Quitar este platillo de la semana?")) return;
+  </div>
 
-      const { error } = await db
-        .from("weekly_menu_items")
-        .delete()
-        .eq("id", button.dataset.weeklyDelete);
+  <!-- INFORMACIÓN DEL PLAN -->
+  <div id="customer-portal-content" class="hidden">
+    <h3>Detalles de tu plan</h3>
+    <p id="customer-plan-dates"></p>
+    <div id="customer-plan-address"></div>
+  </div>
 
-      if (error) {
-        showWeeklyMessage(
-          "No se pudo quitar el platillo: " + error.message,
-          "error"
+</div>
+      <div id="portal-view-menu" class="pomelo-portal-view hidden">
+        <div id="customer-plan-menu-view"></div>
+      </div>
+
+      <div id="portal-view-orders" class="pomelo-portal-view hidden">
+        <div id="customer-orders"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN DEL MENÚ DINÁMICO -->
+  <section class="section menu-section" id="menu">
+    <div class="menu-inner">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">Menú semanal</div>
+          <h2>Elige tus platillos.</h2>
+        </div>
+        <p class="section-description">Consulta qué opciones tenemos para cada día de la semana.</p>  
+      </div>  
+      <div id="menu-status" class="menu-status hidden" role="status" aria-live="polite"></div> 
+      <div class="week-selector-dropdown" id="week-selector-container">
+  <label for="week-select">Elige tu semana</label>
+
+  <select id="week-select" class="week-select">
+    <option value="">Cargando semanas disponibles...</option>
+  </select>
+
+  <p class="week-selector-hint">
+    Agrega tus platillos y cambia de semana para seguir armando tu pedido.
+  </p>
+</div>
+      <div id="day-tabs" class="day-tabs hidden" role="tablist" aria-label="Días de la semana">  
+        <button class="day-tab" role="tab" type="button" data-day="1"><span class="full">Lunes</span><span class="short">Lun</span></button>  
+        <button class="day-tab" role="tab" type="button" data-day="2"><span class="full">Martes</span><span class="short">Mar</span></button>  
+        <button class="day-tab" role="tab" type="button" data-day="3"><span class="full">Miércoles</span><span class="short">Mié</span></button>  
+        <button class="day-tab" role="tab" type="button" data-day="4"><span class="full">Jueves</span><span class="short">Jue</span></button>  
+        <button class="day-tab" role="tab" type="button" data-day="5"><span class="full">Viernes</span><span class="short">Vie</span></button>  
+      </div>  
+      <div id="public-menu" role="tabpanel" class="week-menu" aria-busy="true"></div>  
+      
+      <div id="order-summary" class="order-summary" aria-live="polite">  
+        <h3>Tu selección.</h3>  
+        <div id="order-summary-items">  
+          <p class="order-summary-empty">  
+            Elige un día y agrega los platillos que necesitas.  
+          </p>  
+        </div>  
+        <div class="order-summary-total">  
+          <span>Total</span>  
+          <span id="order-summary-total">$0.00 MXN</span>  
+        </div>  
+
+        <button id="clear-order" class="order-summary-clear" type="button">
+          Limpiar selección
+        </button>
+
+        <div class="subscription-form" id="subscription-form">
+          <h3>Organiza tus entregas.</h3>
+          <p class="form-description">
+            Elige tus platillos para la semana publicada. Revisa las cantidades y comparte tu dirección para enviar tu solicitud.  
+          </p>
+
+          <div class="subscription-fields">
+            <div class="subscription-field full-width">
+  <div class="week-selector">
+    <p class="selector-label">Elige tu semana</p>
+    <div id="week-tabs" class="week-tabs" aria-label="Semanas disponibles">
+      <span class="menu-status">Cargando semanas disponibles...</span>
+    </div>
+  </div>
+</div>
+        
+  <input type="hidden" id="subscription-start-date">
+  <input type="hidden" id="subscription-end-date">        
+          </div>
+
+          <p class="form-description">
+            La solicitud quedará pendiente de confirmación. El total mostrado corresponde a las cantidades seleccionadas por día, no al total de todas las entregas del periodo.
+          </p>
+
+          <button id="submit-subscription" class="button subscription-submit" type="button">
+            Solicitar suscripción
+          </button>
+
+          <p id="subscription-feedback" class="subscription-feedback" role="status" aria-live="polite"></p>
+        </div>
+      </div>  
+    </div>  
+  </section>  
+  <!-- FIN DEL MENÚ DINÁMICO -->    
+
+  <section class="section" id="filosofia">  
+    <div class="section-heading">  
+      <div>  
+        <div class="eyebrow">La filosofía Pomelo</div>  
+        <h2>Comer bien, sin complicarte.</h2>  
+      </div>  
+      <p class="section-description">Una forma más sencilla de organizar tus comidas, con platos pensados para acompañarte durante la semana.</p>  
+    </div>  
+    <div class="features">  
+      <article class="feature"><div class="feature-number">01 — INGREDIENTES</div><h3>Real, siempre.</h3><p>Priorizamos ingredientes frescos y preparaciones que ponen al alimento en el centro.</p></article>  
+      <article class="feature"><div class="feature-number">02 — TU SEMANA</div><h3>A tu ritmo.</h3><p>Organiza tus comidas según los días que necesites y elige entre las opciones disponibles.</p></article>  
+      <article class="feature"><div class="feature-number">03 — SIN COMPLICACIONES</div><h3>Nosotros cocinamos.</h3><p>Tu comida se prepara y se entrega de acuerdo con la programación de tu pedido.</p></article>  
+    </div>  
+  </section>    
+
+  <section class="subscription" id="suscripciones">  
+    <div class="subscription-inner">  
+      <div>  
+        <div class="eyebrow">Una semana más simple</div>  
+        <h2>Tu comida, organizada a tu manera.</h2>  
+        <p>
+          Consulta el menú, elige tus platillos por día y solicita tus entregas desde tu propia cuenta. Revisaremos tu solicitud antes de activarla.
+        </p>     
+      </div>  
+      <a class="button" href="#como-funciona">Así funcionará ↗</a>  
+    </div>  
+  </section>    
+
+  <section class="section" id="como-funciona">  
+    <div class="section-heading">  
+      <div>  
+        <div class="eyebrow">Fácil por diseño</div>  
+        <h2>Menos pendientes.<br>Más tiempo para ti.</h2>  
+      </div>  
+      <p class="section-description">Estamos preparando una experiencia para que elegir, programar y recibir tus comidas sea sencillo desde tu celular.</p>  
+    </div>  
+    <div class="notice">
+      Puedes enviar tu solicitud de suscripción desde el menú.
+      La programación de tus entregas comenzará una vez que tu suscripción haya sido revisada y activada.
+    </div>  
+  </section>  
+</main>  
+
+<footer>  
+  <a class="brand" href="#">pomelo<span>.</span><small>brunch house</small></a>  
+  <span>Comida real, todos los días.</span>  
+  <span>© <span id="year"></span> Pomelo Brunch House</span>  
+</footer>  
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  
+<script>  
+const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";  
+const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";  
+const pomeloDB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);  
+window.pomeloDB = pomeloDB;  
+  
+document.getElementById("year").textContent = new Date().getFullYear();  
+  
+function formatMenuPrice(value) {  
+  return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(Number(value || 0));  
+}  
+  
+function escapeMenuText(value) {  
+  return String(value ?? "").replace(/[&<>"']/g, c => ({  
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"  
+  })[c]);  
+}  
+  
+function showMenuStatus(html) {  
+  const status = document.getElementById("menu-status");  
+  status.innerHTML = html;  
+  status.classList.remove("hidden");  
+}  
+  
+function hideDay() {  
+  document.querySelectorAll("#day-tabs .day-tab").forEach(tab => {  
+    tab.setAttribute("aria-selected", "false");  
+    tab.tabIndex = 0;  
+  });  
+  document.getElementById("public-menu").innerHTML =  
+    '<p class="day-empty">Toca un día para ver los platillos.</p>';  
+}  
+  
+document.addEventListener("click", event => {
+  const open = document.querySelector(
+    '#day-tabs .day-tab[aria-selected="true"]'
+  );
+
+  if (
+    open &&
+    !event.target.closest(
+      "#day-tabs, #public-menu, #order-summary, #week-selector-container, .week-selector-dropdown"
+    )
+  ) {
+    hideDay();
+  }
+});
+document.addEventListener("keydown", event => {  
+  const open = document.querySelector('#day-tabs .day-tab[aria-selected="true"]');  
+  if (event.key === "Escape" && open) hideDay();  
+});  
+  
+async function loadPublicMenu() {
+  const status = document.getElementById("menu-status");
+  const container = document.getElementById("public-menu");
+  const tabsContainer = document.getElementById("day-tabs");
+const weekTabsContainer = document.getElementById("week-tabs");
+const weekSelect = document.getElementById("week-select");  
+  status.classList.add("hidden");
+  tabsContainer.classList.add("hidden");
+  weekTabsContainer.innerHTML = "";
+  container.setAttribute("aria-busy", "true");
+  container.innerHTML =
+    '<div class="menu-grid"><div class="skeleton"></div><div class="skeleton"></div></div>';
+
+  try {
+    const { data: publishedWeeks, error: weekError } = await pomeloDB
+      .from("weekly_menus")
+      .select("id, name, start_date, end_date")
+      .eq("status", "published")
+      .gte("end_date", getLocalDateString())
+      .order("start_date", { ascending: true });
+
+    if (weekError) throw weekError;
+
+    const weeks = publishedWeeks || [];
+
+    if (!weeks.length) {
+      container.innerHTML = "";
+      weekTabsContainer.innerHTML = "";
+      showMenuStatus("Todavía no hay semanas publicadas disponibles.");
+      return;
+    }
+
+    const weekIds = weeks.map(week => week.id);
+
+    const { data: weeklyItems, error: itemsError } = await pomeloDB
+      .from("weekly_menu_items")
+      .select("id, weekly_menu_id, menu_item_id, name, description, image_url, price_mxn, category, day_of_week")
+      .in("weekly_menu_id", weekIds)
+      .order("day_of_week")
+      .order("name");
+
+    if (itemsError) throw itemsError;
+
+    const days = [
+      [1, "Lunes"],
+      [2, "Martes"],
+      [3, "Miércoles"],
+      [4, "Jueves"],
+      [5, "Viernes"]
+    ];
+
+    const menuItems = (weeklyItems || [])
+      .filter(item => item.menu_item_id)
+      .map(item => ({
+        ...item,
+        original_menu_item_id: item.menu_item_id,
+        weekly_day: Number(item.day_of_week),
+        active: true
+      }));
+
+    const quantities = {};
+
+    // Semanas que el cliente ha elegido incluir.
+    const selectedWeekIds = new Set([weeks[0].id]);
+
+    // Semana y día que se muestran actualmente.
+    let activeWeekId = weeks[0].id;
+    let activeDayNumber = 1;
+
+    const getWeek = weekId =>
+      weeks.find(week => String(week.id) === String(weekId));
+
+    const getItem = (weekId, day, itemId) =>
+      menuItems.find(item =>
+        String(item.weekly_menu_id) === String(weekId) &&
+        Number(item.weekly_day) === Number(day) &&
+        String(item.id) === String(itemId)
+      );
+
+    function getQuantity(weekId, day, itemId) {
+      const key = `${weekId}|${day}|${itemId}`;
+      return Number(quantities[key] || 0);
+    }
+
+    function setQuantity(weekId, day, itemId, value) {
+      const key = `${weekId}|${day}|${itemId}`;
+
+      if (value <= 0) {
+        delete quantities[key];
+      } else {
+        quantities[key] = Number(value);
+      }
+    }
+
+    function getLocalDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatWeekDate(value) {
+      const [year, month, day] = value.split("-").map(Number);
+
+      return new Intl.DateTimeFormat("es-MX", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC"
+      }).format(new Date(Date.UTC(year, month - 1, day)));
+    }
+
+    function getDeliveryDate(week, dayNumber) {
+      const [year, month, day] = week.start_date.split("-").map(Number);
+      const date = new Date(Date.UTC(year, month - 1, day));
+
+      date.setUTCDate(date.getUTCDate() + dayNumber - 1);
+
+      return date.toISOString().slice(0, 10);
+    }
+
+function renderWeekTabs() {
+  // Oculta el selector anterior.
+  if (weekTabsContainer) {
+    weekTabsContainer.innerHTML = "";
+  }
+
+  // Llena el nuevo selector.
+  if (!weekSelect) return;
+
+  weekSelect.innerHTML = "";
+
+  weeks.forEach((week, index) => {
+    const option = document.createElement("option");
+
+    option.value = String(week.id);
+    option.textContent =
+      `${week.name || `Semana ${index + 1}`} · ` +
+      `${formatWeekDate(week.start_date)} al ${formatWeekDate(week.end_date)}`;
+
+    weekSelect.appendChild(option);
+  });
+
+  weekSelect.value = String(activeWeekId);
+
+  weekSelect.onchange = () => {
+    const newWeekId = weekSelect.value;
+
+    if (!newWeekId) return;
+
+    activeWeekId = newWeekId;
+    selectedWeekIds.add(newWeekId);
+
+    renderDayTabs();
+    renderDay(activeDayNumber);
+    renderSummary();
+  };
+}
+
+function renderDayTabs() {
+  tabsContainer.innerHTML = "";
+
+    days.forEach(([dayNumber, dayName]) => {
+    const button = document.createElement("button");
+        button.type = "button";
+        button.className = "day-tab";
+        
+        button.dataset.day = dayNumber;
+        button.textContent = dayName;
+
+        button.setAttribute(
+          "aria-selected",
+String(Number(activeDayNumber) === Number(dayNumber))      
         );
+
+        button.tabIndex =
+Number(activeDayNumber) === Number(dayNumber) ? 0 : -1;
+      
+button.addEventListener("click", (event) => {
+  event.stopPropagation();
+
+  activeDayNumber = dayNumber;
+  renderDayTabs();
+  renderDay(dayNumber);
+});
+        tabsContainer.appendChild(button);
+      });
+}
+    function calculateTotal() {
+      let total = 0;
+
+      Object.entries(quantities).forEach(([key, quantity]) => {
+        const [weekId, day, itemId] = key.split("|");
+
+        if (!selectedWeekIds.has(weekId)) return;
+
+        const item = getItem(weekId, day, itemId);
+
+        if (item) {
+          total += Number(item.price_mxn || 0) * quantity;
+        }
+      });
+
+      return total;
+    }
+
+    function renderSummary() {
+      const summary = document.getElementById("order-summary-items");
+      const totalElement = document.getElementById("order-summary-total");
+
+      const selectedItems = Object.entries(quantities)
+        .map(([key, quantity]) => {
+          const [weekId, day, itemId] = key.split("|");
+          const week = getWeek(weekId);
+          const item = getItem(weekId, day, itemId);
+
+          if (
+            !week ||
+            !item ||
+            !selectedWeekIds.has(weekId) ||
+            quantity <= 0
+          ) {
+            return null;
+          }
+
+          return {
+            week,
+            item,
+            day: Number(day),
+            quantity,
+            deliveryDate: getDeliveryDate(week, Number(day))
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) =>
+          a.deliveryDate.localeCompare(b.deliveryDate) ||
+          a.item.name.localeCompare(b.item.name)
+        );
+
+      summary.replaceChildren();
+
+      if (!selectedItems.length) {
+        const empty = document.createElement("p");
+        empty.className = "order-summary-empty";
+        empty.textContent =
+          "Elige una semana, un día y agrega los platillos que necesitas.";
+
+        summary.appendChild(empty);
+      } else {
+        selectedItems.forEach(selected => {
+          const row = document.createElement("div");
+          row.className = "order-summary-row";
+
+          const info = document.createElement("div");
+          info.className = "order-summary-info";
+
+          const name = document.createElement("strong");
+          name.textContent = selected.item.name;
+
+          const detail = document.createElement("small");
+          detail.textContent =
+            `${selected.week.name} · ${days[selected.day - 1][1]} · ${formatWeekDate(selected.deliveryDate)} · ${formatMenuPrice(selected.item.price_mxn)} c/u`;
+
+          info.append(name, detail);
+
+          const quantity = document.createElement("span");
+          quantity.className = "summary-qty";
+          quantity.textContent = `× ${selected.quantity}`;
+
+          const amount = document.createElement("strong");
+          amount.className = "order-summary-amount";
+          amount.textContent = formatMenuPrice(
+            Number(selected.item.price_mxn || 0) * selected.quantity
+          );
+
+          row.append(info, quantity, amount);
+          summary.appendChild(row);
+        });
+      }
+
+      totalElement.textContent = formatMenuPrice(calculateTotal());
+
+      const startDateInput = document.getElementById("subscription-start-date");
+      const endDateInput = document.getElementById("subscription-end-date");
+
+      const dates = Object.entries(quantities)
+        .map(([key, quantity]) => {
+          if (quantity <= 0) return null;
+
+          const [weekId, day] = key.split("|");
+
+          if (!selectedWeekIds.has(weekId)) return null;
+
+          const week = getWeek(weekId);
+
+          return week ? getDeliveryDate(week, Number(day)) : null;
+        })
+        .filter(Boolean)
+        .sort();
+
+      startDateInput.value = dates[0] || "";
+      endDateInput.value = dates[dates.length - 1] || "";
+    }
+
+    function renderDay(dayNumber) {
+      const day = days.find(item => item[0] === dayNumber);
+      if (!day) return;
+
+      activeDayNumber = dayNumber;
+
+      document.querySelectorAll("#day-tabs .day-tab").forEach(tab => {
+        const active = Number(tab.dataset.day) === dayNumber;
+
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+
+      const week = getWeek(activeWeekId);
+
+      if (!week) return;
+
+      container.innerHTML = "";
+
+      const heading = document.createElement("h3");
+      heading.className = "day-title";
+      heading.textContent =
+        `${day[1]} · ${formatWeekDate(getDeliveryDate(week, dayNumber))}`;
+
+      container.appendChild(heading);
+
+      const dishes = menuItems.filter(item =>
+        String(item.weekly_menu_id) === String(activeWeekId) &&
+        item.weekly_day === dayNumber
+      );
+
+      if (!dishes.length) {
+        const empty = document.createElement("p");
+        empty.className = "day-empty";
+        empty.textContent = "Menú por confirmar para este día.";
+        container.appendChild(empty);
         return;
       }
 
-      showWeeklyMessage("Platillo quitado del borrador.", "success");
-      await loadWeeklyItems();
-    });
-  });
-}
+      const grid = document.createElement("div");
+      grid.className = "menu-grid";
 
-function renderWeeklyMenus() {
-  const container = $("weekly-list");
+      dishes.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "menu-card";
 
-  if (!weeklyMenusCache.length) {
+        if (item.image_url) {
+          const image = document.createElement("img");
+          image.className = "menu-card-image";
+          image.src = item.image_url;
+          image.alt = item.name;
+          image.loading = "lazy";
+          image.width = 800;
+          image.height = 600;
+          card.appendChild(image);
+        } else {
+          const imagePlaceholder = document.createElement("div");
+          imagePlaceholder.className = "menu-card-image";
+          imagePlaceholder.setAttribute("aria-hidden", "true");
+          card.appendChild(imagePlaceholder);
+        }
+
+        const content = document.createElement("div");
+        content.className = "menu-card-content";
+
+        const category = document.createElement("div");
+        category.className = "menu-card-category";
+        category.textContent =
+          item.category === "dinner"
+            ? "Cena · Producto independiente"
+            : "Comida";
+
+        const name = document.createElement("h4");
+        name.textContent = item.name;
+
+        const description = document.createElement("p");
+        description.className = "menu-card-description";
+        description.textContent =
+          item.description || "Preparado con ingredientes frescos.";
+
+        const price = document.createElement("div");
+        price.className = "menu-card-price";
+        price.textContent = formatMenuPrice(item.price_mxn);
+
+        const quantity = document.createElement("div");
+        quantity.className = "dish-order";
+
+        const label = document.createElement("span");
+        label.className = "dish-order-label";
+        label.textContent = "Cantidad";
+
+        const controls = document.createElement("div");
+        controls.className = "dish-order-controls";
+
+        const minus = document.createElement("button");
+        minus.type = "button";
+        minus.textContent = "−";
+        minus.setAttribute("aria-label", `Quitar ${item.name}`);
+
+        const count = document.createElement("span");
+        count.className = "dish-order-qty";
+
+        const plus = document.createElement("button");
+        plus.type = "button";
+        plus.textContent = "+";
+        plus.setAttribute("aria-label", `Agregar ${item.name}`);
+
+        const subtotal = document.createElement("span");
+        subtotal.className = "dish-order-subtotal";
+
+        function refreshCard() {
+          const qty = getQuantity(activeWeekId, dayNumber, item.id);
+
+          count.textContent = qty;
+          minus.disabled = qty === 0;
+
+          subtotal.textContent = qty > 0
+            ? `Subtotal: ${formatMenuPrice(Number(item.price_mxn || 0) * qty)}`
+            : "";
+        }
+
+        minus.addEventListener("click", () => {
+          setQuantity(
+            activeWeekId,
+            dayNumber,
+            item.id,
+            getQuantity(activeWeekId, dayNumber, item.id) - 1
+          );
+
+          refreshCard();
+          renderSummary();
+        });
+
+        plus.addEventListener("click", () => {
+          setQuantity(
+            activeWeekId,
+            dayNumber,
+            item.id,
+            getQuantity(activeWeekId, dayNumber, item.id) + 1
+          );
+
+          refreshCard();
+          renderSummary();
+        });
+
+        controls.append(minus, count, plus);
+        quantity.append(label, controls);
+
+        content.append(
+          category,
+          name,
+          description,
+          price,
+          subtotal,
+          quantity
+        );
+
+        card.appendChild(content);
+        grid.appendChild(card);
+
+        refreshCard();
+      });
+
+      container.appendChild(grid);
+    }
+
+    document.getElementById("clear-order").onclick = () => {
+      Object.keys(quantities).forEach(key => delete quantities[key]);
+
+      renderDay(activeDayNumber);
+      renderSummary();
+    };
+
+    const startDateInput = document.getElementById("subscription-start-date");
+    const endDateInput = document.getElementById("subscription-end-date");
+    const submitButton = document.getElementById("submit-subscription");
+    const feedback = document.getElementById("subscription-feedback");
+
+    async function saveCustomerAddress(userId, address, notes) {
+      const { error } = await pomeloDB
+        .from("profiles")
+        .update({
+          delivery_address: address,
+          delivery_notes: notes
+        })
+        .eq("id", userId);
+
+      if (error) {
+        throw new Error(
+          "No se pudo guardar tu dirección: " + error.message
+        );
+      }
+    }
+
+    submitButton.onclick = async () => {
+      feedback.textContent = "";
+
+      const items = [];
+
+      Object.entries(quantities).forEach(([key, quantity]) => {
+        if (Number(quantity) <= 0) return;
+
+        const [weekId, day, itemId] = key.split("|");
+
+        if (!selectedWeekIds.has(weekId)) return;
+
+        const selectedItem = getItem(weekId, day, itemId);
+
+        if (!selectedItem) return;
+
+        items.push({
+          weekly_menu_id: weekId,
+          day: Number(day),
+          menu_item_id: selectedItem.original_menu_item_id,
+          quantity: Number(quantity)
+        });
+      });
+
+      if (!items.length) {
+        feedback.textContent =
+          "Agrega al menos un platillo de las semanas seleccionadas.";
+        return;
+      }
+
+      const dates = items
+        .map(item => {
+          const week = getWeek(item.weekly_menu_id);
+          return getDeliveryDate(week, item.day);
+        })
+        .sort();
+
+      const startDate = dates[0];
+      const endDate = dates[dates.length - 1];
+
+      startDateInput.value = startDate;
+      endDateInput.value = endDate;
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Enviando solicitud…";
+      feedback.textContent = "Conectando con el servidor…";
+      feedback.style.color = "var(--muted)";
+
+      try {
+        const { data: userData, error: userError } =
+          await pomeloDB.auth.getUser();
+
+        if (userError || !userData.user) {
+          throw new Error(
+            "Tu sesión expiró. Inicia sesión nuevamente."
+          );
+        }
+
+        feedback.textContent = "Consultando tu dirección guardada…";
+
+        const { data: profile, error: profileError } = await pomeloDB
+          .from("profiles")
+          .select("delivery_address, delivery_notes")
+          .eq("id", userData.user.id)
+          .single();
+
+        if (profileError) throw profileError;
+
+        const address = (profile.delivery_address || "").trim();
+        const notes = (profile.delivery_notes || "").trim();
+
+        if (!address) {
+          throw new Error(
+            "Primero guarda tu dirección desde Mi cuenta antes de solicitar una suscripción."
+          );
+        }
+
+        feedback.textContent = "Registrando tu solicitud…";
+
+        const { data, error } = await pomeloDB.rpc(
+          "create_subscription_request",
+          {
+            p_start_date: startDate,
+            p_end_date: endDate,
+            p_delivery_address: address,
+            p_delivery_notes: notes,
+            p_items: items
+          }
+        );
+
+        if (error) {
+          console.error("Error de Supabase:", error);
+          throw new Error(
+            error.message || "Supabase no pudo registrar la solicitud."
+          );
+        }
+
+        if (!data) {
+          throw new Error(
+            "No recibimos la confirmación del servidor. Revisa Supabase antes de volver a enviar."
+          );
+        }
+
+        Object.keys(quantities).forEach(key => delete quantities[key]);
+
+        renderDay(activeDayNumber);
+        renderSummary();
+
+        feedback.textContent =
+          "¡Solicitud enviada! Tu suscripción quedó pendiente de confirmación.";
+        feedback.style.color = "var(--green)";
+
+      } catch (error) {
+        console.error("Error al solicitar suscripción:", error);
+        feedback.textContent =
+          error.message || "Ocurrió un error. Inténtalo nuevamente.";
+        feedback.style.color = "#a33b32";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Solicitar suscripción";
+      }
+    };
+
+    renderWeekTabs();
+    renderDayTabs();
+
+    tabsContainer.classList.remove("hidden");
+
+    showMenuStatus(
+      "Elige las semanas que necesitas y después selecciona un día para agregar tus platillos."
+    );
+
     container.innerHTML =
-      '<p class="empty">Todavía no hay semanas creadas.</p>';
-    return;
+      '<p class="day-empty">Selecciona un día para consultar sus platillos.</p>';
+
+    renderSummary();
+
+  } catch (error) {
+    console.error("Error al cargar el menú:", error);
+
+    container.innerHTML = "";
+    tabsContainer.classList.add("hidden");
+    weekTabsContainer.innerHTML = "";
+
+    let message =
+      "No pudimos cargar el menú. Inténtalo de nuevo en unos minutos.";
+
+    if (/failed to fetch|networkerror/i.test(error.message || "")) {
+      message =
+        "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.";
+    }
+
+    showMenuStatus(
+      `${message}<br><button class="button" type="button" id="retry-menu">Reintentar</button>`
+    );
+
+    document.getElementById("retry-menu").addEventListener(
+      "click",
+      loadPublicMenu
+    );
+
+  } finally {
+    container.setAttribute("aria-busy", "false");
   }
-
-  container.innerHTML = weeklyMenusCache.map(week => {
-    const statusLabel = {
-      draft: "Borrador",
-      published: "Publicada",
-      archived: "Archivada"
-    }[week.status] || week.status;
-
-    return `
-      <article class="item">
-        <div>
-          <div class="item-title">${escapeHtml(week.name)}</div>
-          <div class="muted">
-            ${dateLocal(week.start_date)} — ${dateLocal(week.end_date)}
-          </div>
-          <p><span class="pill">${statusLabel}</span></p>
-        </div>
-
-        <div class="item-actions">
-
-          <button class="btn"
-            type="button"
-            data-week-edit="${escapeHtml(week.id)}">
-            Seleccionar
-          </button>
-
-          ${week.status === "draft" ? `
-            <button class="btn primary"
-              type="button"
-              data-week-publish="${escapeHtml(week.id)}">
-              Publicar
-            </button>
-          ` : ""}
-
-          ${week.status === "published" ? `
-            <button class="btn danger"
-              type="button"
-              data-week-archive="${escapeHtml(week.id)}">
-              Archivar
-            </button>
-          ` : ""}
-${week.status === "archived" ? `
-  <button class="btn primary"
-    type="button"
-    data-week-reactivate="${escapeHtml(week.id)}">
-    Reactivar
-  </button>
-` : ""}
-          ${week.status === "draft" || week.status === "archived" ? `
-            <button class="btn danger"
-              type="button"
-              data-week-delete="${escapeHtml(week.id)}">
-              Eliminar
-            </button>
-          ` : ""}
-
-        </div>
-      </article>
-    `;
-  }).join("");
-
-  // SELECCIONAR SEMANA
-  container.querySelectorAll("[data-week-edit]").forEach(button => {
-    button.addEventListener("click", async () => {
-
-      const id = button.dataset.weekEdit;
-
-      $("weekly-select").value = id;
-
-      // Cambiar automáticamente al apartado Agregar platillo
-      document.querySelectorAll(".weekly-section").forEach(section => {
-        section.classList.add("hidden");
-      });
-
-      $("weekly-section-items").classList.remove("hidden");
-
-      document.querySelectorAll(".weekly-section-btn").forEach(btn => {
-        btn.classList.remove("primary");
-      });
-
-      document.querySelector(
-        '[data-weekly-section="items"]'
-      ).classList.add("primary");
-
-      await loadWeeklyItems();
-
-      $("weekly-select").scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-
-    });
-  });
-
-  // PUBLICAR
-  container.querySelectorAll("[data-week-publish]").forEach(button => {
-    button.addEventListener("click", () =>
-      changeWeeklyStatus(button.dataset.weekPublish, "published")
-    );
-  });
-
-  // ARCHIVAR
-  container.querySelectorAll("[data-week-archive]").forEach(button => {
-    button.addEventListener("click", () =>
-      changeWeeklyStatus(button.dataset.weekArchive, "archived")
-    );
-  });
-// REACTIVAR
-container.querySelectorAll("[data-week-reactivate]").forEach(button => {
-  button.addEventListener("click", () => {
-    changeWeeklyStatus(button.dataset.weekReactivate, "draft");
-  });
-});
-  // ELIMINAR
-  container.querySelectorAll("[data-week-delete]").forEach(button => {
-    button.addEventListener("click", () =>
-      deleteWeeklyMenu(button.dataset.weekDelete)
-    );
-  });
 }
-$("weekly-form").addEventListener("submit", async event => {
-  event.preventDefault();
+async function setupCustomerSavedAddress(userId) {
+  const display = document.getElementById("customer-saved-address");
+  const editButton = document.getElementById("customer-edit-address");
+  const editor = document.getElementById("customer-address-editor");
+  const addressInput = document.getElementById("customer-address-input");
+  const notesInput = document.getElementById("customer-address-notes");
+  const saveButton = document.getElementById("customer-save-address");
+  const cancelButton = document.getElementById("customer-cancel-edit-address");
+  const feedback = document.getElementById("customer-address-feedback");
 
-  const name = $("weekly-name").value.trim();
-  const start = $("weekly-start").value;
-  const end = $("weekly-end").value;
+  if (!display || !editButton || !editor || !addressInput || !notesInput || !saveButton || !cancelButton || !feedback) return;
 
-  if (!name || !start || !end) {
-    showWeeklyMessage("Completa el nombre y las fechas.", "error");
-    return;
-  }
-
-  if (!isMonday(start) || !isFridayAfterMonday(start, end)) {
-    showWeeklyMessage(
-      "La semana debe comenzar en lunes y terminar ese mismo viernes.",
-      "error"
-    );
-    return;
-  }
-
-  const submit = $("weekly-form").querySelector(
-    'button[type="submit"]'
-  );
-  submit.disabled = true;
-
-  const { data, error } = await db
-    .from("weekly_menus")
-    .insert({
-      name,
-      start_date: start,
-      end_date: end,
-      status: "draft"
-    })
-    .select()
+  const { data: profile, error } = await pomeloDB
+    .from("profiles")
+    .select("delivery_address, delivery_notes")
+    .eq("id", userId)
     .single();
 
-  submit.disabled = false;
+  if (error) throw error;
 
-  if (error) {
-    showWeeklyMessage(
-      error.code === "23505"
-        ? "Ya existe una semana con esa fecha de inicio."
-        : "No se pudo crear la semana: " + error.message,
-      "error"
-    );
-    return;
-  }
+  addressInput.value = profile.delivery_address || "";
+  notesInput.value = profile.delivery_notes || "";
 
-  showWeeklyMessage("Semana creada como borrador.", "success");
-  $("weekly-form").reset();
-  $("weekly-name").value = "Menú semanal";
-
-  await loadWeeklyData();
-  $("weekly-select").value = data.id;
-  await loadWeeklyItems();
-});
-
-$("weekly-select").addEventListener("change", loadWeeklyItems);
-
-$("weekly-add-item").addEventListener("click", async () => {
-  const weekId = $("weekly-select").value;
-  const itemId = $("weekly-item").value;
-  const day = Number($("weekly-day").value);
-
-  const week = weeklyMenusCache.find(item => item.id === weekId);
-  const item = menuCache.find(row => row.id === itemId);
-
-  if (!week || !item) {
-    showWeeklyMessage("Selecciona una semana y un platillo.", "error");
-    return;
-  }
-
-  if (week.status !== "draft") {
-    showWeeklyMessage(
-      "Solo puedes modificar semanas en borrador.",
-      "error"
-    );
-    return;
-  }
-
-const availableDays = Array.isArray(item.available_days)
-  ? item.available_days.map(Number)
-  : [1, 2, 3, 4, 5];
-
-if (!availableDays.includes(day)) {
-  showWeeklyMessage(
-    "Este platillo no está disponible para el día seleccionado en el catálogo.",
-    "error"
-  );
-  return;
-}
-  
-const duplicate = weeklyItemsCache.some(existing =>
-  existing.menu_item_id === item.id &&
-  Number(existing.day_of_week) === day
-);
-
-if (duplicate) {
-  showWeeklyMessage(
-    "Este platillo ya está asignado a ese día.",
-    "error"
-  );
-  return;
-}
-
-
-  const { error } = await db
-    .from("weekly_menu_items")
-    .insert({
-      weekly_menu_id: week.id,
-      menu_item_id: item.id,
-      day_of_week: day,
-      name: item.name,
-      description: item.description || "",
-      image_url: item.image_url || null,
-      price_mxn: item.price_mxn,
-      category: item.category
-    });
-
-  if (error) {
-    showWeeklyMessage(
-      "No se pudo agregar el platillo: " + error.message,
-      "error"
-    );
-    return;
-  }
-
-  showWeeklyMessage(
-    item.name + " agregado al " + WEEKLY_DAYS[day] + ".",
-    "success"
-  );
-  await loadWeeklyItems();
-});
-async function deleteWeeklyMenu(id) {
-  const week = weeklyMenusCache.find(item => item.id === id);
-
-  if (!week) return;
-
-  if (!["draft", "archived"].includes(week.status)) {
-    showWeeklyMessage(
-      "Primero debes archivar la semana antes de eliminarla.",
-      "error"
-    );
-    return;
-  }
-
-  const confirmed = confirm(
-    `¿Eliminar definitivamente "${week.name}"?\n\n` +
-    "También se eliminarán todos los platillos asociados. Esta acción no se puede deshacer."
-  );
-
-  if (!confirmed) return;
-
-  // Eliminar primero los platillos asociados
-  const { error: itemsError } = await db
-    .from("weekly_menu_items")
-    .delete()
-    .eq("weekly_menu_id", id);
-
-  if (itemsError) {
-    showWeeklyMessage(
-      "No se pudieron eliminar los platillos: " + itemsError.message,
-      "error"
-    );
-    return;
-  }
-
-  // Eliminar la semana
-  const { error } = await db
-    .from("weekly_menus")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    showWeeklyMessage(
-      "No se pudo eliminar la semana: " + error.message,
-      "error"
-    );
-    return;
-  }
-
-  if ($("weekly-select").value === id) {
-    $("weekly-select").value = "";
-  }
-
-  weeklyItemsCache = [];
-
-  showWeeklyMessage(
-    "Semana eliminada correctamente.",
-    "success"
-  );
-
-  await loadWeeklyData();
-}
-async function changeWeeklyStatus(id, status) {
-  const week = weeklyMenusCache.find(item => item.id === id);
-  if (!week) return;
-
-  if (status === "published") {
-    const { data: items, error: itemsError } = await db
-      .from("weekly_menu_items")
-      .select("id")
-      .eq("weekly_menu_id", id)
-      .limit(1);
-
-    if (itemsError) {
-      showWeeklyMessage(itemsError.message, "error");
-      return;
-    }
-
-    if (!items?.length) {
-      showWeeklyMessage(
-        "Agrega al menos un platillo antes de publicar.",
-        "error"
-      );
-      return;
-    }
-
-    const overlapping = weeklyMenusCache.some(other =>
-      other.id !== id &&
-      other.status === "published" &&
-      other.start_date <= week.end_date &&
-      other.end_date >= week.start_date
-    );
-
-    if (overlapping) {
-      showWeeklyMessage(
-        "Ya existe otro menú publicado con fechas que se cruzan.",
-        "error"
-      );
-      return;
-    }
-  }
-
-  const action = status === "published" ? "publicar" : "archivar";
-  if (!confirm(`¿Seguro que deseas ${action} "${week.name}"?`)) return;
-
-  const { error } = await db
-    .from("weekly_menus")
-    .update({ status })
-    .eq("id", id);
-
-  if (error) {
-    showWeeklyMessage(
-      "No se pudo actualizar el estado: " + error.message,
-      "error"
-    );
-    return;
-  }
-
-  showWeeklyMessage(
-    status === "published"
-      ? "Menú publicado."
-      : "Menú archivado.",
-    "success"
-  );
-
-  await loadWeeklyData();
-  $("weekly-select").value = id;
-  await loadWeeklyItems();
-}
-
-async function loadOrders() {
-  $("orders-list").textContent = "Generando pedidos del día...";
-
-  // Generar los pedidos de las suscripciones para la fecha actual
-  const today = new Date();
-  const localDate = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, "0"),
-    String(today.getDate()).padStart(2, "0")
-  ].join("-");
-
-  const { data: generated, error: generateError } = await db.rpc(
-    "generate_subscription_orders",
-    { p_delivery_date: localDate }
-  );
-
-  if (generateError) {
-    console.error("Error generando pedidos:", generateError);
-    $("orders-list").textContent =
-      "No se pudieron generar los pedidos de suscripciones: " +
-      generateError.message;
-    return;
-  }
-
-  console.log("Pedidos nuevos generados:", generated);
-
-  $("orders-list").textContent = "Cargando pedidos...";
-
-  const { data, error } = await db
-    .from("orders")
-    .select(
-      "id, customer_id, subscription_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at"
-    )
-    .eq("delivery_date", localDate)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    $("orders-list").textContent =
-      "No se pudieron cargar los pedidos: " + error.message;
-    return;
-  }
-
-  $("stat-orders").textContent = (data || []).length;
-
-  if (!data?.length) {
-    $("orders-list").innerHTML =
-      '<div class="empty">No hay pedidos para hoy.</div>';
-    return;
-  }
-
-  const orderIds = data.map(order => order.id);
-  const customerIds = [
-    ...new Set(data.map(order => order.customer_id).filter(Boolean))
-  ];
-
-  const profiles = {};
-  const itemsByOrder = {};
-
-  if (customerIds.length) {
-    const { data: people, error: peopleError } = await db
-      .from("profiles")
-      .select("id, full_name, phone")
-      .in("id", customerIds);
-
-    if (peopleError) console.error("Error consultando clientes:", peopleError);
-
-    (people || []).forEach(person => {
-      profiles[person.id] = person;
-    });
-  }
-
-  const { data: items, error: itemsError } = await db
-    .from("order_items")
-    .select("order_id, item_name, meal_type, quantity, unit_price_mxn")
-    .in("order_id", orderIds);
-
-  if (itemsError) {
-    $("orders-list").textContent =
-      "No se pudieron cargar los platillos: " + itemsError.message;
-    return;
-  }
-
-  (items || []).forEach(item => {
-    if (!itemsByOrder[item.order_id]) {
-      itemsByOrder[item.order_id] = [];
-    }
-    itemsByOrder[item.order_id].push(item);
-  });
-
-  $("orders-list").innerHTML = `
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Entrega</th>
-            <th>Suscriptor / Cliente</th>
-            <th>Platillos</th>
-            <th>Dirección</th>
-            <th>Total</th>
-            <th>Estado</th>
-            <th>Pago</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${data.map(order => {
-            const person = profiles[order.customer_id] || {};
-            const orderItems = itemsByOrder[order.id] || [];
-
-            const itemsHtml = orderItems.length
-              ? orderItems.map(item =>
-                  `<div>
-                    ${Number(item.quantity || 1)} ×
-                    ${escapeHtml(item.item_name || "Platillo")}
-                    <span class="muted">
-                      (${item.meal_type === "dinner" ? "Cena" : "Comida"})
-                    </span>
-                  </div>`
-                ).join("")
-              : '<span class="muted">Sin platillos registrados</span>';
-
-            return `
-              <tr>
-                <td>${dateLocal(order.delivery_date)}</td>
-                <td>
-                  <strong>${escapeHtml(person.full_name || "Cliente")}</strong>
-                  <br>
-                  <span class="muted">${escapeHtml(person.phone || "")}</span>
-                  ${order.subscription_id
-                    ? '<br><span class="pill">Suscripción</span>'
-                    : ""}
-                </td>
-                <td>${itemsHtml}</td>
-                <td>${escapeHtml(order.delivery_address || "Sin dirección")}</td>
-                <td>${money(order.total_mxn)}</td>
-                <td>${escapeHtml(order.delivery_status || "pending")}</td>
-                <td>${escapeHtml(order.payment_status || "unpaid")}</td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-    </div>`;
-}
-
-
-async function loadSubscriptions() {
-  const container = $("subscriptions-list");
-  container.textContent = "Cargando suscripciones...";
-
-  const { data: subscriptions, error } = await db
-    .from("subscriptions")
-    .select(`
-      id,
-      customer_id,
-      start_date,
-      end_date,
-      status,
-      created_at,
-      delivery_address,
-      delivery_notes,
-      delivery_fee_mxn
-    `)
-    .order("created_at", { ascending: false })
-    .limit(100);
-
-  if (error) {
-const debugBox = document.createElement("pre");
-
-debugBox.style.cssText =
-  "background:#eee;color:#222;padding:12px;margin:12px 0;border-radius:8px;white-space:pre-wrap;font-size:13px;";
-
-debugBox.textContent = JSON.stringify(
-  subscriptions.map(s => ({
-    status: s.status,
-    start_date: s.start_date,
-    end_date: s.end_date
-  })),
-  null,
-  2
-);
-
-container.before(debugBox);
-console.log(
-  "Fecha actual:",
-  new Date().getFullYear() + "-" +
-  String(new Date().getMonth() + 1).padStart(2, "0") + "-" +
-  String(new Date().getDate()).padStart(2, "0")
-);
-    container.textContent =
-      "No se pudieron cargar las suscripciones: " + error.message;
-    console.error(error);
-    return;
-  }
-
-  if (!subscriptions?.length) {
-    $("stat-subs").textContent = "0";
-    container.innerHTML =
-      '<div class="empty">Todavía no hay suscripciones.</div>';
-    return;
-  }
-
-  // Obtener clientes únicos
-  const customerIds = [
-    ...new Set(
-      subscriptions.map(s => s.customer_id).filter(Boolean)
-    )
-  ];
-
-  const profiles = {};
-
-  if (customerIds.length) {
-    const { data: people, error: peopleError } = await db
-      .from("profiles")
-      .select("id, full_name, phone")
-      .in("id", customerIds);
-
-    if (peopleError) console.error(peopleError);
-
-    (people || []).forEach(person => {
-      profiles[person.id] = person;
-    });
-  }
-
-  // Agrupar suscripciones por cliente
-  const customerGroups = {};
-  // Fecha actual local
-const today = [
-  new Date().getFullYear(),
-  String(new Date().getMonth() + 1).padStart(2, "0"),
-  String(new Date().getDate()).padStart(2, "0")
-].join("-");
-
-// Clasificación general del cliente
-function getCustomerStatus(customerSubscriptions) {
-const active = customerSubscriptions.some(sub =>
-  String(sub.status || "").toLowerCase() === "active" &&
-  sub.end_date >= today
-);
-
-if (active) return "active";
-  const pending = customerSubscriptions.some(sub =>
-    String(sub.status).toLowerCase() === "pending"
-  );
-
-  if (pending) return "pending";
-
-  const latest = [...customerSubscriptions].sort((a, b) => {
-    const dateA = a.end_date || a.created_at || "";
-    const dateB = b.end_date || b.created_at || "";
-    return dateB.localeCompare(dateA);
-  })[0];
-
-  if (
-    latest &&
-    String(latest.status).toLowerCase() === "cancelled"
-  ) {
-    return "cancelled";
-  }
-
-  return "inactive";
-}
-
-  subscriptions.forEach((sub, index) => {
-    const key = sub.customer_id
-      ? String(sub.customer_id)
-      : "sin-cliente-" + index;
-
-    if (!customerGroups[key]) {
-      customerGroups[key] = [];
-    }
-
-    customerGroups[key].push(sub);
-  });
-
-// Contar clientes únicos por estado
-const customerStatusCounts = {
-  active: 0,
-  pending: 0,
-  inactive: 0,
-  cancelled: 0
-};
-
-Object.values(customerGroups).forEach(customerSubscriptions => {
-  const status = getCustomerStatus(customerSubscriptions);
-
-  customerStatusCounts[status]++;
-});
-
-// Total de clientes
-$("stat-subs").textContent =
-  Object.keys(customerGroups).length;
-
-// Indicadores por estado
-$("stat-subs-active").textContent =
-  customerStatusCounts.active;
-
-$("stat-subs-pending").textContent =
-  customerStatusCounts.pending;
-
-$("stat-subs-inactive").textContent =
-  customerStatusCounts.inactive;
-
-$("stat-subs-cancelled").textContent =
-  customerStatusCounts.cancelled;
-// Clasificación general del cliente
-
-const statusLabels = {
-  pending: "Pendiente",
-  active: "Activa",
-  completed: "Completada",
-  cancelled: "Cancelada",
-  inactive: "Inactiva"
-};
-  const renderSubscription = (sub, isMain = false) => {
-    const status = String(sub.status || "pending").toLowerCase();
-
-    const statusLabel =
-      statusLabels[status] || status;
-
-    return `
-      <div class="${isMain ? "sub-main" : "sub-history-entry"}">
-
-        <div class="sub-record-info">
-
-          <div class="sub-record-top">
-            <strong>
-              ${isMain ? "Suscripción principal" : "Registro anterior"}
-            </strong>
-
-            <span class="pill">
-              ${escapeHtml(statusLabel)}
-            </span>
-          </div>
-
-          <p>
-            ${dateLocal(sub.start_date)}
-            — 
-            ${dateLocal(sub.end_date)}
-          </p>
-
-          ${
-            (
-              !isMain ||
-              ["cancelled", "completed"].includes(status)
-            )
-              ? `<button
-                  class="btn danger"
-                  data-delete-history="${escapeHtml(sub.id)}">
-                  ${isMain ? "Eliminar suscripción" : "Eliminar del historial"}
-                </button>`
-              : ""
-          }
-
-          <button class="btn"
-            data-details="${escapeHtml(sub.id)}">
-            Ver detalle
-          </button>
-          <div id="sub-detail-${sub.id}"
-            class="hidden"
-            style="margin-top:12px">
-            Cargando detalle...
-          </div>
-
-          <div class="item-actions">
-
-            ${
-              status === "pending"
-                ? `<button class="btn primary"
-                    data-status-id="${escapeHtml(sub.id)}"
-                    data-new-status="active">
-                    Activar
-                  </button>`
-                : ""
-            }
-
-            ${
-              status === "pending" || status === "active"
-                ? `<button class="btn danger"
-                    data-status-id="${escapeHtml(sub.id)}"
-                    data-new-status="cancelled">
-                    Cancelar
-                  </button>`
-                : ""
-            }
-
-          </div>
-
-        </div>
-      </div>
-    `;
+  const renderAddress = () => {
+    display.textContent = addressInput.value.trim() || "Todavía no has guardado una dirección.";
   };
 
-  // Dibujar una sola tarjeta por cliente
-  container.innerHTML = Object.entries(customerGroups)
-    .map(([key, customerSubscriptions]) => {
+  renderAddress();
 
-      const person =
-        profiles[customerSubscriptions[0].customer_id] || {};
-      const customerId = customerSubscriptions[0].customer_id;
+  editButton.onclick = () => {
+    feedback.textContent = "";
+    editor.classList.remove("hidden");
+    addressInput.focus();
+  };
 
-// Calcular estado general del cliente
-const customerStatus = getCustomerStatus(customerSubscriptions);
-console.log(
-  "Cliente:",
-  person.full_name,
-  "| Estatus calculado:",
-  customerStatus,
-  "| Suscripciones:",
-  customerSubscriptions.map(s => ({
-    status: s.status,
-    start_date: s.start_date,
-    end_date: s.end_date
-  }))
-);
-// Seleccionar la suscripción principal
-const ordered = [...customerSubscriptions].sort((a, b) => {
-  const statusA = String(a.status || "").toLowerCase();
-  const statusB = String(b.status || "").toLowerCase();
+  cancelButton.onclick = () => {
+    addressInput.value = profile.delivery_address || "";
+    notesInput.value = profile.delivery_notes || "";
+    editor.classList.add("hidden");
+    feedback.textContent = "";
+    renderAddress();
+  };
 
-  const priorityA =
-    statusA === "active" &&
-    a.start_date <= today &&
-    a.end_date >= today ? 1 :
-    statusA === "pending" ? 2 : 3;
+  saveButton.onclick = async () => {
+    const address = addressInput.value.trim();
+    const notes = notesInput.value.trim();
 
-  const priorityB =
-    statusB === "active" &&
-    b.start_date <= today &&
-    b.end_date >= today ? 1 :
-    statusB === "pending" ? 2 : 3;
+    if (!address) {
+      feedback.textContent = "Escribe tu dirección de entrega.";
+      addressInput.focus();
+      return;
+    }
 
-  if (priorityA !== priorityB) {
-    return priorityA - priorityB;
+    saveButton.disabled = true;
+    saveButton.textContent = "Guardando...";
+
+    try {
+      const { error: saveError } = await pomeloDB
+        .from("profiles")
+        .update({
+          delivery_address: address,
+          delivery_notes: notes
+        })
+        .eq("id", userId);
+
+      if (saveError) throw saveError;
+
+      profile.delivery_address = address;
+      profile.delivery_notes = notes;
+
+      renderAddress();
+      editor.classList.add("hidden");
+      feedback.textContent = "Dirección guardada correctamente.";
+    } catch (error) {
+      feedback.textContent = "No se pudo guardar: " + error.message;
+    } finally {
+      saveButton.disabled = false;
+      saveButton.textContent = "Guardar dirección";
+    }
+  };
+}
+
+async function loadCustomerPortal(userId) {
+  const status = document.getElementById("customer-portal-status");
+  const content = document.getElementById("customer-portal-content");
+const menuBox = document.getElementById("customer-plan-menu-view");
+  const ordersBox = document.getElementById("customer-orders");
+
+  const money = value => formatMenuPrice(value);
+  const safe = value => escapeMenuText(value);
+  const date = value => {
+    if (!value) return "No indicada";
+    const parts = String(value).slice(0, 10).split("-");
+    if (parts.length !== 3) return safe(value);
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  };
+
+  const statusLabel = value => {
+    const labels = {
+      pending: "Pendiente de confirmación",
+      active: "Activa",
+      approved: "Aprobada",
+      cancelled: "Cancelada",
+      canceled: "Cancelada",
+      completed: "Finalizada",
+      paused: "Pausada",
+      paid: "Pagado",
+      unpaid: "Pendiente de pago",
+      delivered: "Entregado",
+      preparing: "En preparación",
+      confirmed: "Confirmado"
+    };
+    const key = String(value || "").toLowerCase();
+    return labels[key] || value || "Sin estado registrado";
+  };
+
+  try {
+    status.textContent = "Consultando tu plan...";
+    await setupCustomerSavedAddress(userId);
+
+    const { data: plans, error: planError } = await pomeloDB
+      .from("subscriptions")
+      .select("id, start_date, end_date, status, delivery_address, delivery_notes, delivery_fee_mxn, created_at")
+      .eq("customer_id", userId)
+      .in("status", ["pending", "active"])
+      .order("created_at", { ascending: false });
+
+    if (planError) throw planError;
+
+
+const subscriptions = plans || [];
+
+// ESTADO GENERAL DE LA CUENTA
+const planStatusElement = document.getElementById("customer-plan-status");
+
+if (subscriptions.some(plan => plan.status === "active")) {
+  planStatusElement.textContent = "Activa";
+  planStatusElement.style.cssText =
+    "color:#397a45;background:#e8f3e9;padding:6px 12px;border-radius:20px;display:inline-block;";
+} else if (subscriptions.some(plan => plan.status === "pending")) {
+  planStatusElement.textContent = "Pendiente";
+  planStatusElement.style.cssText =
+    "color:#946b20;background:#fbf2dc;padding:6px 12px;border-radius:20px;display:inline-block;";
+} else {
+  planStatusElement.textContent = "Inactiva";
+  planStatusElement.style.cssText =
+    "color:#a33b32;background:#f9e9e7;padding:6px 12px;border-radius:20px;display:inline-block;";
+}
+
+document.getElementById("customer-cancel-subscription")?.remove();
+
+if (!subscriptions.length) {
+  content.classList.add("hidden");
+
+  menuBox.textContent =
+    "No tienes un menú programado actualmente.";
+
+} else {
+  content.classList.remove("hidden");
+
+  const plan = subscriptions[0];
+
+  document.getElementById("customer-plan-dates").textContent =
+    `Del ${date(plan.start_date)} al ${date(plan.end_date)}`;
+
+  // BOTÓN PARA CANCELAR
+  if (["pending", "active"].includes(plan.status)) {
+    const button = document.createElement("button");
+
+    button.id = "customer-cancel-subscription";
+    button.type = "button";
+    button.textContent = "Cancelar suscripción";
+
+    button.style.cssText =
+      "display:block;margin-top:20px;padding:12px 18px;border:1px solid #a64b43;border-radius:4px;background:transparent;color:#a64b43;cursor:pointer;";
+
+    document.getElementById("customer-plan-dates")
+      .insertAdjacentElement("afterend", button);
+
+    button.addEventListener("click", async () => {
+      if (!confirm("¿Cancelar tu suscripción? Se cancelarán los pedidos pendientes de hoy en adelante.")) return;
+
+      button.disabled = true;
+      button.textContent = "Cancelando...";
+
+      try {
+        const { data, error } = await pomeloDB.rpc(
+          "cancel_subscription",
+          { p_subscription_id: plan.id }
+        );
+
+        if (error) throw error;
+        if (!data?.success) throw new Error("No se confirmó la cancelación.");
+
+        alert("Suscripción cancelada. Pedidos cancelados: " + data.cancelled_orders);
+
+        await loadCustomerPortal(userId);
+
+      } catch (error) {
+        console.error("Error al cancelar:", error);
+        alert("No se pudo cancelar: " + error.message);
+
+        button.disabled = false;
+        button.textContent = "Cancelar suscripción";
+      }
+    });
   }
+      const planIds = subscriptions.map(item => item.id);
+      const { data: planItems, error: planItemsError } = await pomeloDB
+        .from("subscription_items")
+        .select("subscription_id, day_of_week, meal_name, unit_price_mxn, quantity")
+        .in("subscription_id", planIds);
 
-  return (b.end_date || b.created_at || "")
-    .localeCompare(a.end_date || a.created_at || "");
-});
+      if (planItemsError) throw planItemsError;
 
-const mainSubscription = ordered[0];
-const history = ordered.slice(1);
-const customerStatusLabel =
-  statusLabels[customerStatus] || customerStatus;
-      const activeCount = customerSubscriptions.filter(
-        s => String(s.status).toLowerCase() === "active"
-      ).length;
 
-      const pendingCount = customerSubscriptions.filter(
-        s => String(s.status).toLowerCase() === "pending"
-      ).length;
+const days = [
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+  "Domingo"
+];
 
-      const cancelledCount = customerSubscriptions.filter(
-        s => String(s.status).toLowerCase() === "cancelled"
-      ).length;
+const items = planItems || [];
 
-      const completedCount = customerSubscriptions.filter(
-        s => String(s.status).toLowerCase() === "completed"
-      ).length;
+if (!items.length) {
+  menuBox.textContent =
+    "Tu plan todavía no tiene platillos registrados.";
+} else {
+  const groupedDays = {};
 
-      const mainStatus =
-        String(mainSubscription.status || "pending").toLowerCase();
+  items.forEach(item => {
+    const dayName = String(item.day_of_week || "").trim();
 
-const badgeColor =
-  customerStatus === "active" ? "pill-success" :
-  customerStatus === "pending" ? "pill-warning" :
-  customerStatus === "cancelled" ? "pill-danger" :
-  "";
-return `
-        <article
-          class="item sub-customer-card"
-          data-customer-status="${customerStatus}">
+    if (!groupedDays[dayName]) {
+      groupedDays[dayName] = [];
+    }
 
-          <button
-            type="button"
-            class="sub-customer-toggle"
-            data-customer-toggle="${escapeHtml(key)}"
-            aria-expanded="false"
-            aria-controls="sub-customer-detail-${escapeHtml(key)}">
+    groupedDays[dayName].push(item);
+  });
 
-            <span class="sub-customer-name">
-              ${escapeHtml(person.full_name || "Cliente sin nombre")}
-            </span>
+  menuBox.innerHTML = Object.keys(groupedDays)
+    .sort((a, b) => days.indexOf(a) - days.indexOf(b))
+    .map(dayName => `
+      <section style="
+        padding:8px 0;
+        border-bottom:1px solid var(--line);
+      ">
+        <h3 style="
+          margin:0 0 8px;
+          font-family:'Playfair Display',serif;
+          font-size:19px;
+          font-weight:400;
+        ">
+          ${safe(dayName)}
+        </h3>
 
-            <span class="pill ${badgeColor}">
-              ${escapeHtml(customerStatusLabel)}
-            </span>
-
-            <span class="sub-customer-arrow">＋</span>
-          </button>
-
-          <div
-            id="sub-customer-detail-${escapeHtml(key)}"
-            class="hidden sub-customer-detail">
-
-            <div class="muted">
-              ${escapeHtml(person.phone || "Sin teléfono")}
-            </div>
-
-            <div class="sub-customer-summary">
-              ${customerSubscriptions.length} ${
-                customerSubscriptions.length === 1 ? "registro" : "registros"
-              } ·
-              ${activeCount} activas ·
-              ${pendingCount} pendientes ·
-              ${cancelledCount} canceladas ·
-              ${completedCount} completadas
-            </div>
-
-            ${
-              customerId
-                ? `<button
-                     class="btn danger"
-                     data-delete-subscriber="${escapeHtml(customerId)}">
-                     Eliminar suscriptor
-                   </button>`
-                : ""
-            }
-
-            ${renderSubscription(mainSubscription, true)}
-            
-          ${
-            history.length
-              ? `
-                <div class="sub-history">
-
-                  <button class="btn sub-history-toggle"
-                    data-history-toggle="${escapeHtml(key)}">
-
-                    Ver historial (${history.length})
-                    <span>＋</span>
-
-                  </button>
-
-                  <div id="sub-history-${escapeHtml(key)}"
-                    class="hidden sub-history-content">
-
-                    ${history.map(sub =>
-                      renderSubscription(sub)
-                    ).join("")}
-
-                  </div>
-
-                </div>
-              `
-              : ""
-          }
+        ${groupedDays[dayName].map(item => `
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:baseline;
+            gap:10px;
+            padding:3px 0;
+          ">
+            <span>${safe(item.meal_name)}</span>
+            <small style="white-space:nowrap">
+              × ${Number(item.quantity || 1)}
+            </small>
           </div>
+        `).join("")}
+      </section>
+    `)
+    .join("");
+}
+}
+    status.classList.add("hidden");
+
+    const { data: orders, error: ordersError } = await pomeloDB
+      .from("orders")
+      .select("id, subscription_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at")
+      .eq("customer_id", userId)
+      .order("delivery_date", { ascending: true });
+
+    if (ordersError) throw ordersError;
+
+    const activeSubscriptionIds = new Set(subscriptions.map(s => s.id));
+    const orderList = (orders || []).filter(order => !order.subscription_id || activeSubscriptionIds.has(order.subscription_id));
+
+    if (!orderList.length) {
+      ordersBox.textContent = "Todavía no hay pedidos generados para tu cuenta.";
+      return;
+    }
+
+    const orderIds = orderList.map(order => order.id);
+    const { data: orderItems, error: orderItemsError } = await pomeloDB
+      .from("order_items")
+      .select("order_id, item_name, meal_type, quantity, unit_price_mxn")
+      .in("order_id", orderIds);
+
+    if (orderItemsError) throw orderItemsError;
+
+    const groupedItems = {};
+    (orderItems || []).forEach(item => {
+      if (!groupedItems[item.order_id]) groupedItems[item.order_id] = [];
+      groupedItems[item.order_id].push(item);
+    });
+
+    ordersBox.innerHTML = orderList.map(order => {
+      const items = groupedItems[order.id] || [];
+      const dishes = items.length
+        ? `<ul style="margin:8px 0;padding-left:20px">${items.map(item => `<li>${safe(item.item_name)} × ${Number(item.quantity || 1)} ${item.meal_type ? `· ${safe(item.meal_type === "dinner" ? "Cena" : "Comida")}` : ""}</li>`).join("")}</ul>`
+        : "<p>Sin platillos registrados.</p>";
+
+      return `
+        <article style="padding:20px 0;border-bottom:1px solid var(--line)">
+          <div class="feature-number">PEDIDO · ${safe(String(order.id).slice(0, 8))}</div>
+          <h3 style="margin:8px 0;font-family:'Playfair Display',serif;font-size:23px;font-weight:400">Entrega: ${date(order.delivery_date)}</h3>
+          <p style="margin-bottom:8px"><strong>Pedido:</strong> ${safe(statusLabel(order.delivery_status))}<br><strong>Pago:</strong> ${safe(statusLabel(order.payment_status))}</p>
+          ${dishes}
+          <p style="margin:8px 0"><strong>Total: ${money(order.total_mxn)}</strong></p>
         </article>
       `;
     }).join("");
-// Filtros de suscriptores
-const filterButtons = document.querySelectorAll(".subscriber-filter");
 
-function applySubscriberFilter(filter) {
-  filterButtons.forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.filter === filter
-    );
-  });
-
-  container.querySelectorAll(".sub-customer-card").forEach(card => {
-    const status = card.dataset.customerStatus;
-
-    card.hidden = (
-      filter !== "all" && status !== filter
-    );
-  });
+  } catch (error) {
+    console.error("Error al cargar el portal del cliente:", error);
+    status.classList.remove("hidden");
+    status.textContent = "No pudimos cargar toda tu información: " + (error.message || "Error de conexión.");
+    content.classList.add("hidden");
+  }
 }
 
-filterButtons.forEach(button => {
-  button.onclick = () => {
-    applySubscriberFilter(button.dataset.filter);
-  };
-});
+/* INTERACCIÓN DE MI CUENTA */
+const portalModal = document.getElementById("customer-portal-modal");
+const portalTitle = document.getElementById("pomelo-portal-title");
 
-// Mostrar todos al cargar
-applySubscriberFilter("all");// Desplegar información del suscriptor
-container.querySelectorAll("[data-customer-toggle]").forEach(button => {
+const portalViews = {
+  plan: { element: document.getElementById("portal-view-plan"), title: "Mi cuenta." },
+  menu: { element: document.getElementById("portal-view-menu"), title: "Mi menú." },
+  orders: { element: document.getElementById("portal-view-orders"), title: "Mis pedidos." }
+};
+
+function openCustomerPortal(viewName) {
+  const selected = portalViews[viewName];
+  if (!selected) return;
+
+  Object.values(portalViews).forEach(view => {
+    view.element.classList.add("hidden");
+  });
+
+  selected.element.classList.remove("hidden");
+  portalTitle.textContent = selected.title;
+  portalModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCustomerPortal() {
+  portalModal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+document.querySelectorAll("[data-portal-view]").forEach(button => {
   button.addEventListener("click", () => {
-    const key = button.dataset.customerToggle;
-    const detail = $("sub-customer-detail-" + key);
-
-    if (!detail) return;
-
-    const isHidden = detail.classList.toggle("hidden");
-
-    button.setAttribute("aria-expanded", String(!isHidden));
-
-    const arrow = button.querySelector(".sub-customer-arrow");
-    if (arrow) {
-      arrow.textContent = isHidden ? "＋" : "−";
-    }
+    openCustomerPortal(button.dataset.portalView);
   });
 });
-  // Botones de detalles
-  container.querySelectorAll("[data-details]").forEach(button => {
-    button.addEventListener("click", () => {
-      toggleSubscriptionDetails(
-        button.dataset.details,
-        subscriptions,
-        profiles
-      );
-    });
-  });
 
-  // Botones de activar y cancelar
-  container.querySelectorAll("[data-status-id]").forEach(button => {
-    button.addEventListener("click", () => {
-      updateSubscriptionStatus(
-        button.dataset.statusId,
-        button.dataset.newStatus
-      );
-    });
-  });
-// Eliminar una suscripción del historial
-container.querySelectorAll("[data-delete-history]").forEach(button => {
-  button.addEventListener("click", async () => {
-    const id = button.dataset.deleteHistory;
+document.getElementById("pomelo-portal-close").addEventListener("click", closeCustomerPortal);
 
-    const confirmed = confirm(
-      "¿Eliminar definitivamente esta suscripción del historial?\n\n" +
-      "También se eliminarán sus pedidos, artículos y pagos relacionados.\n\n" +
-      "Las demás suscripciones del cliente permanecerán intactas."
-    );
-
-    if (!confirmed) return;
-
-    button.disabled = true;
-    button.textContent = "Eliminando...";
-
-    const { error } = await db.rpc(
-      "delete_subscription_history",
-      { p_subscription_id: id }
-    );
-
-    if (error) {
-      alert("No se pudo eliminar la suscripción:\n" + error.message);
-      await loadSubscriptions();
-      return;
-    }
-
-    alert("Suscripción eliminada correctamente.");
-    await loadSubscriptions();
-  });
+portalModal.addEventListener("click", event => {
+  if (event.target === portalModal) {
+    closeCustomerPortal();
+  }
 });
-  // Eliminar suscriptor completo
-container.querySelectorAll("[data-delete-subscriber]").forEach(button => {
-  button.addEventListener("click", async () => {
-    const customerId = button.dataset.deleteSubscriber;
 
-    const confirmed = confirm(
-      "¿Eliminar definitivamente a este suscriptor?\n\n" +
-      "Se borrarán su perfil, cuenta de acceso, todas sus suscripciones, " +
-      "pedidos, artículos y pagos relacionados.\n\n" +
-      "Esta acción es irreversible y no afectará a otros clientes."
-    );
-
-    if (!confirmed) return;
-
-    const confirmationWord = prompt(
-      'Para confirmar, escribe exactamente: ELIMINAR'
-    );
-
-    if (confirmationWord !== "ELIMINAR") {
-      alert("Eliminación cancelada.");
-      return;
-    }
-
-    button.disabled = true;
-    button.textContent = "Eliminando...";
-
-    const { data, error } = await db.functions.invoke(
-      "delete-subscriber",
-      {
-        body: {
-          customer_id: customerId
-        }
-      }
-    );
-
-    if (error || !data?.success) {
-      console.error("Error al eliminar suscriptor:", error || data);
-      alert(
-        "No se pudo completar la eliminación.\n\n" +
-        (data?.error || error?.message || "Error desconocido.")
-      );
-
-      await loadSubscriptions();
-      return;
-    }
-
-    alert("Suscriptor eliminado correctamente.");
-    await loadSubscriptions();
-  });
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !portalModal.classList.contains("hidden")) {
+    closeCustomerPortal();
+  }
 });
-  // Mostrar y ocultar historial
-  container.querySelectorAll("[data-history-toggle]").forEach(button => {
-    button.addEventListener("click", () => {
 
-      const key = button.dataset.historyToggle;
-      const history = $("sub-history-" + key);
-
-      if (!history) return;
-
-      const isHidden = history.classList.toggle("hidden");
-
-      button.innerHTML = isHidden
-        ? `Ver historial (${history.children.length}) <span>＋</span>`
-        : `Ocultar historial <span>−</span>`;
-    });
-  });
-}
-  async function deleteSubscriptionHistory(id) {
-  const { error } = await db.rpc(
-    "delete_subscription_history",
-    { p_subscription_id: id }
-  );
-
-  if (error) {
-    alert("Error al eliminar: " + error.message);
-    return false;
-  }
-
-  await loadSubscriptions();
-  return true;
-}
-  async function toggleSubscriptionDetails(id, subscriptions, profiles) {
-  const detail = $("sub-detail-" + id);
-  const sub = subscriptions.find(s => String(s.id) === String(id));
-
-  if (!sub || !detail) return;
-
-  if (!detail.classList.contains("hidden")) {
-    detail.classList.add("hidden");
-    return;
-  }
-
-  detail.classList.remove("hidden");
-  detail.textContent = "Consultando platillos...";
-
-  const { data: items, error } = await db
-    .from("subscription_items")
-    .select("day_of_week, meal_name, unit_price_mxn, quantity")
-    .eq("subscription_id", id);
-
-  if (error) {
-    detail.textContent =
-      "No se pudieron cargar los platillos: " + error.message;
-    console.error(error);
-    return;
-  }
-
-  const person = profiles[sub.customer_id] || {};
-
-  const grouped = {};
-  (items || []).forEach(item => {
-    const day = item.day_of_week || "Día sin especificar";
-    if (!grouped[day]) grouped[day] = [];
-    grouped[day].push(item);
-  });
-
-  const dayOrder = [
-    "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
-  ];
-
-  const days = Object.keys(grouped).sort((a, b) => {
-    const ia = dayOrder.indexOf(a);
-    const ib = dayOrder.indexOf(b);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  });
-
-  detail.innerHTML = `
-    <div class="notice">
-      <strong>Dirección de entrega</strong><br>
-      ${escapeHtml(sub.delivery_address || "Sin dirección")}
-      ${
-        sub.delivery_notes
-          ? `<p><strong>Indicaciones:</strong><br>
-              ${escapeHtml(sub.delivery_notes)}</p>`
-          : ""
-      }
-      <p><strong>Teléfono:</strong>
-        ${escapeHtml(person.phone || "No registrado")}
-      </p>
-      <p><strong>Cargo de entrega:</strong>
-        ${money(sub.delivery_fee_mxn)}
-      </p>
-    </div>
-
-    <h3 style="font-size:16px">Platillos seleccionados</h3>
-
-    ${
-      days.length
-        ? days.map(day => `
-            <div style="margin-bottom:14px">
-              <strong>${escapeHtml(day)}</strong>
-              <div class="table-wrap" style="margin-top:6px">
-                <table style="min-width:0">
-                  <thead>
-                    <tr>
-                      <th>Platillo</th>
-                      <th>Cant.</th>
-                      <th>Precio</th>
-                      <th>Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${grouped[day].map(item => {
-                      const quantity = Number(item.quantity || 0);
-                      const price = Number(item.unit_price_mxn || 0);
-                      return `
-                        <tr>
-                          <td>${escapeHtml(item.meal_name || "Platillo")}</td>
-                          <td>${quantity}</td>
-                          <td>${money(price)}</td>
-                          <td>${money(quantity * price)}</td>
-                        </tr>
-                      `;
-                    }).join("")}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          `).join("")
-        : '<p class="empty">No se encontraron platillos para esta suscripción.</p>'
-    }
-  `;
-}
-
-
-async function updateSubscriptionStatus(id, newStatus) {
-  const labels = {
-    active: "activar",
-    cancelled: "cancelar"
-  };
-
-  if (!labels[newStatus]) return;
-
-  const confirmed = confirm(
-    `¿Seguro que deseas ${labels[newStatus]} esta suscripción?`
-  );
-
-  if (!confirmed) return;
-
-  // 1. Obtener el periodo de la suscripción
-  const { data: sub, error: subError } = await db
-    .from("subscriptions")
-    .select("id, start_date, end_date, status")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (subError || !sub) {
-    alert(
-      "No se pudo consultar la suscripción: " +
-      (subError?.message || "No encontrada.")
-    );
-    return;
-  }
-
-if (newStatus === "active" && sub.status !== "pending") {
-  alert("Solo puedes activar suscripciones pendientes.");
-  await loadSubscriptions();
-  return;
-}
-
-if (
-  newStatus === "cancelled" &&
-  !["pending", "active", "completed"].includes(
-    String(sub.status || "").toLowerCase()
-  )
-) {
-  alert("Esta suscripción ya está cancelada.");
-  await loadSubscriptions();
-  return;
-}
-  // 2. Actualizar el estado
-let updateQuery = db
-  .from("subscriptions")
-  .update({ status: newStatus })
-  .eq("id", id);
-
-if (newStatus === "active") {
-  updateQuery = updateQuery.eq("status", "pending");
-}
-
-const { data: updated, error: updateError } =
-  await updateQuery.select("id").maybeSingle();
-  if (updateError || !updated) {
-    alert(
-      "No se pudo actualizar la suscripción: " +
-      (updateError?.message || "El estado pudo cambiar previamente.")
-    );
-    await loadSubscriptions();
-    return;
-  }
-
-  // 3. Si se activa, generar los pedidos del periodo completo
-  if (newStatus === "active") {
-    const start = new Date(sub.start_date + "T12:00:00");
-    const end = new Date(sub.end_date + "T12:00:00");
-
-    let generatedTotal = 0;
-    const errors = [];
-
-    for (
-      let date = new Date(start);
-      date <= end;
-      date.setDate(date.getDate() + 1)
-    ) {
-      const deliveryDate = [
-        date.getFullYear(),
-        String(date.getMonth() + 1).padStart(2, "0"),
-        String(date.getDate()).padStart(2, "0")
-      ].join("-");
-
-      const { data, error } = await db.rpc(
-        "generate_subscription_orders",
-        { p_delivery_date: deliveryDate }
-      );
-
-      if (error) {
-        errors.push(
-          deliveryDate + ": " + error.message
-        );
-      } else {
-        generatedTotal += Number(data || 0);
-      }
-    }
-
-    await loadSubscriptions();
-
-    if (errors.length) {
-      alert(
-        "La suscripción quedó activa, pero algunos pedidos " +
-        "no pudieron generarse.\n\n" +
-        errors.join("\n") +
-        "\n\nRevisa esos días y vuelve a generar los pedidos " +
-        "pendientes desde Producción."
-      );
-      return;
-    }
-
-    alert(
-      "Suscripción activada correctamente.\n\n" +
-      "Pedidos nuevos generados: " + generatedTotal +
-      "\nPeriodo: " + sub.start_date + " al " + sub.end_date
-    );
-
-    return;
-  }
-
-  alert("Suscripción cancelada correctamente.");
-  await loadSubscriptions();
-}
-
-async function loadProduction() {
-  const date = $("production-date").value;
-
-  if (!date) {
-    $("production-list").textContent = "Selecciona una fecha.";
-    return;
-  }
-
-  $("production-list").textContent =
-    "Generando pedidos y calculando producción...";
-
-  // 1. Generar pedidos de suscripciones para la fecha seleccionada
-  const { data: generated, error: generateError } = await db.rpc(
-    "generate_subscription_orders",
-    { p_delivery_date: date }
-  );
-
-  if (generateError) {
-    console.error("Error al generar pedidos:", generateError);
-
-    $("production-list").textContent =
-      "Error al generar los pedidos: " + generateError.message;
-
-    return;
-  }
-
-  console.log("Pedidos nuevos generados:", generated);
-
-  // 2. Consultar todos los pedidos de esa fecha
-  const { data: orders, error } = await db
-    .from("orders")
-    .select("id, delivery_status")
-    .eq("delivery_date", date);
-
-  if (error) {
-    console.error("Error consultando pedidos:", error);
-
-    $("production-list").textContent =
-      "No se pudieron consultar los pedidos: " + error.message;
-
-    return;
-  }
-
-  // Excluir pedidos cancelados
-  const validOrders = (orders || []).filter(order => {
-    const status = String(order.delivery_status || "").toLowerCase();
-
-    return ![
-      "cancelled",
-      "canceled",
-      "cancelado",
-      "cancelada"
-    ].includes(status);
-  });
-
-  if (!validOrders.length) {
-    $("production-list").innerHTML =
-      '<div class="empty">No hay pedidos para esta fecha. Comprueba que existan suscripciones activas, vigentes y con platillos programados para ese día.</div>';
-
-    return;
-  }
-
-  // 3. Consultar los platillos de los pedidos
-  const orderIds = validOrders.map(order => order.id);
-
-  const { data: items, error: itemError } = await db
-    .from("order_items")
-    .select("item_name, meal_type, quantity")
-    .in("order_id", orderIds);
-
-  if (itemError) {
-    console.error("Error consultando platillos:", itemError);
-
-    $("production-list").textContent =
-      "No se pudieron consultar los platillos: " + itemError.message;
-
-    return;
-  }
-
-  // 4. Sumar las porciones por tipo y nombre de platillo
-  const totals = {};
-
-  (items || []).forEach(item => {
-    const type = item.meal_type || "lunch";
-    const name = item.item_name || "Platillo sin nombre";
-    const key = type + "||" + name;
-
-    if (!totals[key]) {
-      totals[key] = {
-        name,
-        type,
-        quantity: 0
-      };
-    }
-
-    totals[key].quantity += Number(item.quantity || 1);
-  });
-
-  const rows = Object.values(totals);
-
-  if (!rows.length) {
-    $("production-list").innerHTML =
-      '<div class="empty">Hay pedidos, pero no tienen platillos registrados.</div>';
-
-    return;
-  }
-
-  // 5. Mostrar el resumen
-  $("production-list").innerHTML = `
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Platillo</th>
-            <th>Porciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map(row => `
-            <tr>
-              <td>${row.type === "dinner" ? "Cena" : "Comida"}</td>
-              <td>${escapeHtml(row.name)}</td>
-              <td><strong>${row.quantity}</strong></td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-    </div>`;
-}
-  let financeAccountsCache = [];
-
-  function showFinanceMessage(message, type = "") {
-    const el = $("finance-message");
-    if (!el) return;
-    el.textContent = message;
-    el.className = "notice" + (type ? " " + type : "");
-    el.classList.remove("hidden");
-  }
-
-  function renderFinanceAccounts() {
-    const container = $("finance-accounts");
-    if (!container) return;
-    const search = String($("finance-search")?.value || "").trim().toLowerCase();
-    const filter = $("finance-filter")?.value || "all";
-    const rows = financeAccountsCache.filter(row => {
-      const snapshot = row.finance_customer_snapshots || {};
-      const haystack = `${snapshot.full_name || ""} ${snapshot.phone || ""}`.toLowerCase();
-      return (filter === "all" || row.status === filter) && (!search || haystack.includes(search));
-    });
-
-    if (!rows.length) {
-      container.innerHTML = '<div class="empty">No hay cuentas que coincidan con la búsqueda.</div>';
-      return;
-    }
-
-    const labels = { pending: "Pendiente", partial: "Parcial", paid: "Liquidada", cancelled: "Cancelada" };
-    container.innerHTML = rows.map(row => {
-      const person = row.finance_customer_snapshots || {};
-      const balance = Number(row._balance || 0);
-      const source = row.source_type === "subscription" ? "Suscripción" : "Pedido individual";
-      return `
-        <article class="finance-account">
-          <div class="finance-account-top">
-            <div>
-              <div class="finance-account-name">${escapeHtml(person.full_name || "Cliente sin nombre")}</div>
-              <div class="finance-account-meta">${escapeHtml(person.phone || "Sin teléfono")} · ${source}</div>
-              <div class="finance-account-meta">Cuenta: ${escapeHtml(row.id)}</div>
-            </div>
-            <span class="finance-pill ${escapeHtml(row.status)}">${escapeHtml(labels[row.status] || row.status)}</span>
-          </div>
-          <div class="finance-account-bottom">
-            <div><div class="muted">Importe actual</div><strong>${money(row.current_amount_mxn)}</strong></div>
-            <div><div class="muted">Saldo pendiente</div><div class="finance-balance">${money(balance)}</div></div>
-            <div><div class="muted">Creada</div><strong>${dateLocal(row.created_at)}</strong></div>
-          </div>
-        </article>`;
-    }).join("");
-  }
-
-  async function loadFinance() {
-    const container = $("finance-accounts");
-    if (container) container.innerHTML = '<div class="empty">Consultando información financiera...</div>';
-    if ($("finance-message")) $("finance-message").classList.add("hidden");
-
-    try {
-      // Cargar cuentas y snapshots; el RLS limita la consulta al administrador.
-      const [accountsResult, transactionsResult, creditsResult, ordersResult, subscriptionsResult] = await Promise.all([
-        db.from("finance_accounts").select("id, source_type, source_id, customer_snapshot_id, original_amount_mxn, current_amount_mxn, status, created_at, finance_customer_snapshots(full_name, phone)").order("created_at", { ascending: false }),
-        db.from("finance_transactions").select("transaction_type, amount_mxn, transaction_date, cash_received_mxn, cash_refunded_mxn, balance_effect_mxn, credit_effect_mxn, account_id, customer_credit_id"),
-        db.from("finance_customer_credits").select("id"),
-        db.from("orders").select("id"),
-        db.from("subscriptions").select("id")
-      ]);
-
-      const firstError = accountsResult.error || transactionsResult.error || creditsResult.error || ordersResult.error || subscriptionsResult.error;
-      if (firstError) throw firstError;
-
-      const validOrderIds = new Set((ordersResult.data || []).map(x => x.id));
-      const validSubscriptionIds = new Set((subscriptionsResult.data || []).map(x => x.id));
-      // Excluir cuentas de pruebas/manuales que no correspondan a una operación real.
-      const accounts = (accountsResult.data || []).filter(a =>
-        a.source_type === "order" ? validOrderIds.has(a.source_id) :
-        a.source_type === "subscription" ? validSubscriptionIds.has(a.source_id) : false
-      );
-      const transactions = transactionsResult.data || [];
-      const accountIds = new Set(accounts.map(a => a.id));
-      const walletIds = new Set((creditsResult.data || []).map(x => x.id));
-      const accountEffects = {};
-      accounts.forEach(a => accountEffects[a.id] = Number(a.current_amount_mxn || 0));
-      transactions.forEach(t => {
-        if (t.account_id && accountIds.has(t.account_id)) {
-          accountEffects[t.account_id] = Math.max(0, (accountEffects[t.account_id] || 0) + Number(t.balance_effect_mxn || 0));
-        }
-      });
-      financeAccountsCache = accounts.map(a => ({ ...a, _balance: accountEffects[a.id] || 0 }));
-
-      const now = new Date();
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-      const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      const monthlyTransactions = transactions.filter(t => {
-        const d = new Date(t.transaction_date);
-        return d >= monthStart && d < monthEnd;
-      });
-      const received = monthlyTransactions.reduce((sum, t) => sum + Number(t.cash_received_mxn || 0), 0);
-      const refunded = monthlyTransactions.reduce((sum, t) => sum + Number(t.cash_refunded_mxn || 0), 0);
-      const receivable = financeAccountsCache.reduce((sum, a) => sum + a._balance, 0);
-      const creditTotal = transactions.reduce((sum, t) => sum + Number(t.credit_effect_mxn || 0), 0);
-
-      $("finance-income").textContent = money(received - refunded);
-      $("finance-pending").textContent = money(receivable);
-      $("finance-credit").textContent = money(creditTotal);
-      renderFinanceAccounts();
-    } catch (error) {
-      console.error("Error al cargar finanzas:", error);
-      if (container) container.innerHTML = '<div class="empty">No se pudo cargar la información financiera.</div>';
-      showFinanceMessage("Error al consultar finanzas: " + (error.message || "Error desconocido"), "error");
-    }
-  }
-
-  $("finance-search").addEventListener("input", renderFinanceAccounts);
-  $("finance-filter").addEventListener("change", renderFinanceAccounts);
-
-  document.querySelectorAll("[data-tab]").forEach(button => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab === button));
-["menu", "weekly", "orders", "production", "subscriptions", "finance"].forEach(name => {       
-  $("tab-" + name).classList.toggle("hidden", name !== button.dataset.tab);
-      });
-      if (button.dataset.tab === "finance") loadFinance();
-    });
-  });
-
-  $("refresh-btn").addEventListener("click", loadAll);
-  $("weekly-refresh").addEventListener("click", loadWeeklyData);
-  $("orders-refresh").addEventListener("click", loadOrders);
-  $("subscriptions-refresh").addEventListener("click", loadSubscriptions);
-  $("finance-refresh").addEventListener("click", loadFinance);
-  $("production-refresh").addEventListener("click", loadProduction);
-
-  $("logout-btn").addEventListener("click", async () => {
-    await db.auth.signOut();
-    location.replace("./login.html");
-  });
-
-  $("production-date").value = new Date().toLocaleDateString("en-CA");
-  verifyAccess();
-</script>
-</body>
+(async function checkCustomerSession() {  
+  try {  
+    const { data, error } = await pomeloDB.auth.getSession();  
+  
+    if (error || !data.session) {  
+      window.location.replace("./login.html");  
+      return;  
+    }  
+  
+    const user = data.session.user;  
+  
+    const { data: profile } = await pomeloDB  
+      .from("profiles")  
+      .select("full_name")  
+      .eq("id", user.id)  
+      .maybeSingle();  
+  
+    const accountName = document.getElementById("account-name");  
+    accountName.textContent = profile?.full_name?.trim() || user.user_metadata?.full_name || user.email?.split("@")[0] || "Mi cuenta";  
+    document.getElementById("account-dropdown").dataset.name = accountName.textContent;  
+
+    const trigger = document.getElementById("account-trigger");  
+    const dropdown = document.getElementById("account-dropdown");  
+    const logout = document.getElementById("account-logout");  
+  
+    trigger.addEventListener("click", () => {  
+      const isOpen = trigger.getAttribute("aria-expanded") === "true";  
+      trigger.setAttribute("aria-expanded", String(!isOpen));  
+      dropdown.classList.toggle("hidden", isOpen);  
+    });  
+  
+    document.addEventListener("click", event => {  
+      if (!event.target.closest(".account")) {  
+        dropdown.classList.add("hidden");  
+        trigger.setAttribute("aria-expanded", "false");  
+      }  
+    });  
+  
+    document.addEventListener("keydown", event => {  
+      if (event.key === "Escape") {  
+        dropdown.classList.add("hidden");  
+        trigger.setAttribute("aria-expanded", "false");  
+      }  
+    });  
+  
+    logout.addEventListener("click", async () => {  
+      logout.disabled = true;  
+      try {  
+        const { error: logoutError } = await pomeloDB.auth.signOut();  
+        if (logoutError) throw logoutError;  
+        window.location.replace("./login.html");  
+      } catch (error) {  
+        console.error("Error al cerrar sesión:", error);  
+        logout.disabled = false;  
+        alert("No se pudo cerrar la sesión. Inténtalo de nuevo.");  
+      }  
+    });  
+  
+    document.documentElement.classList.remove("auth-check");
+
+    await Promise.all([
+      loadPublicMenu(),
+      loadCustomerPortal(user.id)
+    ]);  
+  } catch (error) {  
+    console.error("Error al verificar la sesión:", error);  
+    window.location.replace("./login.html");  
+  }  
+})();  
+</script>  
+</body>  
 </html>
