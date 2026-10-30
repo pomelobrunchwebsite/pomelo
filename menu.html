@@ -2380,9 +2380,9 @@ function renderWeekTabs() {
 
 function renderDayTabs() {
   tabsContainer.innerHTML = "";
-  
-      days.forEach(([dayNumber, dayName]) => {
-        const button = document.createElement("button");
+
+    days.forEach(([dayNumber, dayName]) => {
+    const button = document.createElement("button");
         button.type = "button";
         button.className = "day-tab";
         
@@ -2405,8 +2405,7 @@ function renderDayTabs() {
 
         tabsContainer.appendChild(button);
       });
-    }
-
+}
     function calculateTotal() {
       let total = 0;
 
