@@ -2165,11 +2165,12 @@ async function loadPublicMenu() {
   const container = document.getElementById("public-menu");
   const tabsContainer = document.getElementById("day-tabs");
   const weekTabsContainer = document.getElementById("week-tabs");
+  const weekSelect = document.getElementById("week-select");
 
   status.classList.add("hidden");
   tabsContainer.classList.add("hidden");
-  weekTabsContainer.innerHTML = "";
-  container.setAttribute("aria-busy", "true");
+if (weekTabsContainer) weekTabsContainer.innerHTML = "";
+if (weekSelect) weekSelect.innerHTML = "";  container.setAttribute("aria-busy", "true");
   container.innerHTML =
     '<div class="menu-grid"><div class="skeleton"></div><div class="skeleton"></div></div>';
 
