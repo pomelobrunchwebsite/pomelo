@@ -1469,6 +1469,29 @@ tbody tr:last-child td {
           <h2>Suscripciones</h2>
           <button id="subscriptions-refresh" class="btn">Recargar</button>
         </div>
+        <div class="stats" id="subscription-status-stats">
+
+  <div class="stat">
+    <div class="muted">Clientes activos</div>
+    <div id="stat-subs-active" class="number">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="muted">Pendientes</div>
+    <div id="stat-subs-pending" class="number">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="muted">Inactivos</div>
+    <div id="stat-subs-inactive" class="number">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="muted">Cancelados</div>
+    <div id="stat-subs-cancelled" class="number">0</div>
+  </div>
+
+</div>
         <div id="subscriptions-list" class="empty">Aún no se han consultado las suscripciones.</div>
       </section>
     </div>
@@ -2727,10 +2750,36 @@ async function loadSubscriptions() {
     customerGroups[key].push(sub);
   });
 
-  // Contar clientes, no registros
-  $("stat-subs").textContent =
-    Object.keys(customerGroups).length;
+// Contar clientes únicos por estado
+const customerStatusCounts = {
+  active: 0,
+  pending: 0,
+  inactive: 0,
+  cancelled: 0
+};
 
+Object.values(customerGroups).forEach(customerSubscriptions => {
+  const status = getCustomerStatus(customerSubscriptions);
+
+  customerStatusCounts[status]++;
+});
+
+// Total de clientes
+$("stat-subs").textContent =
+  Object.keys(customerGroups).length;
+
+// Indicadores por estado
+$("stat-subs-active").textContent =
+  customerStatusCounts.active;
+
+$("stat-subs-pending").textContent =
+  customerStatusCounts.pending;
+
+$("stat-subs-inactive").textContent =
+  customerStatusCounts.inactive;
+
+$("stat-subs-cancelled").textContent =
+  customerStatusCounts.cancelled;
 // Clasificación general del cliente
 function getCustomerStatus(customerSubscriptions) {
 const today = [
