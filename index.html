@@ -304,6 +304,9 @@ h1 em {
   background: var(--sand);
   border-radius: 24px;
   box-shadow: 0 20px 50px rgba(37, 41, 31, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-image img {
@@ -329,6 +332,7 @@ h1 em {
   font-weight: 600;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  z-index: 2;
 }
 
 /* BENEFICIOS / VALORES */
@@ -520,3 +524,370 @@ footer {
 /* ANIMACIONES DE SCROLL (SCROLL REVEAL) */
 .reveal {
   opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-left.visible,
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* RESPONSIVO MÓVIL Y TABLETS */
+@media (max-width: 1000px) {
+  .hero {
+    gap: 30px;
+  }
+
+  .features,
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .feature,
+  .step {
+    padding: 26px;
+  }
+}
+
+@media (max-width: 760px) {
+  html {
+    scroll-padding-top: 80px;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  .announcement {
+    padding: 8px 10px;
+    font-size: 9.5px;
+    letter-spacing: 1px;
+  }
+
+  header {
+    min-height: 66px;
+    padding: 10px 18px;
+  }
+
+  .brand {
+    font-size: 22px;
+  }
+
+  .brand small {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+
+  .nav .nav-button {
+    padding: 0 14px;
+    font-size: 12.5px;
+    min-height: 38px;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding: 36px 18px;
+  }
+
+  .eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+  }
+
+  h1 {
+    margin: 16px 0;
+    font-size: clamp(36px, 9vw, 48px);
+    line-height: 1.1;
+  }
+
+  .hero-copy {
+    font-size: 15px;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .hero-actions .button,
+  .hero-actions .text-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-image {
+    aspect-ratio: 4 / 3;
+    border-radius: 20px;
+  }
+
+  .values {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 10px;
+    padding: 18px;
+    font-size: 11.5px;
+  }
+
+  .section,
+  .how-inner,
+  .closing {
+    padding: 50px 18px;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  h2 {
+    font-size: clamp(26px, 7vw, 36px);
+  }
+
+  footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    padding: 30px 18px calc(30px + env(safe-area-inset-bottom));
+    font-size: 12.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { 
+    scroll-behavior: auto !important; 
+    animation-duration: 0.01ms !important; 
+    transition-duration: 0.01ms !important; 
+  }
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+  </style>
+</head>
+
+<body>
+  <div class="announcement">
+    COMIDA REAL · PREPARADA FRESCA · DE LUNES A VIERNES
+  </div>
+
+  <header>
+    <a class="brand" href="./" aria-label="Pomelo Brunch House inicio">
+      pomelo<span>.</span><small>brunch house</small>
+    </a>
+
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="#concepto">Nuestra filosofía</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a class="nav-button" href="./login.html">Iniciar sesión ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- PORTADA PRINCIPAL -->
+    <section class="hero">
+      <div class="reveal-left">
+        <div class="eyebrow">Bien comer, vivir mejor</div>
+        <h1>Tu semana,<br>bien <em>alimentada.</em></h1>
+        <p class="hero-copy">
+          Comida real, ingredientes frescos y platillos preparados con intención de lunes a viernes. Nosotros cocinamos y organizamos tus entregas; tú disfrutas tu día.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="./login.html">Entrar a mi cuenta ↗</a>
+          <a class="text-link" href="#concepto">Conoce el concepto</a>
+        </div>
+      </div>
+
+      <div class="hero-image reveal-right">
+        <img
+          id="hero-img"
+          src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80"
+          alt="Platillo fresco y saludable preparado con ingredientes de temporada"
+          fetchpriority="high"
+          width="1200"
+          height="1000"
+          onerror="handleImageError(this)"
+        >
+        <div class="image-label">Hecho con ingredientes reales.</div>
+      </div>
+    </section>
+
+    <!-- PILARES DE SERVICIO -->
+    <div class="values reveal">
+      <span>Ingredientes frescos y naturales</span>
+      <span>Menú de Lunes a Viernes</span>
+      <span>Comidas y cenas opcionales</span>
+      <span>Entregas programadas a domicilio</span>
+    </div>
+
+    <!-- EL CONCEPTO POMELO -->
+    <section class="section" id="concepto">
+      <div class="section-heading reveal">
+        <div>
+          <div class="eyebrow">La filosofía Pomelo</div>
+          <h2>Menos pendientes.<br>Más tiempo para ti.</h2>
+        </div>
+        <p class="section-description">
+          Pomelo Brunch House nace para simplificar tu rutina diaria. Olvídate de improvisar qué comer y disfruta de platillos nutritivos, caseros y listos en tu mesa.
+        </p>
+      </div>
+
+      <div class="features">
+        <article class="feature reveal-scale">
+          <div class="feature-number">01 — INGREDIENTES</div>
+          <h3>Real, siempre.</h3>
+          <p>
+            Priorizamos insumos de temporada, recetas equilibradas e ingredientes naturales que ponen la buena alimentación en el centro de tu día.
+          </p>
+        </article>
+
+        <article class="feature reveal-scale">
+          <div class="feature-number">02 — FLEXIBILIDAD</div>
+          <h3>A tu propio ritmo.</h3>
+          <p>
+            Arma tu semana seleccionando los días que realmente necesitas. Elige tus comidas principales e incluye tus cenas adicionales si así lo prefieres.
+          </p>
+        </article>
+
+        <article class="feature reveal-scale">
+          <div class="feature-number">03 — TRANQUILIDAD</div>
+          <h3>Nosotros cocinamos.</h3>
+          <p>
+            Ahorra horas en la cocina y supermercado. Tus platillos se programan y se entregan directo en tu hogar u oficina para que disfrutes sin prisas.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section class="how reveal" id="como-funciona">
+      <div class="how-inner">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Fácil por diseño</div>
+            <h2>Pide y organiza en 3 pasos.</h2>
+          </div>
+          <p class="section-description">
+            Diseñamos una experiencia digital intuitiva para que elegir, verificar y recibir tus alimentos semanales sea rápido desde tu celular.
+          </p>
+        </div>
+
+        <div class="steps">
+          <article class="step reveal-scale">
+            <strong>PASO 01</strong>
+            <h3>Crea o entra a tu cuenta</h3>
+            <p>Accede a tu panel personal donde podrás gestionar tus direcciones de entrega, datos de contacto y solicitudes activas.</p>
+          </article>
+
+          <article class="step reveal-scale">
+            <strong>PASO 02</strong>
+            <h3>Explora el menú publicado</h3>
+            <p>Consulta las opciones publicadas para la semana, revisa los ingredientes por día y añade tus porciones de comida o cena.</p>
+          </article>
+
+          <article class="step reveal-scale">
+            <strong>PASO 03</strong>
+            <h3>Solicita tus entregas</h3>
+            <p>Envía tu propuesta de platillos para que revisemos tu suscripción y comencemos la preparación fresca de tus entregas.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- LLAMADO FINAL -->
+    <section class="closing reveal">
+      <div class="eyebrow">Una semana más simple</div>
+      <h2>Haz espacio para comer bien cada día.</h2>
+      <p>
+        Ingresa a tu cuenta cliente para explorar los platillos de la semana publicada y programar tus comidas.
+      </p>
+      <a class="button" href="./login.html">Acceder a mi cuenta ↗</a>
+    </section>
+  </main>
+
+  <footer class="reveal">
+    <a class="brand" href="./">pomelo<span>.</span><small>brunch house</small></a>
+    <span>Comida real, todos los días.</span>
+    <span>© <span id="year"></span> Pomelo Brunch House</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // RESPALDO DE IMAGEN SI FALLA LA CONEXIÓN O ENLACE EXTERNO
+    function handleImageError(img) {
+      // Si falla la primera imagen de Unsplash, intenta una segunda o renderiza un gráfico SVG limpio
+      if (!img.dataset.fallbackTried) {
+        img.dataset.fallbackTried = "true";
+        img.src = "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80";
+      } else {
+        // Respaldo de gráfico vectorial por si no hay conexión a internet
+        const svgFallback = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" fill="none"><rect width="800" height="600" fill="%23E9E4D7"/><circle cx="400" cy="300" r="180" fill="%23536247" opacity="0.15"/><path d="M400 160C320 160 250 210 230 290H570C550 210 480 160 400 160Z" fill="%23536247"/><path d="M230 310C240 400 310 460 400 460C490 460 560 400 570 310H230Z" fill="%23E88772"/><circle cx="400" cy="240" r="30" fill="%23F5F2ED"/><circle cx="340" cy="370" r="20" fill="%23FFF1E8"/><circle cx="460" cy="370" r="25" fill="%23C1E1A6"/></svg>`;
+        img.src = svgFallback;
+      }
+    }
+
+    // INTERSECTION OBSERVER PARA EFECTOS DE SCROLL SUAVES
+    document.addEventListener("DOMContentLoaded", () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: "0px 0px -40px 0px",
+        threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale").forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
+</body>
+</html>
