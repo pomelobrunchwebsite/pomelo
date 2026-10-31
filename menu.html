@@ -1727,21 +1727,10 @@ footer {
   line-height: 1.7;
 }
 
-/* Animaciones fluidas */
-@keyframes pomeloRise {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes pomeloModalIn {
   from { opacity: 0; transform: translateY(16px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
-
-.hero > div, .section-heading, .pomelo-account-actions, .menu-grid { 
-  animation: pomeloRise .6s cubic-bezier(0.16, 1, 0.3, 1) both; 
-}
-.pomelo-account-actions { animation-delay: .08s; }
 
 .customer-account-info { 
   display: grid; 
@@ -1862,16 +1851,6 @@ footer {
   color: var(--muted); 
 }
 
-/* Reduce movimiento si el usuario lo prefiere por accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { 
-    scroll-behavior: auto !important; 
-    animation-duration: .01ms !important; 
-    animation-iteration-count: 1 !important; 
-    transition-duration: .01ms !important; 
-  }
-}
-
 @media (max-width: 720px) {
   .pomelo-account-actions { 
     grid-template-columns: 1fr; 
@@ -1914,18 +1893,8 @@ footer {
 }
 
 /* ==========================================================
-   EFECTOS DE TRANSICIÓN Y SCROLL REVEAL COHERENTES
+   EFECTOS DE SCROLL REVEAL OPTIMIZADOS Y FLUIDOS
    ========================================================== */
-
-@keyframes pomeloRise {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pomeloModalIn {
-  from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
 
 .button {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1975,11 +1944,11 @@ footer {
   animation: pomeloModalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Clases de desvanecimiento al hacer scroll (Scroll Reveal) */
+/* Sistema Reveal ultra-suave y optimizado para GPU */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -1990,14 +1959,16 @@ footer {
 
 .reveal-left {
   opacity: 0;
-  transform: translateX(-30px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal-right {
   opacity: 0;
-  transform: translateX(30px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal-left.visible,
@@ -2008,8 +1979,9 @@ footer {
 
 .reveal-scale {
   opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.97);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal-scale.visible {
@@ -3399,19 +3371,19 @@ document.addEventListener("keydown", event => {
   }
 });
 
-/* SCRIPT INTERSECTION OBSERVER PARA ACTIVAR LAS ANIMACIONES REVEAL AL HACER SCROLL */
+/* SCRIPT INTERSECTION OBSERVER OPTIMIZADO PARA SCROLL FLUIDO */
 document.addEventListener("DOMContentLoaded", () => {
   const observerOptions = {
     root: null,
-    rootMargin: "0px 0px -50px 0px",
-    threshold: 0.12
+    rootMargin: "0px 0px -40px 0px",
+    threshold: 0.1
   };
 
   const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add("visible");
-        observer.unobserve(entry.target); // Animarlo solo una vez por carga
+        observer.unobserve(entry.target); 
       }
     });
   }, observerOptions);
