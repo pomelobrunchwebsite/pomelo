@@ -1931,10 +1931,10 @@ tbody tr:last-child td {
     const cancelledCount = subscriptionsCache.filter(s => String(s.status) === "cancelled").length;
 
     $("stat-subs").textContent = subscriptionsCache.length;
-    $("stat-subs-active").textContent = activeCount;
-    $("stat-subs-pending").textContent = pendingCount;
-    $("stat-subs-inactive").textContent = inactiveCount;
-    $("stat-subs-cancelled").textContent = cancelledCount;
+    if ($("stat-subs-active")) $("stat-subs-active").textContent = activeCount;
+    if ($("stat-subs-pending")) $("stat-subs-pending").textContent = pendingCount;
+    if ($("stat-subs-inactive")) $("stat-subs-inactive").textContent = inactiveCount;
+    if ($("stat-subs-cancelled")) $("stat-subs-cancelled").textContent = cancelledCount;
 
     if (!filteredSubs.length) {
       container.innerHTML = '<div class="empty">No hay suscripciones en este filtro.</div>';
@@ -1945,29 +1945,22 @@ tbody tr:last-child td {
       const statusClass = { active: "pill-success", pending: "pill-warning", cancelled: "pill-danger", inactive: "" }[sub.status] || "";
       return `
         <article class="item sub-customer-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;width:100%;gap:12px;flex-wrap:wrap">
-            <div>
-              <div class="item-title">Suscripción #${escapeHtml(sub.id.slice(0, 8))}</div>
-              <div class="muted">Cliente: ${escapeHtml(sub.customer_id || "Sin ID")} · Creada: ${dateLocal(sub.created_at)}</div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <span class="pill ${statusClass}">${escapeHtml(sub.status || "desconocido")}</span>
-              <button class="btn" type="button" data-sub-action="${escapeHtml(sub.id)}">Ver detalles</button>
+          <button class="sub-customer-toggle" type="button" onclick="const detail = this.nextElementSibling; detail.classList.toggle('hidden');">
+            <span class="sub-customer-name">Suscripción #${escapeHtml(sub.id.slice(0, 8))}</span>
+            <span class="pill ${statusClass}">${escapeHtml(sub.status || "desconocido")}</span>
+            <span class="sub-customer-arrow">▾</span>
+          </button>
+          <div class="sub-customer-detail hidden">
+            <div class="sub-main">
+              <div class="sub-record-info">
+                <p><strong>Cliente ID:</strong> ${escapeHtml(sub.customer_id || "No asignado")}</p>
+                <p><strong>Creada el:</strong> ${dateLocal(sub.created_at)}</p>
+              </div>
             </div>
           </div>
         </article>
       `;
     }).join("");
-
-    container.querySelectorAll("[data-sub-action]").forEach(button => {
-      button.addEventListener("click", () => {
-        const subId = button.dataset.subAction;
-        const sub = subscriptionsCache.find(s => s.id === subId);
-        if (sub) {
-          alert(`Detalles de suscripción:\n- ID: ${sub.id}\n- Estado: ${sub.status}\n- Creación: ${sub.created_at}`);
-        }
-      });
-    });
   }
 
   document.querySelectorAll(".subscriber-filter").forEach(button => {
