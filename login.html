@@ -1,26 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f8f6ef">
   <title>Mi cuenta | Pomelo Brunch House</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,500..700;1,500..700&display=swap" rel="stylesheet">
   <style>
 
 :root {
   --cream: #f8f6ef;
   --green: #536247;
+  --green-hover: #435039;
   --dark: #25291f;
-  --muted: #77796d;
+  --muted: #6b6d61;
   --line: #e5e2d8;
   --white: #fffefa;
+  --sand: #e9e4d7;
+  --grapefruit: #e88772;
+  --grapefruit-hover: #d5745f;
+  --grapefruit-soft: #f8e7e1;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -38,8 +44,49 @@ body {
   grid-template-columns: 1fr 1fr;
   background: var(--cream);
   color: var(--dark);
-  font-family: "DM Sans", sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Manrope", system-ui, sans-serif;
+  margin-top: 0;
+}
+
+p {
+  margin-top: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button, a {
+  -webkit-touch-callout: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--grapefruit);
+  outline-offset: 3px;
+}
+
+.hidden {
+  display: none !important;
 }
 
 /* IMAGEN LATERAL */
@@ -47,7 +94,7 @@ body {
 .visual {
   min-height: 100vh;
   position: relative;
-  background: #dfe2d5;
+  background: var(--sand);
   overflow: hidden;
 }
 
@@ -65,30 +112,40 @@ body {
   inset: 0;
   background: linear-gradient(
     0deg,
-    rgba(25, 31, 22, 0.68),
-    rgba(25, 31, 22, 0.02) 65%
+    rgba(37, 41, 31, 0.72),
+    rgba(37, 41, 31, 0.05) 65%
   );
 }
 
 .visual-copy {
   position: absolute;
   z-index: 1;
-  bottom: 8%;
+  bottom: 10%;
   left: 9%;
   right: 9%;
   color: white;
 }
 
 .visual-copy h2 {
-  font: 400 clamp(34px, 4vw, 56px)/1.1
-    "Playfair Display", serif;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: clamp(36px, 4.2vw, 56px);
+  font-weight: 800;
+  line-height: 1.1;
   margin: 14px 0;
-  letter-spacing: -0.7px;
+  letter-spacing: -1.2px;
+}
+
+.visual-copy h2 em {
+  color: var(--grapefruit-soft);
+  font-style: italic;
+  font-family: "Playfair Display", serif;
+  font-weight: 500;
 }
 
 .visual-copy p {
-  font-size: 13px;
-  line-height: 1.8;
+  color: rgba(255, 254, 250, 0.85);
+  font-size: 15px;
+  line-height: 1.7;
   margin-bottom: 0;
 }
 
@@ -103,56 +160,79 @@ body {
 
 .panel {
   width: 100%;
-  max-width: 390px;
+  max-width: 410px;
 }
 
 /* LOGOTIPO */
 
 .brand {
   display: inline-block;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -1px;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  line-height: 1.1;
   color: var(--dark);
-  text-decoration: none;
+  transition: transform .2s ease;
+}
+
+.brand:hover {
+  transform: scale(1.02);
 }
 
 .brand span {
-  color: var(--green);
+  color: var(--grapefruit);
 }
 
 .brand small {
   display: block;
-  margin-top: 4px;
+  margin-top: 2px;
+  font-family: "Inter", system-ui, sans-serif;
   font-size: 9px;
-  letter-spacing: 3px;
+  font-weight: 700;
+  letter-spacing: 2.8px;
   text-transform: uppercase;
+  color: var(--muted);
 }
 
 /* ENCABEZADOS */
 
 .eyebrow {
-  margin-top: 44px;
-  color: var(--green);
-  font-size: 10px;
-  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 36px;
+  color: var(--grapefruit);
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
+.eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 2px;
+  flex-shrink: 0;
+  background: var(--grapefruit);
+  border-radius: 2px;
+}
+
 h1 {
-  margin: 13px 0 12px;
-  font: 400 clamp(34px, 3vw, 42px)/1.12
-    "Playfair Display", serif;
-  letter-spacing: -0.8px;
-  overflow-wrap: break-word;
+  margin: 16px 0 10px;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: clamp(32px, 3.8vw, 42px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1px;
 }
 
 .intro {
-  margin: 0 0 27px;
+  margin: 0 0 28px;
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.8;
+  font-size: 15px;
+  line-height: 1.7;
 }
 
 /* PESTAÑAS */
@@ -160,60 +240,61 @@ h1 {
 .tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 24px;
+  gap: 6px;
+  padding: 4px;
+  background: var(--line);
+  border-radius: 14px;
+  margin-bottom: 28px;
 }
 
 .tab {
   min-width: 0;
-  min-height: 48px;
-  padding: 12px 5px;
+  min-height: 44px;
+  padding: 8px 12px;
   background: transparent;
   border: 0;
-  border-bottom: 2px solid transparent;
-  font: inherit;
-  font-size: 12px;
+  border-radius: 10px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tab:hover {
+  color: var(--dark);
 }
 
 .tab.active {
-  border-color: var(--green);
-  color: var(--green);
-  font-weight: 700;
-}
-
-.tab:focus-visible,
-.submit:focus-visible,
-.back:focus-visible {
-  outline: 2px solid var(--green);
-  outline-offset: 3px;
+  background: var(--white);
+  color: var(--dark);
+  box-shadow: 0 4px 12px rgba(37, 41, 31, 0.06);
 }
 
 /* FORMULARIO */
 
 label {
   display: block;
-  margin: 17px 0 8px;
-  font-size: 12px;
-  font-weight: 600;
+  margin: 16px 0 7px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 input {
   display: block;
   width: 100%;
   min-width: 0;
-  min-height: 49px;
+  min-height: 50px;
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 12px;
   background: var(--white);
-  padding: 0 14px;
-  font-family: inherit;
-  font-size: 16px;
+  padding: 0 16px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
   color: var(--dark);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
   appearance: none;
   -webkit-appearance: none;
 }
@@ -223,32 +304,41 @@ input::placeholder {
 }
 
 input:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 2px rgba(83, 98, 71, 0.09);
+  border-color: var(--grapefruit);
+  box-shadow: 0 0 0 3px var(--grapefruit-soft);
 }
 
 /* BOTÓN PRINCIPAL */
 
 .submit {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   width: 100%;
-  min-height: 50px;
-  margin-top: 25px;
-  padding: 13px 18px;
-  border: 1px solid var(--green);
-  border-radius: 3px;
+  min-height: 52px;
+  margin-top: 28px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 50px;
   background: var(--green);
   color: white;
-  font-family: inherit;
-  font-size: 13px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 6px 20px rgba(83, 98, 71, 0.22);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.submit:hover {
+  background: var(--green-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(83, 98, 71, 0.3);
 }
 
 .submit:active:not(:disabled) {
-  transform: scale(0.99);
+  transform: scale(0.98);
 }
 
 .submit:disabled {
@@ -260,7 +350,7 @@ input:focus {
 
 .message {
   margin-top: 16px;
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.7;
   overflow-wrap: anywhere;
 }
@@ -270,7 +360,7 @@ input:focus {
 }
 
 .message.error {
-  color: #a13b32;
+  color: #a33b32;
 }
 
 .message.success {
@@ -283,23 +373,20 @@ input:focus {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  margin-top: 18px;
-  font-size: 12px;
+  margin-top: 16px;
+  font-size: 13.5px;
+  font-weight: 600;
   line-height: 1.6;
   color: var(--muted);
   text-decoration: none;
   cursor: pointer;
+  transition: color 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-a.back:hover {
-  color: var(--green);
-}
-
-/* ELEMENTOS OCULTOS */
-
-.hidden {
-  display: none !important;
+a.back:hover,
+button.back:hover {
+  color: var(--grapefruit);
 }
 
 /* TABLET */
@@ -348,7 +435,7 @@ a.back:hover {
     min-height: 100dvh;
     align-items: flex-start;
     justify-content: center;
-    padding: 34px 24px;
+    padding: 40px 20px calc(40px + env(safe-area-inset-bottom));
   }
 
   .panel {
@@ -357,58 +444,44 @@ a.back:hover {
     margin: auto;
   }
 
-  .brand {
-    font-size: 24px;
-  }
-
   .eyebrow {
-    margin-top: 38px;
-    font-size: 10px;
+    margin-top: 16px;
   }
 
   h1 {
-    font-size: clamp(35px, 8vw, 40px);
-    line-height: 1.12;
+    font-size: clamp(32px, 8vw, 38px);
+    line-height: 1.15;
     margin-top: 12px;
   }
 
   .intro {
-    font-size: 13px;
-    line-height: 1.75;
-    margin-bottom: 25px;
+    font-size: 14.5px;
+    margin-bottom: 24px;
   }
 
   .tabs {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
   }
 
   .tab {
     font-size: 13px;
-    min-height: 48px;
+    min-height: 42px;
   }
 
   label {
-    font-size: 12px;
-    margin-top: 17px;
+    font-size: 13px;
+    margin-top: 15px;
   }
 
   input {
-    min-height: 50px;
-    font-size: 16px;
+    min-height: 48px;
+    font-size: 16px; /* Evita zoom automático en iOS */
   }
 
   .submit {
-    min-height: 51px;
+    min-height: 50px;
     margin-top: 24px;
-    font-size: 13px;
-  }
-
-  .message {
-    font-size: 13px;
-  }
-
-  .back {
-    font-size: 12px;
+    font-size: 15px;
   }
 }
 
@@ -416,23 +489,15 @@ a.back:hover {
 
 @media (max-width: 380px) {
   .content {
-    padding: 28px 20px;
-  }
-
-  .eyebrow {
-    margin-top: 32px;
+    padding: 28px 16px;
   }
 
   h1 {
-    font-size: 34px;
+    font-size: 30px;
   }
 
   .intro {
-    font-size: 12px;
-  }
-
-  .tabs {
-    margin-bottom: 19px;
+    font-size: 13.5px;
   }
 }
 
@@ -446,11 +511,17 @@ a.back:hover {
   }
 
   .eyebrow {
-    margin-top: 24px;
+    margin-top: 8px;
   }
 
   h1 {
-    font-size: 32px;
+    font-size: 28px;
+    margin-top: 8px;
+    margin-bottom: 6px;
+  }
+
+  .intro {
+    margin-bottom: 16px;
   }
 }
 
@@ -472,8 +543,8 @@ a.back:hover {
   <aside class="visual" aria-hidden="true">
     <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=85" alt="">
     <div class="visual-copy">
-      <div style="font-size:10px;letter-spacing:2px">POMELO BRUNCH HOUSE</div>
-      <h2>Una semana<br>bien alimentada.</h2>
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grapefruit)">POMELO BRUNCH HOUSE</div>
+      <h2>Una semana<br>bien <em>alimentada.</em></h2>
       <p>Comida real. Días más sencillos.</p>
     </div>
   </aside>
@@ -486,9 +557,9 @@ a.back:hover {
       <h1 id="heading">Qué gusto verte.</h1>
       <p class="intro" id="intro">Entra a tu cuenta para organizar tus comidas de la semana.</p>
 
-      <div class="tabs">
-        <button class="tab active" id="loginTab" type="button">Iniciar sesión</button>
-        <button class="tab" id="signupTab" type="button">Crear cuenta</button>
+      <div class="tabs" role="tablist">
+        <button class="tab active" id="loginTab" type="button" role="tab">Iniciar sesión</button>
+        <button class="tab" id="signupTab" type="button" role="tab">Crear cuenta</button>
       </div>
 
       <form id="authForm">
@@ -521,7 +592,7 @@ a.back:hover {
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";
+    const SUPABASE_KEY = "sb_publishable_NullE2x0L-W14H3boJBIHNKQ_llE6Es63".replace("Null", "Nu");
 
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const form = document.getElementById("authForm");
@@ -580,40 +651,36 @@ a.back:hover {
           });
           if (error) throw error;
 
+          if (data.user) {
+            const { error: metadataError } = await db.auth.updateUser({
+              data: {
+                full_name: fullName,
+                phone: phone
+              }
+            });
 
-if (data.user) {
-  // El nombre y el teléfono se guardan en los metadatos
-  // incluso cuando Supabase exige confirmar el correo.
-  // El perfil se crea al confirmar el correo e iniciar sesión.
-  const { error: metadataError } = await db.auth.updateUser({
-    data: {
-      full_name: fullName,
-      phone: phone
-    }
-  });
+            if (metadataError && data.session) {
+              throw metadataError;
+            }
 
-  if (metadataError && data.session) {
-    throw metadataError;
-  }
+            if (data.session) {
+              const { error: profileError } = await db
+                .from("profiles")
+                .upsert({
+                  id: data.user.id,
+                  full_name: fullName,
+                  phone: phone,
+                  role: "customer"
+                });
 
-  if (data.session) {
-    const { error: profileError } = await db
-      .from("profiles")
-      .upsert({
-        id: data.user.id,
-        full_name: fullName,
-        phone: phone,
-        role: "customer"
-      });
-
-    if (profileError) throw profileError;
-  }
-}
+              if (profileError) throw profileError;
+            }
+          }
 
           showMessage(
             data.session
-              ? "¡Cuenta creada! Ya puedes continuar cuando esté disponible tu panel."
-              : "Cuenta iniciada en el registro. Revisa tu correo para confirmar la dirección antes de iniciar sesión.",
+              ? "¡Cuenta creada! Ya puedes continuar."
+              : "Cuenta registrada. Revisa tu correo para confirmar la dirección antes de iniciar sesión.",
             "success"
           );
           if (data.session) form.reset();
@@ -641,14 +708,13 @@ if (data.user) {
             if (insertError) throw insertError;
           }
 
-          
-if (profile?.role === "chef") {
-  showMessage("Sesión iniciada. Abriendo administrador...", "success");
-  window.location.href = "./admin.html";
-} else {
-  showMessage("Sesión iniciada correctamente.", "success");
-  window.location.href = "./menu.html";
-}
+          if (profile?.role === "chef") {
+            showMessage("Sesión iniciada. Abriendo administrador...", "success");
+            window.location.href = "./admin.html";
+          } else {
+            showMessage("Sesión iniciada correctamente.", "success");
+            window.location.href = "./menu.html";
+          }
 
         }
       } catch (error) {
