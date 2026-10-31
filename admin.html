@@ -1,53 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f8f6ef">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#69734b">
   <title>Administración | Pomelo Brunch House</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,500..700;1,500..700&display=swap" rel="stylesheet">
   <style>
 
 :root {
+  --olive: #69734b;
+  --olive-dark: #424a30;
   --cream: #f8f6ef;
-  --green: #536247;
-  --green-hover: #435039;
-  --dark: #25291f;
-  --muted: #6b6d61;
-  --line: #e5e2d8;
   --white: #fffefa;
-  --sand: #e9e4d7;
-  --grapefruit: #e88772;
-  --grapefruit-hover: #d5745f;
-  --grapefruit-soft: #f8e7e1;
-  --danger: #a33b32;
-  --pad: clamp(16px, 4vw, 36px);
+  --ink: #292b24;
+  --muted: #77796e;
+  --line: #e7e5da;
+  --danger: #a33d32;
 }
 
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 96px;
+  scroll-padding-top: 18px;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   background: var(--cream);
-  color: var(--dark);
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  overflow-x: clip;
+  overflow-wrap: break-word;
 }
 
 button,
@@ -60,94 +50,74 @@ textarea {
 button {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
 }
 
-:focus-visible {
-  outline: 2px solid var(--grapefruit);
-  outline-offset: 3px;
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--olive);
+  outline-offset: 2px;
 }
 
 /* ENCABEZADO */
 
 header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  min-height: 76px;
-  padding: 0 var(--pad);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  background: rgba(248, 246, 239, .92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 254, 250, 0.97);
   border-bottom: 1px solid var(--line);
-  transition: box-shadow .3s ease;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
 }
 
 .brand {
-  display: inline-block;
-  flex-shrink: 0;
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 800;
-  letter-spacing: -0.8px;
-  line-height: 1.1;
-  color: var(--dark);
-  transition: transform .2s ease;
-}
-
-.brand:hover {
-  transform: scale(1.02);
+  letter-spacing: -0.5px;
+  line-height: 1.35;
 }
 
 .brand span {
-  color: var(--grapefruit);
+  color: var(--olive);
 }
 
 .header-right {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   align-items: center;
 }
 
 .muted {
   color: var(--muted);
-  font-size: 13.5px;
+  font-size: 13px;
 }
 
 /* CONTENIDO */
 
 main {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: clamp(30px, 6vw, 60px) var(--pad) 80px;
+  padding: 30px 20px 60px;
 }
 
 h1 {
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: clamp(30px, 4vw, 44px);
-  font-weight: 800;
-  line-height: 1.15;
-  margin: 0 0 10px;
-  letter-spacing: -1.2px;
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.2;
+  margin: 0 0 8px;
+  letter-spacing: -1px;
 }
 
 h2 {
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: clamp(20px, 2.5vw, 26px);
-  font-weight: 700;
-  line-height: 1.25;
+  font-size: 20px;
+  line-height: 1.3;
   margin: 0 0 18px;
-  letter-spacing: -0.5px;
 }
 
 p {
-  line-height: 1.7;
-  margin-top: 0;
+  line-height: 1.6;
 }
 
 /* BOTONES */
@@ -161,58 +131,29 @@ button,
 .btn,
 .tab {
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 0 18px;
+  border-radius: 9px;
+  padding: 10px 15px;
   background: var(--white);
-  color: var(--dark);
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: 13.5px;
-  font-weight: 600;
-  line-height: 1;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn:hover,
-.tab:hover {
-  border-color: var(--grapefruit);
-  color: var(--grapefruit);
-  background: var(--cream);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.4;
+  transition: background 0.18s, border-color 0.18s;
 }
 
 .btn.primary,
 .tab.active {
-  background: var(--green);
-  border-color: var(--green);
+  background: var(--olive);
+  border-color: var(--olive);
   color: white;
-  box-shadow: 0 4px 14px rgba(83, 98, 71, 0.2);
-}
-
-.btn.primary:hover {
-  background: var(--green-hover);
-  color: white;
-  transform: translateY(-1px);
 }
 
 .btn.danger {
   color: var(--danger);
-  border-color: #f0d5d2;
-  background: #fdf2f1;
-}
-
-.btn.danger:hover {
-  background: #f9e2e0;
-  color: #a33b32;
-  border-color: #a33b32;
 }
 
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none !important;
 }
 
 /* INTRODUCCIÓN */
@@ -223,13 +164,11 @@ button,
   gap: 16px;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .topline p {
   margin: 0;
-  color: var(--muted);
-  font-size: 15px;
 }
 
 #refresh-btn {
@@ -241,8 +180,8 @@ button,
 .stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .stat,
@@ -250,25 +189,15 @@ button,
   min-width: 0;
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(37, 41, 31, 0.02);
-}
-
-.stat .muted {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  border-radius: 15px;
+  padding: 20px;
 }
 
 .stat .number {
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: clamp(28px, 3.5vw, 38px);
+  font-size: 28px;
   font-weight: 800;
-  line-height: 1.1;
-  margin-top: 10px;
-  color: var(--green);
+  line-height: 1.2;
+  margin-top: 8px;
   overflow-wrap: anywhere;
 }
 
@@ -277,8 +206,8 @@ button,
 .tabs {
   display: flex;
   gap: 8px;
-  margin: 24px 0 28px;
-  padding-bottom: 4px;
+  margin: 20px 0;
+  padding-bottom: 3px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
@@ -288,8 +217,6 @@ button,
 .tab {
   flex: 0 0 auto;
   white-space: nowrap;
-  font-size: 14px;
-  border-radius: 50px;
 }
 
 /* ENCABEZADOS DE SECCIÓN */
@@ -298,9 +225,9 @@ button,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .section-head h2 {
@@ -312,19 +239,19 @@ button,
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 14px;
 }
 
 .field {
   min-width: 0;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 label {
   display: block;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
 input,
@@ -333,43 +260,39 @@ textarea {
   display: block;
   width: 100%;
   min-width: 0;
-  min-height: 50px;
-  padding: 12px 16px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--cream);
-  color: var(--dark);
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: 15px;
-  transition: all 0.2s ease;
+  min-height: 46px;
+  padding: 11px 12px;
+  border: 1px solid #dcdacd;
+  border-radius: 9px;
+  background: white;
+  color: var(--ink);
+  font-size: 16px;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--grapefruit);
+  border-color: var(--olive);
   outline: none;
-  background: var(--white);
-  box-shadow: 0 0 0 3px var(--grapefruit-soft);
+  box-shadow: 0 0 0 2px rgba(105, 115, 75, 0.12);
 }
 
 input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  min-height: 20px;
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
   padding: 0;
-  accent-color: var(--green);
+  accent-color: var(--olive);
   flex: 0 0 auto;
 }
 
 input[type="file"] {
-  padding: 10px;
-  font-size: 13.5px;
-  background: var(--white);
+  padding: 9px;
+  font-size: 13px;
 }
 
 textarea {
-  min-height: 110px;
+  min-height: 90px;
   resize: vertical;
 }
 
@@ -379,13 +302,9 @@ textarea {
 
 .checkline {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  margin: 12px 0 22px;
-  padding: 12px 16px;
-  background: var(--cream);
-  border-radius: 12px;
-  border: 1px solid var(--line);
+  margin: 8px 0 18px;
 }
 
 .checkline label {
@@ -393,20 +312,19 @@ textarea {
 }
 
 #item-form {
-  margin-bottom: 28px;
-  padding: 24px;
+  margin-bottom: 22px;
+  padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 20px;
-  background: var(--white);
-  box-shadow: 0 12px 35px rgba(37,41,31,0.03);
+  border-radius: 12px;
+  background: #fcfbf6;
 }
 
 #item-form h2 {
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 #item-form button {
-  margin: 6px 8px 0 0;
+  margin: 4px 6px 0 0;
 }
 
 /* DÍAS DISPONIBLES */
@@ -414,7 +332,7 @@ textarea {
 .days-selector {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
   margin-top: 10px;
 }
 
@@ -422,22 +340,17 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
   min-width: 0;
-  min-height: 48px;
+  min-height: 44px;
   padding: 8px;
   margin: 0;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 9px;
   background: var(--cream);
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.day-option:hover {
-  border-color: var(--grapefruit);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .day-option input {
@@ -453,9 +366,9 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin: 22px 0 18px;
+  margin: 18px 0 14px;
 }
 
 .menu-filters {
@@ -466,44 +379,43 @@ textarea {
 
 .menu-filter {
   min-height: 42px;
-  padding: 0 16px;
+  padding: 9px 14px;
   border: 1px solid var(--line);
-  border-radius: 50px;
+  border-radius: 9px;
   background: var(--white);
-  color: var(--dark);
-  font-size: 13.5px;
-  font-weight: 600;
+  color: var(--ink);
+  font-size: 13px;
   white-space: nowrap;
 }
 
 .menu-filter.active {
-  background: var(--grapefruit);
-  border-color: var(--grapefruit);
+  background: var(--olive);
+  border-color: var(--olive);
   color: white;
+}
+
+.menu-filter:focus-visible {
+  outline: 2px solid var(--olive-dark);
+  outline-offset: 2px;
 }
 
 /* LISTAS Y PLATILLOS */
 
 .list {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .item {
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   background: var(--white);
-  transition: box-shadow 0.2s ease;
-}
-
-.item:hover {
-  box-shadow: 0 8px 25px rgba(37,41,31,0.04);
 }
 
 .item > div:first-child {
@@ -512,10 +424,8 @@ textarea {
 }
 
 .item-title {
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   overflow-wrap: anywhere;
 }
 
@@ -523,69 +433,48 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 }
 
 .item-actions {
   display: flex;
-  gap: 8px;
+  gap: 7px;
   flex-wrap: wrap;
   flex: 0 0 auto;
 }
 
+.item-actions .btn {
+  min-width: 78px;
+}
+
 .pill {
   font-size: 12px;
-  font-weight: 600;
-  border-radius: 30px;
-  background: var(--cream);
-  border: 1px solid var(--line);
-  padding: 4px 12px;
+  border-radius: 99px;
+  background: #eeeee5;
+  padding: 5px 9px;
   display: inline-block;
-  line-height: 1.4;
-  color: var(--muted);
-}
-
-.pill.pill-success {
-  background: #e8f3e9;
-  color: #397a45;
-  border-color: #c8e6c9;
-}
-
-.pill.pill-warning {
-  background: #fbf2dc;
-  color: #946b20;
-  border-color: #f7e2b3;
-}
-
-.pill.pill-danger {
-  background: #f9e9e7;
-  color: #a33b32;
-  border-color: #f2cac6;
+  line-height: 1.5;
 }
 
 /* AVISOS */
 
 .notice {
-  padding: 16px 20px;
-  border-radius: 14px;
-  margin: 18px 0;
-  background: var(--cream);
-  border: 1px solid var(--line);
-  font-size: 14.5px;
-  line-height: 1.6;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 14px 0;
+  background: #eeeee5;
+  font-size: 14px;
   overflow-wrap: anywhere;
 }
 
 .notice.error {
-  color: #a33b32;
-  background: #fdf2f1;
-  border-color: #f0d5d2;
+  color: var(--danger);
+  background: #f8e9e5;
 }
 
 .notice.success {
-  color: var(--green);
-  background: #edf3eb;
-  border-color: #d4e3d0;
+  color: #355b36;
+  background: #e9f1e5;
 }
 
 .hidden {
@@ -594,9 +483,7 @@ textarea {
 
 .empty {
   color: var(--muted);
-  padding: 30px 0;
-  text-align: center;
-  font-size: 15px;
+  padding: 18px 0;
   overflow-wrap: anywhere;
 }
 
@@ -606,33 +493,30 @@ textarea {
   width: 100%;
   overflow-x: auto;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 10px;
   -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 620px;
+  min-width: 580px;
   background: var(--white);
 }
 
 th,
 td {
-  padding: 14px 16px;
+  padding: 12px 10px;
   border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 th {
   color: var(--muted);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  background: var(--cream);
+  background: #f6f5ee;
   white-space: nowrap;
 }
 
@@ -640,217 +524,3400 @@ tbody tr:last-child td {
   border-bottom: 0;
 }
 
-/* SUSCRIPCIONES Y SUSCRIPTORES */
+/* TABLET */
+
+@media (max-width: 850px) {
+  main {
+    padding: 24px 16px 45px;
+  }
+
+  .stats {
+    gap: 9px;
+  }
+
+  .stat {
+    padding: 16px;
+  }
+
+  .stat .number {
+    font-size: 25px;
+  }
+
+  .item {
+    align-items: flex-start;
+  }
+
+  .item-actions {
+    flex-direction: column;
+  }
+
+  .item-actions .btn {
+    width: 100%;
+  }
+}
+
+/* MÓVIL */
+
+@media (max-width: 650px) {
+  header {
+    padding: 13px 15px;
+    gap: 10px;
+  }
+
+  .brand {
+    max-width: 150px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .header-right .muted {
+    display: none;
+  }
+
+  #logout-btn {
+    padding: 9px 11px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  main {
+    padding: 22px 13px 38px;
+  }
+
+  .topline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .topline h1 {
+    font-size: 28px;
+  }
+
+  .topline p {
+    font-size: 13px;
+  }
+
+  #refresh-btn {
+    width: 100%;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 15px;
+  }
+
+  .stat {
+    padding: 12px 9px;
+    border-radius: 11px;
+  }
+
+  .stat .muted {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .stat .number {
+    font-size: 22px;
+    margin-top: 7px;
+  }
+
+  .tabs {
+    gap: 7px;
+    margin: 17px 0;
+    padding-bottom: 5px;
+  }
+
+  .tab {
+    min-height: 43px;
+    padding: 10px 13px;
+    font-size: 12px;
+  }
+
+  .panel {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .section-head {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-head h2 {
+    font-size: 19px;
+  }
+
+  .section-head .btn {
+    width: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .full {
+    grid-column: auto;
+  }
+
+  #item-form {
+    padding: 13px;
+  }
+
+  #item-form button {
+    width: 100%;
+    margin: 5px 0 0;
+  }
+
+  #item-image-preview {
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+  }
+
+  .days-selector {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .day-option:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .menu-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .menu-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 6px;
+  }
+
+  .menu-filter {
+    width: 100%;
+    padding: 9px 5px;
+    font-size: 12px;
+  }
+
+  #menu-count {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 13px;
+  }
+
+  .item-title {
+    font-size: 14px;
+  }
+
+  .item .muted {
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  .item p {
+    gap: 7px;
+  }
+
+  .item-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+  }
+
+  .item-actions .btn {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 7px;
+    font-size: 12px;
+  }
+
+  .notice {
+    font-size: 13px;
+    padding: 11px 12px;
+  }
+
+  th,
+  td {
+    padding: 10px 9px;
+    font-size: 12px;
+  }
+
+  .table-wrap {
+    border-radius: 8px;
+  }
+}
+
+/* TELÉFONOS MUY PEQUEÑOS */
+
+@media (max-width: 360px) {
+  header {
+    padding-inline: 11px;
+  }
+
+  .brand {
+    font-size: 15px;
+    max-width: 130px;
+  }
+
+  #logout-btn {
+    padding-inline: 8px;
+    font-size: 11px;
+  }
+
+  main {
+    padding-inline: 10px;
+  }
+
+  .stats {
+    gap: 5px;
+  }
+
+  .stat {
+    padding: 10px 6px;
+  }
+
+  .stat .muted {
+    font-size: 9px;
+  }
+
+  .stat .number {
+    font-size: 20px;
+  }
+
+  .panel {
+    padding: 12px;
+  }
+
+  .menu-filter {
+    font-size: 11px;
+  }
+}
+
+/* ACCESIBILIDAD */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+    
+/* SUSCRIPCIONES COMPACTAS */
+#subscriptions-list {
+  display: grid;
+  gap: 8px;
+}
+
+#subscriptions-list > .item {
+  padding: 12px 14px;
+  gap: 10px;
+  align-items: center !important;
+  border-radius: 10px;
+}
+
+#subscriptions-list .item-title {
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
+#subscriptions-list .muted {
+  font-size: 12px;
+}
+
+#subscriptions-list p {
+  margin: 5px 0 !important;
+  font-size: 12px;
+}
+
+#subscriptions-list .pill {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+#subscriptions-list button {
+  min-height: 36px;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+#subscriptions-list .item-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px !important;
+}
+
+#subscriptions-list [id^="sub-detail-"] {
+  width: 100%;
+}
+
+#subscriptions-list [id^="sub-detail-"] .notice {
+  margin: 8px 0;
+  padding: 10px;
+  font-size: 12px;
+}
+
+#subscriptions-list [id^="sub-detail-"] h3 {
+  margin: 10px 0 6px;
+}
+
+@media (max-width: 650px) {
+  #subscriptions-list > .item {
+    padding: 11px;
+  }
+
+  #subscriptions-list .item-actions {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+/* ===== SUSCRIPCIONES: DISEÑO COMPACTO ===== */
 
 #subscriptions-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 7px;
 }
+
+#subscriptions-list > .item {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center !important;
+  gap: 12px;
+  padding: 10px 14px !important;
+  margin: 0;
+  border-radius: 10px;
+}
+
+/* Información del suscriptor */
+#subscriptions-list > .item > div:first-child {
+  min-width: 0;
+}
+
+#subscriptions-list .item-title {
+  font-size: 14px;
+  line-height: 1.3;
+  margin: 0 0 4px !important;
+  overflow-wrap: anywhere;
+}
+
+#subscriptions-list .muted {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+#subscriptions-list p {
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 3px 0 !important;
+}
+
+/* Botones a la derecha */
+#subscriptions-list .item-actions {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 5px;
+  margin: 0 !important;
+  min-width: 105px;
+}
+
+#subscriptions-list .item-actions button {
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 9px !important;
+  margin: 0 !important;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Estado más pequeño */
+#subscriptions-list .pill {
+  display: inline-block;
+  padding: 3px 7px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+/* El detalle ocupa toda la fila */
+#subscriptions-list [id^="sub-detail-"] {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: 4px;
+}
+
+#subscriptions-list [id^="sub-detail-"] .notice {
+  margin: 6px 0;
+  padding: 9px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+#subscriptions-list [id^="sub-detail-"] h3 {
+  font-size: 13px;
+  margin: 10px 0 5px;
+}
+
+/* ===== TABLET Y MÓVIL ===== */
+
+@media (max-width: 650px) {
+  #subscriptions-list {
+    gap: 8px;
+  }
+
+  #subscriptions-list > .item {
+    grid-template-columns: minmax(0, 1fr) 90px;
+    gap: 8px;
+    padding: 9px !important;
+  }
+
+  #subscriptions-list .item-title {
+    font-size: 13px;
+  }
+
+  #subscriptions-list .muted {
+    font-size: 10px;
+  }
+
+  #subscriptions-list p {
+    font-size: 11px;
+  }
+
+  #subscriptions-list .item-actions {
+    min-width: 0;
+    gap: 5px;
+  }
+
+  #subscriptions-list .item-actions button {
+    min-height: 34px;
+    padding: 6px 4px !important;
+    font-size: 10px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Móviles muy estrechos */
+@media (max-width: 380px) {
+  #subscriptions-list > .item {
+    grid-template-columns: minmax(0, 1fr) 78px;
+    gap: 6px;
+    padding: 8px !important;
+  }
+
+  #subscriptions-list .item-actions button {
+    font-size: 9px;
+    padding: 6px 3px !important;
+  }
+}
+
+/* ===== POMELO: SUSCRIPCIONES AGRUPADAS ===== */
 
 #subscriptions-list > .sub-customer-card {
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
-  gap: 12px;
-  padding: 18px !important;
-  border-radius: 18px;
+  gap: 10px;
+  padding: 14px !important;
+  border-radius: 12px;
 }
 
-.sub-customer-toggle {
-  width: 100%;
-  min-height: 52px;
+#subscriptions-list .sub-customer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 10px 16px;
+  gap: 10px;
+}
+
+#subscriptions-list .sub-customer-header .item-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+#subscriptions-list .sub-customer-summary {
+  font-size: 11px;
+  color: var(--muted, #888);
+  line-height: 1.6;
+}
+
+#subscriptions-list .sub-main {
+  padding: 12px;
+  border-radius: 9px;
+  background: var(--surface, rgba(128,128,128,.07));
+}
+
+#subscriptions-list .sub-record-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+#subscriptions-list .sub-record-info > p {
+  margin: 8px 0 !important;
+}
+
+#subscriptions-list .sub-record-info > button {
+  margin-top: 5px;
+}
+
+#subscriptions-list .sub-record-info .item-actions {
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px !important;
+}
+
+#subscriptions-list .sub-record-info .item-actions button {
+  width: auto;
+  min-width: 85px;
+}
+
+#subscriptions-list .sub-history {
+  border-top: 1px solid var(--border, #ddd);
+  padding-top: 9px;
+}
+
+#subscriptions-list .sub-history-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: inherit;
+  padding: 9px 4px;
+}
+
+#subscriptions-list .sub-history-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+#subscriptions-list .sub-history-entry {
+  padding: 11px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 9px;
+}
+
+#subscriptions-list .sub-history-entry .sub-record-top {
+  font-size: 11px;
+}
+
+#subscriptions-list .sub-history-entry .pill {
+  font-size: 10px;
+}
+
+@media (max-width: 380px) {
+  #subscriptions-list > .sub-customer-card {
+    padding: 10px !important;
+  }
+
+  #subscriptions-list .sub-customer-summary {
+    font-size: 10px;
+  }
+}
+    /* SUSCRIPTORES DESPLEGABLES */
+
+#subscriptions-list .sub-customer-toggle {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 9px;
   background: var(--white);
-  color: var(--dark);
+  color: var(--ink);
   text-align: left;
-  transition: all 0.2s ease;
 }
 
-.sub-customer-toggle:hover {
-  border-color: var(--grapefruit);
-}
-
-.sub-customer-name {
+#subscriptions-list .sub-customer-name {
   flex: 1;
   min-width: 0;
-  font-family: "Manrope", system-ui, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   overflow-wrap: anywhere;
 }
 
-.sub-customer-arrow {
-  color: var(--grapefruit);
-  font-size: 20px;
+#subscriptions-list .sub-customer-arrow {
+  color: var(--olive);
+  font-size: 18px;
   flex-shrink: 0;
-  font-weight: 800;
 }
 
-.sub-customer-detail {
+#subscriptions-list .sub-customer-detail {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
-  padding: 14px 4px 4px;
+  padding: 10px 4px 4px;
 }
 
-.sub-customer-detail.hidden {
+#subscriptions-list .sub-customer-detail.hidden {
   display: none !important;
 }
-
 .subscriber-filters {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   overflow-x: auto;
-  padding: 4px 0 16px;
-  margin-bottom: 10px;
+  padding: 8px 0 12px;
+  margin-bottom: 8px;
 }
 
 .subscriber-filter {
   flex-shrink: 0;
-  padding: 10px 18px;
+  padding: 8px 14px;
   border: 1px solid var(--line);
-  border-radius: 50px;
+  border-radius: 20px;
   background: var(--white);
-  color: var(--dark);
-  font-size: 13.5px;
-  font-weight: 600;
+  color: var(--ink);
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.subscriber-filter:hover {
-  border-color: var(--grapefruit);
-  color: var(--grapefruit);
 }
 
 .subscriber-filter.active {
-  background: var(--grapefruit);
+  background: var(--olive);
   color: white;
-  border-color: var(--grapefruit);
+  border-color: var(--olive);
 }
-
-.sub-main {
-  padding: 18px;
-  border-radius: 14px;
-  background: var(--cream);
-  border: 1px solid var(--line);
-}
-
-.sub-record-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 13.5px;
-}
-
-.sub-record-info > p {
-  margin: 10px 0 !important;
-}
-
-.sub-history {
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
-}
-
-.sub-history-toggle {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  font-size: 13px;
-  padding: 12px 16px;
-}
-
-.sub-history-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.sub-history-entry {
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--white);
+    #subscriptions-list > .sub-customer-card[hidden] {
+  display: none !important;
 }
 
 /* FINANZAS */
+.finance-toolbar { display:grid; grid-template-columns: minmax(0,2fr) minmax(180px,1fr); gap:12px; margin:18px 0; }
+.finance-account { background:var(--white); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:12px; }
+.finance-account-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+.finance-account-name { font-weight:800; font-size:16px; }
+.finance-account-meta { color:var(--muted); font-size:13px; margin-top:5px; }
+.finance-account-bottom { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px solid var(--line); }
+.finance-balance { font-size:20px; font-weight:800; }
+.finance-pill { display:inline-block; border-radius:20px; padding:5px 10px; font-size:12px; font-weight:700; background:#f1f0e9; }
+.finance-pill.pending { background:#fbf2dc; color:#946b20; }
+.finance-pill.partial { background:#e8eff8; color:#365d8a; }
+.finance-pill.paid { background:#e8f3e9; color:#397a45; }
+.finance-pill.cancelled { background:#f8e9e7; color:#a34438; }
+@media(max-width:650px) { .finance-toolbar { grid-template-columns:1fr; } #tab-finance .stats { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">pomelo <span>brunch house.</span></div>
+    <div class="header-right">
+      <span id="user-label" class="muted">Verificando acceso...</span>
+      <button id="logout-btn" class="btn">Cerrar sesión</button>
+    </div>
+  </header>
 
-.finance-toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(200px, 1fr);
-  gap: 16px;
-  margin: 22px 0;
+  <main>
+    <div id="message" class="notice">Verificando permisos de administrador...</div>
+
+    <div id="admin-app" class="hidden">
+      <div class="topline">
+        <div>
+          <h1>Panel de administración</h1>
+          <p class="muted">Gestiona el menú, supervisa la operación y consulta las finanzas de Pomelo.</p>
+        </div>
+        <button id="refresh-btn" class="btn">Actualizar datos</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="muted">Platillos activos</div>
+          <div id="stat-menu" class="number">—</div>
+        </div>
+        <div class="stat">
+          <div class="muted">Pedidos registrados</div>
+          <div id="stat-orders" class="number">—</div>
+        </div>
+        <div class="stat">
+          <div class="muted">Suscripciones</div>
+          <div id="stat-subs" class="number">—</div>
+        </div>
+      </div>
+
+
+<nav class="tabs">
+  <button class="tab active" data-tab="menu">Platillos</button>
+  <button class="tab" data-tab="weekly">Menú semanal</button>
+  <button class="tab" data-tab="orders">Pedidos</button>
+  <button class="tab" data-tab="production">Producción</button>
+  <button class="tab" data-tab="subscriptions">Suscripciones</button>
+  <button class="tab" data-tab="finance">Finanzas</button>
+</nav>
+
+      <section id="tab-menu" class="panel">
+        <div class="section-head">
+          <h2>Platillos del menú</h2>
+          <button id="new-item-btn" class="btn primary">+ Nuevo platillo</button>
+        </div>
+
+        <form id="item-form" class="hidden">
+          <h2 id="form-title">Nuevo platillo</h2>
+          <input id="item-id" type="hidden">
+
+
+<div class="form-grid">
+  <div class="field">
+    <label for="item-name">Nombre del platillo *</label>
+    <input
+      id="item-name"
+      type="text"
+      required
+      maxlength="100"
+      placeholder="Ej. Chilaquiles verdes"
+    >
+  </div>
+
+  <div class="field">
+    <label for="item-price">Precio (MXN) *</label>
+    <input
+      id="item-price"
+      type="number"
+      min="0"
+      step="0.01"
+      required
+      placeholder="Ej. 150"
+    >
+  </div>
+
+  <div class="field">
+    <label for="item-category">Tipo *</label>
+    <select id="item-category" required>
+      <option value="meal">Comida obligatoria</option>
+      <option value="dinner">Cena opcional</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="item-image-file">Fotografía del platillo</label>
+    <input id="item-image-file" type="file" accept="image/jpeg,image/png,image/webp">
+
+    <input id="item-image" type="hidden">
+
+    <div style="margin-top:12px">
+      <img
+        id="item-image-preview"
+        alt="Vista previa del platillo"
+        class="hidden"
+        style="width:150px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #e7e5da"
+      >
+    </div>
+
+    <p class="muted">Selecciona una foto JPG, PNG o WebP de máximo 5 MB.</p>
+  </div>
+
+
+<div class="field full">
+  <label for="item-description">Descripción</label>
+  <textarea
+    id="item-description"
+    maxlength="500"
+    placeholder="Describe los ingredientes o acompañamientos"
+  ></textarea>
+</div>
+
+<div class="field full">
+  <label>Días en que se ofrece el platillo *</label>
+  <div class="days-selector" id="item-days">
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="1" checked>
+      Lunes
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="2" checked>
+      Martes
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="3" checked>
+      Miércoles
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="4" checked>
+      Jueves
+    </label>
+    <label class="day-option">
+      <input type="checkbox" name="available-day" value="5" checked>
+      Viernes
+    </label>
+  </div>
+  <p class="muted">Selecciona uno o varios días. El platillo aparecerá en el menú público únicamente en los días seleccionados.</p>
+</div>
+</div>
+          <div class="checkline">
+            <input id="item-active" type="checkbox" checked>
+            <label for="item-active" style="margin:0">Disponible para los clientes</label>
+          </div>
+          <button class="btn primary" type="submit">Guardar platillo</button>
+          <button class="btn" type="button" id="cancel-form-btn">Cancelar</button>
+        </form>
+
+
+<div id="menu-message" class="notice hidden"></div>
+
+<div class="menu-toolbar">
+  <div class="menu-filters" role="group" aria-label="Filtrar platillos">
+    <button type="button" class="menu-filter active" data-menu-filter="all">
+      Todos
+    </button>
+    <button type="button" class="menu-filter" data-menu-filter="active">
+      Activos
+    </button>
+    <button type="button" class="menu-filter" data-menu-filter="inactive">
+      Inactivos
+    </button>
+  </div>
+
+  <span id="menu-count" class="muted">Cargando platillos...</span>
+</div>
+
+<div id="menu-list" class="list">
+  <div class="empty">Cargando menú...</div>
+</div>
+      </section>
+
+<section id="tab-weekly" class="panel hidden">
+
+  <div class="section-head">
+    <h2>Menú semanal</h2>
+    <button id="weekly-refresh" class="btn">Actualizar</button>
+  </div>
+
+  <div class="weekly-navigation">
+    <button type="button" class="btn primary weekly-section-btn" data-weekly-section="create">
+      Menú semanal
+    </button>
+
+    <button type="button" class="btn weekly-section-btn" data-weekly-section="items">
+      Agregar platillo
+    </button>
+
+    <button type="button" class="btn weekly-section-btn" data-weekly-section="history">
+      Semanas creadas
+    </button>
+  </div>
+
+  <div id="weekly-message" class="notice hidden"></div>
+
+  <!-- APARTADO 1: CREAR MENÚ -->
+  <div class="weekly-section" id="weekly-section-create">
+
+    <h2>Crear menú semanal</h2>
+
+    <form id="weekly-form">
+      <div class="form-grid">
+
+        <div class="field">
+          <label for="weekly-name">Nombre del menú</label>
+          <input id="weekly-name" required
+            value="Menú semanal" maxlength="100">
+        </div>
+
+        <div class="field">
+          <label for="weekly-start">Lunes de la semana</label>
+          <input id="weekly-start" type="date" required>
+        </div>
+
+        <div class="field">
+          <label for="weekly-end">Viernes de la semana</label>
+          <input id="weekly-end" type="date" required>
+        </div>
+
+      </div>
+
+      <button class="btn primary" type="submit">
+        Crear semana en borrador
+      </button>
+    </form>
+
+  </div>
+
+  <!-- APARTADO 2: AGREGAR PLATILLOS -->
+  <div class="weekly-section hidden" id="weekly-section-items">
+
+    <h2>Agregar platillos</h2>
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="weekly-select">Semana</label>
+        <select id="weekly-select">
+          <option value="">Selecciona una semana</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="weekly-day">Día</label>
+        <select id="weekly-day">
+          <option value="1">Lunes</option>
+          <option value="2">Martes</option>
+          <option value="3">Miércoles</option>
+          <option value="4">Jueves</option>
+          <option value="5">Viernes</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label for="weekly-item">Platillo del catálogo</label>
+        <select id="weekly-item">
+          <option value="">Selecciona un platillo</option>
+        </select>
+      </div>
+
+    </div>
+
+    <button id="weekly-add-item" class="btn primary" type="button">
+      Agregar platillo al día
+    </button>
+
+    <div id="weekly-items-list" class="list" style="margin-top:18px">
+      <p class="empty">Selecciona una semana.</p>
+    </div>
+
+  </div>
+
+  <!-- APARTADO 3: HISTORIAL -->
+  <div class="weekly-section hidden" id="weekly-section-history">
+
+    <h2>Semanas creadas</h2>
+
+    <div id="weekly-list" class="list">
+      <p class="empty">Cargando semanas...</p>
+    </div>
+
+  </div>
+
+</section>
+      <section id="tab-orders" class="panel hidden">
+        <div class="section-head">
+          <h2>Pedidos registrados</h2>
+          <button id="orders-refresh" class="btn">Recargar</button>
+        </div>
+        <div id="orders-list" class="empty">Aún no se han consultado los pedidos.</div>
+      </section>
+
+      <section id="tab-production" class="panel hidden">
+        <div class="section-head">
+          <h2>Resumen de producción</h2>
+          <button id="production-refresh" class="btn">Calcular</button>
+        </div>
+        <div class="field" style="max-width:260px">
+          <label for="production-date">Fecha de entrega</label>
+          <input id="production-date" type="date">
+        </div>
+        <p class="muted">El resumen cuenta los artículos de pedidos no cancelados para la fecha seleccionada.</p>
+        <div id="production-list" class="empty">Selecciona una fecha y pulsa Calcular.</div>
+      </section>
+
+      <section id="tab-subscriptions" class="panel hidden">
+        <div class="section-head">
+          <h2>Suscripciones</h2>
+          <button id="subscriptions-refresh" class="btn">Recargar</button>
+        </div>
+        <div class="stats" id="subscription-status-stats">
+
+  <div class="stat">
+    <div class="muted">Clientes activos</div>
+    <div id="stat-subs-active" class="number">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="muted">Pendientes</div>
+    <div id="stat-subs-pending" class="number">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="muted">Inactivos</div>
+    <div id="stat-subs-inactive" class="number">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="muted">Cancelados</div>
+    <div id="stat-subs-cancelled" class="number">0</div>
+  </div>
+
+</div>
+        <div class="subscriber-filters">
+  <button class="subscriber-filter active" data-filter="all">
+    Todos
+  </button>
+  <button class="subscriber-filter" data-filter="active">
+    Activos
+  </button>
+  <button class="subscriber-filter" data-filter="pending">
+    Pendientes
+  </button>
+  <button class="subscriber-filter" data-filter="cancelled">
+    Cancelados
+  </button>
+  <button class="subscriber-filter" data-filter="inactive">
+    Inactivos
+  </button>
+</div>
+        <div id="subscriptions-list" class="empty">Aún no se han consultado las suscripciones.</div>
+      </section>
+
+      <section id="tab-finance" class="panel hidden">
+        <div class="section-head">
+          <div>
+            <h2>Finanzas</h2>
+            <p class="muted">Ingresos recibidos, cuentas por cobrar y créditos de clientes.</p>
+          </div>
+          <button id="finance-refresh" class="btn">Actualizar</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="muted">Ingresos netos este mes</div>
+            <div id="finance-income" class="number">—</div>
+          </div>
+          <div class="stat">
+            <div class="muted">Saldo por cobrar</div>
+            <div id="finance-pending" class="number">—</div>
+          </div>
+          <div class="stat">
+            <div class="muted">Crédito disponible</div>
+            <div id="finance-credit" class="number">—</div>
+          </div>
+        </div>
+
+        <div id="finance-message" class="notice hidden"></div>
+
+        <div class="finance-toolbar">
+          <div class="field">
+            <label for="finance-search">Buscar cliente</label>
+            <input id="finance-search" type="search" placeholder="Nombre o teléfono">
+          </div>
+          <div class="field">
+            <label for="finance-filter">Estado de cuenta</label>
+            <select id="finance-filter">
+              <option value="all">Todas</option>
+              <option value="pending">Pendientes</option>
+              <option value="partial">Parciales</option>
+              <option value="paid">Liquidadas</option>
+              <option value="cancelled">Canceladas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-head"><h2>Cuentas financieras</h2></div>
+        <div id="finance-accounts" class="list">
+          <div class="empty">Pulsa Actualizar para consultar las cuentas.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+<script>
+  const SUPABASE_URL = "https://nwjqtwhtnkknfbgzptpx.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_NuE2x0L-W14H3boJBIHNKQ_llE6Es63";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const $ = id => document.getElementById(id);
+  // NAVEGACIÓN INTERNA DEL MENÚ SEMANAL
+document.querySelectorAll(".weekly-section-btn").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    const selectedSection = button.dataset.weeklySection;
+
+    // Ocultar todos los apartados
+    document.querySelectorAll(".weekly-section").forEach(section => {
+      section.classList.add("hidden");
+    });
+
+    // Mostrar el apartado seleccionado
+    const target = $("weekly-section-" + selectedSection);
+
+    if (target) {
+      target.classList.remove("hidden");
+    }
+
+    // Actualizar botón activo
+    document.querySelectorAll(".weekly-section-btn").forEach(btn => {
+      btn.classList.remove("primary");
+    });
+
+    button.classList.add("primary");
+
+  });
+
+});
+  let currentUser = null;
+  let menuCache = [];
+  
+
+let selectedPhotoFile = null;
+
+$("item-image-file").addEventListener("change", event => {
+  const file = event.target.files[0];
+  const preview = $("item-image-preview");
+
+  selectedPhotoFile = null;
+
+  if (!file) {
+    preview.classList.add("hidden");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    showMenuMessage("Selecciona un archivo de imagen.", "error");
+    event.target.value = "";
+    preview.classList.add("hidden");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    showMenuMessage("La foto supera los 5 MB. Selecciona una más ligera.", "error");
+    event.target.value = "";
+    preview.classList.add("hidden");
+    return;
+  }
+
+  selectedPhotoFile = file;
+  preview.src = URL.createObjectURL(file);
+  preview.classList.remove("hidden");
+});
+
+
+  function showMessage(text, type = "") {
+    const el = $("message");
+    el.textContent = text;
+    el.className = "notice" + (type ? " " + type : "");
+    el.classList.remove("hidden");
+  }
+
+  function showMenuMessage(text, type = "") {
+    const el = $("menu-message");
+    el.textContent = text;
+    el.className = "notice" + (type ? " " + type : "");
+    el.classList.remove("hidden");
+  }
+
+  function money(value) {
+    return new Intl.NumberFormat("es-MX", {
+      style: "currency", currency: "MXN"
+    }).format(Number(value || 0));
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#039;"
+    })[char]);
+  }
+
+  function dateLocal(value) {
+    if (!value) return "Sin fecha";
+    const d = new Date(value + "T12:00:00");
+    return d.toLocaleDateString("es-MX", {
+      day: "2-digit", month: "short", year: "numeric"
+    });
+  }
+
+  async function verifyAccess() {
+    const { data: { session }, error } = await db.auth.getSession();
+
+    if (error || !session) {
+      showMessage("Necesitas iniciar sesión para entrar al panel. Redirigiendo al acceso...");
+      setTimeout(() => location.replace("./login.html"), 1200);
+      return;
+    }
+
+    currentUser = session.user;
+    $("user-label").textContent = session.user.email || "Usuario autenticado";
+
+    const { data: profile, error: profileError } = await db
+      .from("profiles")
+      .select("role, full_name")
+      .eq("id", session.user.id)
+      .maybeSingle();
+
+    if (profileError) {
+      showMessage("No se pudo verificar tu rol. Revisa las políticas RLS de profiles. Detalle: " + profileError.message, "error");
+      return;
+    }
+
+    if (!profile || profile.role !== "chef") {
+      showMessage("Acceso denegado: esta cuenta no tiene permisos de chef.");
+      return;
+    }
+
+    $("admin-app").classList.remove("hidden");
+    showMessage("Acceso autorizado. Bienvenido" + (profile.full_name ? ", " + profile.full_name : "") + ".", "success");
+    await loadAll();
+  }
+
+
+async function loadAll() {
+  await Promise.all([
+    loadMenu(),
+    loadOrders(),
+    loadSubscriptions(),
+    loadWeeklyData()
+  ]);
+
+  renderMenuList();
+}
+  
+
+async function loadMenu() {
+  $("menu-list").innerHTML =
+    '<div class="empty">Cargando menú...</div>';
+  $("menu-count").textContent = "Consultando platillos...";
+
+  const { data, error } = await db
+    .from("menu_items")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    $("menu-list").innerHTML =
+      '<div class="empty">No se pudieron cargar los platillos.</div>';
+
+    $("menu-count").textContent = "Error de consulta";
+
+    showMenuMessage(
+      "Error al cargar el menú: " + error.message,
+      "error"
+    );
+
+    console.error("Error al cargar menu_items:", error);
+    return;
+  }
+
+  menuCache = data || [];
+
+  $("stat-menu").textContent =
+    menuCache.filter(item => item.active === true).length;
+
+  renderMenuList();
+
+  console.log("Platillos recibidos de Supabase:", menuCache.length);
 }
 
-.finance-account {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 14px;
-  box-shadow: 0 8px 25px rgba(37,41,31,0.02);
+let menuFilter = "all";
+
+function renderMenuList() {
+  const filteredItems = menuCache.filter(item => {
+    if (menuFilter === "active") return item.active === true;
+    if (menuFilter === "inactive") return item.active === false;
+    return true;
+  });
+
+  const activeCount = menuCache.filter(item => item.active === true).length;
+  const inactiveCount = menuCache.filter(item => item.active === false).length;
+
+  $("menu-count").textContent =
+    `${filteredItems.length} mostrados · ${activeCount} activos · ${inactiveCount} inactivos`;
+
+  if (!filteredItems.length) {
+    const messages = {
+      all: "Todavía no hay platillos registrados.",
+      active: "No hay platillos activos.",
+      inactive: "No hay platillos inactivos."
+    };
+
+    $("menu-list").innerHTML =
+      `<div class="empty">${messages[menuFilter]}</div>`;
+    return;
+  }
+
+  $("menu-list").innerHTML = filteredItems.map(item => {
+    const days = Array.isArray(item.available_days)
+      ? item.available_days.map(Number)
+      : [1, 2, 3, 4, 5];
+
+    const dayNames = days
+      .filter(day => day >= 1 && day <= 5)
+      .map(day => ["", "Lun", "Mar", "Mié", "Jue", "Vie"][day])
+      .join(", ");
+
+    return `
+      <article class="item">
+        <div>
+          <div class="item-title">${escapeHtml(item.name)}</div>
+          <div class="muted">${escapeHtml(item.description || "Sin descripción")}</div>
+
+          <div class="muted" style="margin-top:6px">
+            Días: ${dayNames || "Sin días asignados"}
+          </div>
+
+          <p style="margin:8px 0">
+            <strong>${money(item.price_mxn)}</strong>
+            <span class="pill">
+              ${item.category === "dinner" ? "Cena opcional" : "Comida"}
+            </span>
+            <span class="pill">
+              ${item.active ? "Activo" : "Inactivo"}
+            </span>
+          </p>
+        </div>
+
+        <div class="item-actions">
+          <button class="btn" data-edit="${item.id}">Editar</button>
+
+          <button
+            class="btn ${item.active ? "danger" : ""}"
+            data-toggle="${item.id}"
+          >
+            ${item.active ? "Desactivar" : "Activar"}
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  $("menu-list").querySelectorAll("[data-edit]").forEach(button => {
+    button.addEventListener("click", () => {
+      editItem(button.dataset.edit);
+    });
+  });
+
+  $("menu-list").querySelectorAll("[data-toggle]").forEach(button => {
+    button.addEventListener("click", () => {
+      toggleItem(button.dataset.toggle);
+    });
+  });
 }
 
-.finance-account-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
-  flex-wrap: wrap;
+document.querySelectorAll("[data-menu-filter]").forEach(button => {
+  button.addEventListener("click", () => {
+    menuFilter = button.dataset.menuFilter;
+
+    document.querySelectorAll("[data-menu-filter]").forEach(filterButton => {
+      filterButton.classList.toggle("active", filterButton === button);
+    });
+
+    renderMenuList();
+  });
+});
+
+
+  function resetItemForm() {
+    $("item-form").reset();
+    selectedPhotoFile = null;
+$("item-image").value = "";
+$("item-image-preview").removeAttribute("src");
+$("item-image-preview").classList.add("hidden");
+    $("item-id").value = "";
+    $("item-active").checked = true;
+    
+document.querySelectorAll('input[name="available-day"]').forEach(input => {
+  input.checked = true;
+});
+
+    $("form-title").textContent = "Nuevo platillo";
+    $("item-form").classList.add("hidden");
+  }
+
+  function editItem(id) {
+    const item = menuCache.find(row => row.id === id);
+    if (!item) return;
+
+    $("item-id").value = item.id;
+    $("item-name").value = item.name || "";
+    $("item-price").value = item.price_mxn;
+    $("item-category").value = item.category || "meal";
+$("item-image").value = item.image_url || "";
+
+selectedPhotoFile = null;
+$("item-image-file").value = "";
+
+if (item.image_url) {
+  $("item-image-preview").src = item.image_url;
+  $("item-image-preview").classList.remove("hidden");
+} else {
+  $("item-image-preview").removeAttribute("src");
+  $("item-image-preview").classList.add("hidden");
+}    $("item-description").value = item.description || "";
+    $("item-active").checked = Boolean(item.active);
+    
+const savedDays = Array.isArray(item.available_days)
+  ? item.available_days.map(Number)
+  : [1, 2, 3, 4, 5];
+
+document.querySelectorAll('input[name="available-day"]').forEach(input => {
+  input.checked = savedDays.includes(Number(input.value));
+});
+
+    $("form-title").textContent = "Editar platillo";
+    $("item-form").classList.remove("hidden");
+    $("item-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  $("new-item-btn").addEventListener("click", () => {
+    resetItemForm();
+    $("item-form").classList.remove("hidden");
+    $("item-name").focus();
+  });
+
+  $("cancel-form-btn").addEventListener("click", resetItemForm);
+
+  $("item-form").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const id = $("item-id").value;
+    
+let uploadedImageUrl = $("item-image").value.trim() || null;
+
+if (selectedPhotoFile) {
+  const extension = selectedPhotoFile.name.split(".").pop().toLowerCase();
+  const safeExtension = /^[a-z0-9]+$/.test(extension) ? extension : "jpg";
+  const filePath = `menu/${crypto.randomUUID()}.${safeExtension}`;
+
+  const { data: uploadData, error: uploadError } = await db.storage
+    .from("menu-photos")
+    .upload(filePath, selectedPhotoFile, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: selectedPhotoFile.type
+    });
+
+  if (uploadError) {
+    showMenuMessage("No se pudo subir la foto: " + uploadError.message, "error");
+    return;
+  }
+
+  const { data: publicData } = db.storage
+    .from("menu-photos")
+    .getPublicUrl(uploadData.path);
+
+  uploadedImageUrl = publicData.publicUrl;
 }
 
-.finance-account-name {
-  font-family: "Manrope", system-ui, sans-serif;
-  font-weight: 800;
-  font-size: 17px;
+const selectedDays = Array.from(
+  document.querySelectorAll('input[name="available-day"]:checked')
+).map(input => Number(input.value));
+
+if (selectedDays.length === 0) {
+  showMenuMessage("Selecciona al menos un día para el platillo.", "error");
+  return;
 }
 
-.finance-account-meta {
-  color: var(--muted);
-  font-size: 13.5px;
-  margin-top: 4px;
+    const payload = {
+      name: $("item-name").value.trim(),
+      description: $("item-description").value.trim(),
+      image_url: uploadedImageUrl,
+      price_mxn: Number($("item-price").value),
+      category: $("item-category").value,
+      available_days: selectedDays,
+      active: $("item-active").checked
+    };
+
+    if (!payload.name || !Number.isFinite(payload.price_mxn) || payload.price_mxn < 0) {
+      showMenuMessage("Revisa el nombre y el precio del platillo.", "error");
+      return;
+    }
+
+    const submit = $("item-form").querySelector('button[type="submit"]');
+    submit.disabled = true;
+    submit.textContent = "Guardando...";
+
+    const result = id
+      ? await db.from("menu_items").update(payload).eq("id", id).select().maybeSingle()
+      : await db.from("menu_items").insert(payload).select().maybeSingle();
+
+    submit.disabled = false;
+    submit.textContent = "Guardar platillo";
+
+    if (result.error) {
+      showMenuMessage("No se pudo guardar: " + result.error.message, "error");
+      return;
+    }
+
+    showMenuMessage(id ? "Platillo actualizado." : "Platillo creado correctamente.", "success");
+    resetItemForm();
+    await loadMenu();
+  });
+
+  
+async function toggleItem(id) {
+  const item = menuCache.find(row => row.id === id);
+  if (!item) return;
+
+  const action = item.active ? "desactivar" : "activar";
+
+  const confirmed = confirm(
+    `¿Seguro que deseas ${action} "${item.name}"?`
+  );
+
+  if (!confirmed) return;
+
+  const { error } = await db
+    .from("menu_items")
+    .update({ active: !item.active })
+    .eq("id", id);
+
+  if (error) {
+    showMenuMessage(
+      "No se pudo cambiar la disponibilidad: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  showMenuMessage(
+    item.active
+      ? "Platillo desactivado correctamente."
+      : "Platillo activado correctamente.",
+    "success"
+  );
+
+  await loadMenu();
 }
 
-.finance-account-bottom {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
+
+const WEEKLY_DAYS = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+let weeklyMenusCache = [];
+let weeklyItemsCache = [];
+
+function showWeeklyMessage(message, type = "") {
+  const el = $("weekly-message");
+  el.textContent = message;
+  el.className = "notice" + (type ? " " + type : "");
+  el.classList.remove("hidden");
 }
 
-.finance-balance {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--green);
+function dateToUTC(value) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
-.finance-pill {
-  display: inline-block;
-  border-radius: 30px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  background: var(--cream);
-  border: 1px solid var(--line);
+function isMonday(value) {
+  return dateToUTC(value).getUTCDay() === 1;
 }
 
-.finance-pill.pending { background: #fbf2dc; color: #946b20; border-color: #f7e2b3; }
-.finance-pill.partial { background: #e8eff8; color: #365d8a; border-color: #
+function isFridayAfterMonday(start, end) {
+  const difference =
+    (dateToUTC(end) - dateToUTC(start)) / 86400000;
+
+  return difference === 4;
+}
+
+async function loadWeeklyData() {
+  const { data, error } = await db
+    .from("weekly_menus")
+    .select("*")
+    .order("start_date", { ascending: false });
+
+  if (error) {
+    $("weekly-list").textContent =
+      "No se pudieron cargar las semanas: " + error.message;
+    console.error(error);
+    return;
+  }
+
+  weeklyMenusCache = data || [];
+  renderWeeklyMenus();
+
+  const select = $("weekly-select");
+  const previousValue = select.value;
+
+  select.innerHTML =
+    '<option value="">Selecciona una semana</option>' +
+    weeklyMenusCache.map(week => `
+      <option value="${escapeHtml(week.id)}">
+        ${escapeHtml(week.name)} · ${dateLocal(week.start_date)}
+        · ${week.status === "published" ? "Publicada" :
+          week.status === "archived" ? "Archivada" : "Borrador"}
+      </option>
+    `).join("");
+
+  if (weeklyMenusCache.some(week => week.id === previousValue)) {
+    select.value = previousValue;
+  } else {
+    const editableWeek = weeklyMenusCache.find(
+      week => week.status === "draft"
+    );
+    if (editableWeek) select.value = editableWeek.id;
+  }
+
+  await loadWeeklyCatalog();
+  await loadWeeklyItems();
+}
+
+async function loadWeeklyCatalog() {
+  const select = $("weekly-item");
+  const { data, error } = await db
+    .from("menu_items")
+    .select("id, name, description, image_url, price_mxn, category, available_days, active")
+    .eq("active", true)
+    .order("name");
+
+  if (error) {
+    select.innerHTML =
+      '<option value="">Error al cargar el catálogo</option>';
+    console.error(error);
+    showWeeklyMessage(
+      "No se pudo cargar el catálogo: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  const items = data || [];
+  select.innerHTML =
+    '<option value="">Selecciona un platillo</option>' +
+    items.map(item => `
+      <option value="${escapeHtml(item.id)}">
+        ${escapeHtml(item.name)} · ${money(item.price_mxn)}
+      </option>
+    `).join("");
+}
+
+async function loadWeeklyItems() {
+  const weekId = $("weekly-select").value;
+  const container = $("weekly-items-list");
+
+  if (!weekId) {
+    weeklyItemsCache = [];
+    container.innerHTML =
+      '<p class="empty">Selecciona una semana.</p>';
+    return;
+  }
+
+  const { data, error } = await db
+    .from("weekly_menu_items")
+    .select("*")
+    .eq("weekly_menu_id", weekId)
+    .order("day_of_week")
+    .order("name");
+
+  if (error) {
+    container.textContent =
+      "No se pudieron cargar los platillos: " + error.message;
+    return;
+  }
+
+  weeklyItemsCache = data || [];
+  renderWeeklyItems();
+}
+
+function renderWeeklyItems() {
+  const container = $("weekly-items-list");
+  const weekId = $("weekly-select").value;
+  const week = weeklyMenusCache.find(item => item.id === weekId);
+
+  if (!week) {
+    container.innerHTML =
+      '<p class="empty">Selecciona una semana.</p>';
+    return;
+  }
+
+  if (!weeklyItemsCache.length) {
+    container.innerHTML =
+      '<p class="empty">Todavía no hay platillos asignados a esta semana.</p>';
+    return;
+  }
+
+  container.innerHTML = WEEKLY_DAYS.slice(1).map((day, index) => {
+    const dayNumber = index + 1;
+    const items = weeklyItemsCache.filter(
+      item => Number(item.day_of_week) === dayNumber
+    );
+
+    if (!items.length) return "";
+
+    return `
+      <div class="item" style="display:block">
+        <h3 style="margin:0 0 10px">${day}</h3>
+        ${items.map(item => `
+          <div style="display:flex;justify-content:space-between;
+            align-items:center;gap:12px;padding:9px 0;
+            border-top:1px solid var(--line)">
+            <div>
+              <strong>${escapeHtml(item.name)}</strong>
+              <div class="muted">${money(item.price_mxn)}</div>
+            </div>
+            ${week.status === "draft" ? `
+              <button class="btn danger"
+                type="button"
+                data-weekly-delete="${escapeHtml(item.id)}">
+                Quitar
+              </button>
+            ` : ""}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }).join("");
+
+  container.querySelectorAll("[data-weekly-delete]").forEach(button => {
+    button.addEventListener("click", async () => {
+      if (!confirm("¿Quitar este platillo de la semana?")) return;
+
+      const { error } = await db
+        .from("weekly_menu_items")
+        .delete()
+        .eq("id", button.dataset.weeklyDelete);
+
+      if (error) {
+        showWeeklyMessage(
+          "No se pudo quitar el platillo: " + error.message,
+          "error"
+        );
+        return;
+      }
+
+      showWeeklyMessage("Platillo quitado del borrador.", "success");
+      await loadWeeklyItems();
+    });
+  });
+}
+
+function renderWeeklyMenus() {
+  const container = $("weekly-list");
+
+  if (!weeklyMenusCache.length) {
+    container.innerHTML =
+      '<p class="empty">Todavía no hay semanas creadas.</p>';
+    return;
+  }
+
+  container.innerHTML = weeklyMenusCache.map(week => {
+    const statusLabel = {
+      draft: "Borrador",
+      published: "Publicada",
+      archived: "Archivada"
+    }[week.status] || week.status;
+
+    return `
+      <article class="item">
+        <div>
+          <div class="item-title">${escapeHtml(week.name)}</div>
+          <div class="muted">
+            ${dateLocal(week.start_date)} — ${dateLocal(week.end_date)}
+          </div>
+          <p><span class="pill">${statusLabel}</span></p>
+        </div>
+
+        <div class="item-actions">
+
+          <button class="btn"
+            type="button"
+            data-week-edit="${escapeHtml(week.id)}">
+            Seleccionar
+          </button>
+
+          ${week.status === "draft" ? `
+            <button class="btn primary"
+              type="button"
+              data-week-publish="${escapeHtml(week.id)}">
+              Publicar
+            </button>
+          ` : ""}
+
+          ${week.status === "published" ? `
+            <button class="btn danger"
+              type="button"
+              data-week-archive="${escapeHtml(week.id)}">
+              Archivar
+            </button>
+          ` : ""}
+${week.status === "archived" ? `
+  <button class="btn primary"
+    type="button"
+    data-week-reactivate="${escapeHtml(week.id)}">
+    Reactivar
+  </button>
+` : ""}
+          ${week.status === "draft" || week.status === "archived" ? `
+            <button class="btn danger"
+              type="button"
+              data-week-delete="${escapeHtml(week.id)}">
+              Eliminar
+            </button>
+          ` : ""}
+
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  // SELECCIONAR SEMANA
+  container.querySelectorAll("[data-week-edit]").forEach(button => {
+    button.addEventListener("click", async () => {
+
+      const id = button.dataset.weekEdit;
+
+      $("weekly-select").value = id;
+
+      // Cambiar automáticamente al apartado Agregar platillo
+      document.querySelectorAll(".weekly-section").forEach(section => {
+        section.classList.add("hidden");
+      });
+
+      $("weekly-section-items").classList.remove("hidden");
+
+      document.querySelectorAll(".weekly-section-btn").forEach(btn => {
+        btn.classList.remove("primary");
+      });
+
+      document.querySelector(
+        '[data-weekly-section="items"]'
+      ).classList.add("primary");
+
+      await loadWeeklyItems();
+
+      $("weekly-select").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    });
+  });
+
+  // PUBLICAR
+  container.querySelectorAll("[data-week-publish]").forEach(button => {
+    button.addEventListener("click", () =>
+      changeWeeklyStatus(button.dataset.weekPublish, "published")
+    );
+  });
+
+  // ARCHIVAR
+  container.querySelectorAll("[data-week-archive]").forEach(button => {
+    button.addEventListener("click", () =>
+      changeWeeklyStatus(button.dataset.weekArchive, "archived")
+    );
+  });
+// REACTIVAR
+container.querySelectorAll("[data-week-reactivate]").forEach(button => {
+  button.addEventListener("click", () => {
+    changeWeeklyStatus(button.dataset.weekReactivate, "draft");
+  });
+});
+  // ELIMINAR
+  container.querySelectorAll("[data-week-delete]").forEach(button => {
+    button.addEventListener("click", () =>
+      deleteWeeklyMenu(button.dataset.weekDelete)
+    );
+  });
+}
+$("weekly-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const name = $("weekly-name").value.trim();
+  const start = $("weekly-start").value;
+  const end = $("weekly-end").value;
+
+  if (!name || !start || !end) {
+    showWeeklyMessage("Completa el nombre y las fechas.", "error");
+    return;
+  }
+
+  if (!isMonday(start) || !isFridayAfterMonday(start, end)) {
+    showWeeklyMessage(
+      "La semana debe comenzar en lunes y terminar ese mismo viernes.",
+      "error"
+    );
+    return;
+  }
+
+  const submit = $("weekly-form").querySelector(
+    'button[type="submit"]'
+  );
+  submit.disabled = true;
+
+  const { data, error } = await db
+    .from("weekly_menus")
+    .insert({
+      name,
+      start_date: start,
+      end_date: end,
+      status: "draft"
+    })
+    .select()
+    .single();
+
+  submit.disabled = false;
+
+  if (error) {
+    showWeeklyMessage(
+      error.code === "23505"
+        ? "Ya existe una semana con esa fecha de inicio."
+        : "No se pudo crear la semana: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  showWeeklyMessage("Semana creada como borrador.", "success");
+  $("weekly-form").reset();
+  $("weekly-name").value = "Menú semanal";
+
+  await loadWeeklyData();
+  $("weekly-select").value = data.id;
+  await loadWeeklyItems();
+});
+
+$("weekly-select").addEventListener("change", loadWeeklyItems);
+
+$("weekly-add-item").addEventListener("click", async () => {
+  const weekId = $("weekly-select").value;
+  const itemId = $("weekly-item").value;
+  const day = Number($("weekly-day").value);
+
+  const week = weeklyMenusCache.find(item => item.id === weekId);
+  const item = menuCache.find(row => row.id === itemId);
+
+  if (!week || !item) {
+    showWeeklyMessage("Selecciona una semana y un platillo.", "error");
+    return;
+  }
+
+  if (week.status !== "draft") {
+    showWeeklyMessage(
+      "Solo puedes modificar semanas en borrador.",
+      "error"
+    );
+    return;
+  }
+
+const availableDays = Array.isArray(item.available_days)
+  ? item.available_days.map(Number)
+  : [1, 2, 3, 4, 5];
+
+if (!availableDays.includes(day)) {
+  showWeeklyMessage(
+    "Este platillo no está disponible para el día seleccionado en el catálogo.",
+    "error"
+  );
+  return;
+}
+  
+const duplicate = weeklyItemsCache.some(existing =>
+  existing.menu_item_id === item.id &&
+  Number(existing.day_of_week) === day
+);
+
+if (duplicate) {
+  showWeeklyMessage(
+    "Este platillo ya está asignado a ese día.",
+    "error"
+  );
+  return;
+}
+
+
+  const { error } = await db
+    .from("weekly_menu_items")
+    .insert({
+      weekly_menu_id: week.id,
+      menu_item_id: item.id,
+      day_of_week: day,
+      name: item.name,
+      description: item.description || "",
+      image_url: item.image_url || null,
+      price_mxn: item.price_mxn,
+      category: item.category
+    });
+
+  if (error) {
+    showWeeklyMessage(
+      "No se pudo agregar el platillo: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  showWeeklyMessage(
+    item.name + " agregado al " + WEEKLY_DAYS[day] + ".",
+    "success"
+  );
+  await loadWeeklyItems();
+});
+async function deleteWeeklyMenu(id) {
+  const week = weeklyMenusCache.find(item => item.id === id);
+
+  if (!week) return;
+
+  if (!["draft", "archived"].includes(week.status)) {
+    showWeeklyMessage(
+      "Primero debes archivar la semana antes de eliminarla.",
+      "error"
+    );
+    return;
+  }
+
+  const confirmed = confirm(
+    `¿Eliminar definitivamente "${week.name}"?\n\n` +
+    "También se eliminarán todos los platillos asociados. Esta acción no se puede deshacer."
+  );
+
+  if (!confirmed) return;
+
+  // Eliminar primero los platillos asociados
+  const { error: itemsError } = await db
+    .from("weekly_menu_items")
+    .delete()
+    .eq("weekly_menu_id", id);
+
+  if (itemsError) {
+    showWeeklyMessage(
+      "No se pudieron eliminar los platillos: " + itemsError.message,
+      "error"
+    );
+    return;
+  }
+
+  // Eliminar la semana
+  const { error } = await db
+    .from("weekly_menus")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    showWeeklyMessage(
+      "No se pudo eliminar la semana: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  if ($("weekly-select").value === id) {
+    $("weekly-select").value = "";
+  }
+
+  weeklyItemsCache = [];
+
+  showWeeklyMessage(
+    "Semana eliminada correctamente.",
+    "success"
+  );
+
+  await loadWeeklyData();
+}
+async function changeWeeklyStatus(id, status) {
+  const week = weeklyMenusCache.find(item => item.id === id);
+  if (!week) return;
+
+  if (status === "published") {
+    const { data: items, error: itemsError } = await db
+      .from("weekly_menu_items")
+      .select("id")
+      .eq("weekly_menu_id", id)
+      .limit(1);
+
+    if (itemsError) {
+      showWeeklyMessage(itemsError.message, "error");
+      return;
+    }
+
+    if (!items?.length) {
+      showWeeklyMessage(
+        "Agrega al menos un platillo antes de publicar.",
+        "error"
+      );
+      return;
+    }
+
+    const overlapping = weeklyMenusCache.some(other =>
+      other.id !== id &&
+      other.status === "published" &&
+      other.start_date <= week.end_date &&
+      other.end_date >= week.start_date
+    );
+
+    if (overlapping) {
+      showWeeklyMessage(
+        "Ya existe otro menú publicado con fechas que se cruzan.",
+        "error"
+      );
+      return;
+    }
+  }
+
+  const action = status === "published" ? "publicar" : "archivar";
+  if (!confirm(`¿Seguro que deseas ${action} "${week.name}"?`)) return;
+
+  const { error } = await db
+    .from("weekly_menus")
+    .update({ status })
+    .eq("id", id);
+
+  if (error) {
+    showWeeklyMessage(
+      "No se pudo actualizar el estado: " + error.message,
+      "error"
+    );
+    return;
+  }
+
+  showWeeklyMessage(
+    status === "published"
+      ? "Menú publicado."
+      : "Menú archivado.",
+    "success"
+  );
+
+  await loadWeeklyData();
+  $("weekly-select").value = id;
+  await loadWeeklyItems();
+}
+
+async function loadOrders() {
+  $("orders-list").textContent = "Generando pedidos del día...";
+
+  // Generar los pedidos de las suscripciones para la fecha actual
+  const today = new Date();
+  const localDate = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0")
+  ].join("-");
+
+  const { data: generated, error: generateError } = await db.rpc(
+    "generate_subscription_orders",
+    { p_delivery_date: localDate }
+  );
+
+  if (generateError) {
+    console.error("Error generando pedidos:", generateError);
+    $("orders-list").textContent =
+      "No se pudieron generar los pedidos de suscripciones: " +
+      generateError.message;
+    return;
+  }
+
+  console.log("Pedidos nuevos generados:", generated);
+
+  $("orders-list").textContent = "Cargando pedidos...";
+
+  const { data, error } = await db
+    .from("orders")
+    .select(
+      "id, customer_id, subscription_id, delivery_date, delivery_address, delivery_notes, delivery_status, payment_status, total_mxn, created_at"
+    )
+    .eq("delivery_date", localDate)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    $("orders-list").textContent =
+      "No se pudieron cargar los pedidos: " + error.message;
+    return;
+  }
+
+  $("stat-orders").textContent = (data || []).length;
+
+  if (!data?.length) {
+    $("orders-list").innerHTML =
+      '<div class="empty">No hay pedidos para hoy.</div>';
+    return;
+  }
+
+  const orderIds = data.map(order => order.id);
+  const customerIds = [
+    ...new Set(data.map(order => order.customer_id).filter(Boolean))
+  ];
+
+  const profiles = {};
+  const itemsByOrder = {};
+
+  if (customerIds.length) {
+    const { data: people, error: peopleError } = await db
+      .from("profiles")
+      .select("id, full_name, phone")
+      .in("id", customerIds);
+
+    if (peopleError) console.error("Error consultando clientes:", peopleError);
+
+    (people || []).forEach(person => {
+      profiles[person.id] = person;
+    });
+  }
+
+  const { data: items, error: itemsError } = await db
+    .from("order_items")
+    .select("order_id, item_name, meal_type, quantity, unit_price_mxn")
+    .in("order_id", orderIds);
+
+  if (itemsError) {
+    $("orders-list").textContent =
+      "No se pudieron cargar los platillos: " + itemsError.message;
+    return;
+  }
+
+  (items || []).forEach(item => {
+    if (!itemsByOrder[item.order_id]) {
+      itemsByOrder[item.order_id] = [];
+    }
+    itemsByOrder[item.order_id].push(item);
+  });
+
+  $("orders-list").innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Entrega</th>
+            <th>Suscriptor / Cliente</th>
+            <th>Platillos</th>
+            <th>Dirección</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Pago</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(order => {
+            const person = profiles[order.customer_id] || {};
+            const orderItems = itemsByOrder[order.id] || [];
+
+            const itemsHtml = orderItems.length
+              ? orderItems.map(item =>
+                  `<div>
+                    ${Number(item.quantity || 1)} ×
+                    ${escapeHtml(item.item_name || "Platillo")}
+                    <span class="muted">
+                      (${item.meal_type === "dinner" ? "Cena" : "Comida"})
+                    </span>
+                  </div>`
+                ).join("")
+              : '<span class="muted">Sin platillos registrados</span>';
+
+            return `
+              <tr>
+                <td>${dateLocal(order.delivery_date)}</td>
+                <td>
+                  <strong>${escapeHtml(person.full_name || "Cliente")}</strong>
+                  <br>
+                  <span class="muted">${escapeHtml(person.phone || "")}</span>
+                  ${order.subscription_id
+                    ? '<br><span class="pill">Suscripción</span>'
+                    : ""}
+                </td>
+                <td>${itemsHtml}</td>
+                <td>${escapeHtml(order.delivery_address || "Sin dirección")}</td>
+                <td>${money(order.total_mxn)}</td>
+                <td>${escapeHtml(order.delivery_status || "pending")}</td>
+                <td>${escapeHtml(order.payment_status || "unpaid")}</td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+
+async function loadSubscriptions() {
+  const container = $("subscriptions-list");
+  container.textContent = "Cargando suscripciones...";
+
+  const { data: subscriptions, error } = await db
+    .from("subscriptions")
+    .select(`
+      id,
+      customer_id,
+      start_date,
+      end_date,
+      status,
+      created_at,
+      delivery_address,
+      delivery_notes,
+      delivery_fee_mxn
+    `)
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+const debugBox = document.createElement("pre");
+
+debugBox.style.cssText =
+  "background:#eee;color:#222;padding:12px;margin:12px 0;border-radius:8px;white-space:pre-wrap;font-size:13px;";
+
+debugBox.textContent = JSON.stringify(
+  subscriptions.map(s => ({
+    status: s.status,
+    start_date: s.start_date,
+    end_date: s.end_date
+  })),
+  null,
+  2
+);
+
+container.before(debugBox);
+console.log(
+  "Fecha actual:",
+  new Date().getFullYear() + "-" +
+  String(new Date().getMonth() + 1).padStart(2, "0") + "-" +
+  String(new Date().getDate()).padStart(2, "0")
+);
+    container.textContent =
+      "No se pudieron cargar las suscripciones: " + error.message;
+    console.error(error);
+    return;
+  }
+
+  if (!subscriptions?.length) {
+    $("stat-subs").textContent = "0";
+    container.innerHTML =
+      '<div class="empty">Todavía no hay suscripciones.</div>';
+    return;
+  }
+
+  // Obtener clientes únicos
+  const customerIds = [
+    ...new Set(
+      subscriptions.map(s => s.customer_id).filter(Boolean)
+    )
+  ];
+
+  const profiles = {};
+
+  if (customerIds.length) {
+    const { data: people, error: peopleError } = await db
+      .from("profiles")
+      .select("id, full_name, phone")
+      .in("id", customerIds);
+
+    if (peopleError) console.error(peopleError);
+
+    (people || []).forEach(person => {
+      profiles[person.id] = person;
+    });
+  }
+
+  // Agrupar suscripciones por cliente
+  const customerGroups = {};
+  // Fecha actual local
+const today = [
+  new Date().getFullYear(),
+  String(new Date().getMonth() + 1).padStart(2, "0"),
+  String(new Date().getDate()).padStart(2, "0")
+].join("-");
+
+// Clasificación general del cliente
+function getCustomerStatus(customerSubscriptions) {
+const active = customerSubscriptions.some(sub =>
+  String(sub.status || "").toLowerCase() === "active" &&
+  sub.end_date >= today
+);
+
+if (active) return "active";
+  const pending = customerSubscriptions.some(sub =>
+    String(sub.status).toLowerCase() === "pending"
+  );
+
+  if (pending) return "pending";
+
+  const latest = [...customerSubscriptions].sort((a, b) => {
+    const dateA = a.end_date || a.created_at || "";
+    const dateB = b.end_date || b.created_at || "";
+    return dateB.localeCompare(dateA);
+  })[0];
+
+  if (
+    latest &&
+    String(latest.status).toLowerCase() === "cancelled"
+  ) {
+    return "cancelled";
+  }
+
+  return "inactive";
+}
+
+  subscriptions.forEach((sub, index) => {
+    const key = sub.customer_id
+      ? String(sub.customer_id)
+      : "sin-cliente-" + index;
+
+    if (!customerGroups[key]) {
+      customerGroups[key] = [];
+    }
+
+    customerGroups[key].push(sub);
+  });
+
+// Contar clientes únicos por estado
+const customerStatusCounts = {
+  active: 0,
+  pending: 0,
+  inactive: 0,
+  cancelled: 0
+};
+
+Object.values(customerGroups).forEach(customerSubscriptions => {
+  const status = getCustomerStatus(customerSubscriptions);
+
+  customerStatusCounts[status]++;
+});
+
+// Total de clientes
+$("stat-subs").textContent =
+  Object.keys(customerGroups).length;
+
+// Indicadores por estado
+$("stat-subs-active").textContent =
+  customerStatusCounts.active;
+
+$("stat-subs-pending").textContent =
+  customerStatusCounts.pending;
+
+$("stat-subs-inactive").textContent =
+  customerStatusCounts.inactive;
+
+$("stat-subs-cancelled").textContent =
+  customerStatusCounts.cancelled;
+// Clasificación general del cliente
+
+const statusLabels = {
+  pending: "Pendiente",
+  active: "Activa",
+  completed: "Completada",
+  cancelled: "Cancelada",
+  inactive: "Inactiva"
+};
+  const renderSubscription = (sub, isMain = false) => {
+    const status = String(sub.status || "pending").toLowerCase();
+
+    const statusLabel =
+      statusLabels[status] || status;
+
+    return `
+      <div class="${isMain ? "sub-main" : "sub-history-entry"}">
+
+        <div class="sub-record-info">
+
+          <div class="sub-record-top">
+            <strong>
+              ${isMain ? "Suscripción principal" : "Registro anterior"}
+            </strong>
+
+            <span class="pill">
+              ${escapeHtml(statusLabel)}
+            </span>
+          </div>
+
+          <p>
+            ${dateLocal(sub.start_date)}
+            — 
+            ${dateLocal(sub.end_date)}
+          </p>
+
+          ${
+            (
+              !isMain ||
+              ["cancelled", "completed"].includes(status)
+            )
+              ? `<button
+                  class="btn danger"
+                  data-delete-history="${escapeHtml(sub.id)}">
+                  ${isMain ? "Eliminar suscripción" : "Eliminar del historial"}
+                </button>`
+              : ""
+          }
+
+          <button class="btn"
+            data-details="${escapeHtml(sub.id)}">
+            Ver detalle
+          </button>
+          <div id="sub-detail-${sub.id}"
+            class="hidden"
+            style="margin-top:12px">
+            Cargando detalle...
+          </div>
+
+          <div class="item-actions">
+
+            ${
+              status === "pending"
+                ? `<button class="btn primary"
+                    data-status-id="${escapeHtml(sub.id)}"
+                    data-new-status="active">
+                    Activar
+                  </button>`
+                : ""
+            }
+
+            ${
+              status === "pending" || status === "active"
+                ? `<button class="btn danger"
+                    data-status-id="${escapeHtml(sub.id)}"
+                    data-new-status="cancelled">
+                    Cancelar
+                  </button>`
+                : ""
+            }
+
+          </div>
+
+        </div>
+      </div>
+    `;
+  };
+
+  // Dibujar una sola tarjeta por cliente
+  container.innerHTML = Object.entries(customerGroups)
+    .map(([key, customerSubscriptions]) => {
+
+      const person =
+        profiles[customerSubscriptions[0].customer_id] || {};
+      const customerId = customerSubscriptions[0].customer_id;
+
+// Calcular estado general del cliente
+const customerStatus = getCustomerStatus(customerSubscriptions);
+console.log(
+  "Cliente:",
+  person.full_name,
+  "| Estatus calculado:",
+  customerStatus,
+  "| Suscripciones:",
+  customerSubscriptions.map(s => ({
+    status: s.status,
+    start_date: s.start_date,
+    end_date: s.end_date
+  }))
+);
+// Seleccionar la suscripción principal
+const ordered = [...customerSubscriptions].sort((a, b) => {
+  const statusA = String(a.status || "").toLowerCase();
+  const statusB = String(b.status || "").toLowerCase();
+
+  const priorityA =
+    statusA === "active" &&
+    a.start_date <= today &&
+    a.end_date >= today ? 1 :
+    statusA === "pending" ? 2 : 3;
+
+  const priorityB =
+    statusB === "active" &&
+    b.start_date <= today &&
+    b.end_date >= today ? 1 :
+    statusB === "pending" ? 2 : 3;
+
+  if (priorityA !== priorityB) {
+    return priorityA - priorityB;
+  }
+
+  return (b.end_date || b.created_at || "")
+    .localeCompare(a.end_date || a.created_at || "");
+});
+
+const mainSubscription = ordered[0];
+const history = ordered.slice(1);
+const customerStatusLabel =
+  statusLabels[customerStatus] || customerStatus;
+      const activeCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "active"
+      ).length;
+
+      const pendingCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "pending"
+      ).length;
+
+      const cancelledCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "cancelled"
+      ).length;
+
+      const completedCount = customerSubscriptions.filter(
+        s => String(s.status).toLowerCase() === "completed"
+      ).length;
+
+      const mainStatus =
+        String(mainSubscription.status || "pending").toLowerCase();
+
+const badgeColor =
+  customerStatus === "active" ? "pill-success" :
+  customerStatus === "pending" ? "pill-warning" :
+  customerStatus === "cancelled" ? "pill-danger" :
+  "";
+return `
+        <article
+          class="item sub-customer-card"
+          data-customer-status="${customerStatus}">
+
+          <button
+            type="button"
+            class="sub-customer-toggle"
+            data-customer-toggle="${escapeHtml(key)}"
+            aria-expanded="false"
+            aria-controls="sub-customer-detail-${escapeHtml(key)}">
+
+            <span class="sub-customer-name">
+              ${escapeHtml(person.full_name || "Cliente sin nombre")}
+            </span>
+
+            <span class="pill ${badgeColor}">
+              ${escapeHtml(customerStatusLabel)}
+            </span>
+
+            <span class="sub-customer-arrow">＋</span>
+          </button>
+
+          <div
+            id="sub-customer-detail-${escapeHtml(key)}"
+            class="hidden sub-customer-detail">
+
+            <div class="muted">
+              ${escapeHtml(person.phone || "Sin teléfono")}
+            </div>
+
+            <div class="sub-customer-summary">
+              ${customerSubscriptions.length} ${
+                customerSubscriptions.length === 1 ? "registro" : "registros"
+              } ·
+              ${activeCount} activas ·
+              ${pendingCount} pendientes ·
+              ${cancelledCount} canceladas ·
+              ${completedCount} completadas
+            </div>
+
+            ${
+              customerId
+                ? `<button
+                     class="btn danger"
+                     data-delete-subscriber="${escapeHtml(customerId)}">
+                     Eliminar suscriptor
+                   </button>`
+                : ""
+            }
+
+            ${renderSubscription(mainSubscription, true)}
+            
+          ${
+            history.length
+              ? `
+                <div class="sub-history">
+
+                  <button class="btn sub-history-toggle"
+                    data-history-toggle="${escapeHtml(key)}">
+
+                    Ver historial (${history.length})
+                    <span>＋</span>
+
+                  </button>
+
+                  <div id="sub-history-${escapeHtml(key)}"
+                    class="hidden sub-history-content">
+
+                    ${history.map(sub =>
+                      renderSubscription(sub)
+                    ).join("")}
+
+                  </div>
+
+                </div>
+              `
+              : ""
+          }
+          </div>
+        </article>
+      `;
+    }).join("");
+// Filtros de suscriptores
+const filterButtons = document.querySelectorAll(".subscriber-filter");
+
+function applySubscriberFilter(filter) {
+  filterButtons.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.filter === filter
+    );
+  });
+
+  container.querySelectorAll(".sub-customer-card").forEach(card => {
+    const status = card.dataset.customerStatus;
+
+    card.hidden = (
+      filter !== "all" && status !== filter
+    );
+  });
+}
+
+filterButtons.forEach(button => {
+  button.onclick = () => {
+    applySubscriberFilter(button.dataset.filter);
+  };
+});
+
+// Mostrar todos al cargar
+applySubscriberFilter("all");// Desplegar información del suscriptor
+container.querySelectorAll("[data-customer-toggle]").forEach(button => {
+  button.addEventListener("click", () => {
+    const key = button.dataset.customerToggle;
+    const detail = $("sub-customer-detail-" + key);
+
+    if (!detail) return;
+
+    const isHidden = detail.classList.toggle("hidden");
+
+    button.setAttribute("aria-expanded", String(!isHidden));
+
+    const arrow = button.querySelector(".sub-customer-arrow");
+    if (arrow) {
+      arrow.textContent = isHidden ? "＋" : "−";
+    }
+  });
+});
+  // Botones de detalles
+  container.querySelectorAll("[data-details]").forEach(button => {
+    button.addEventListener("click", () => {
+      toggleSubscriptionDetails(
+        button.dataset.details,
+        subscriptions,
+        profiles
+      );
+    });
+  });
+
+  // Botones de activar y cancelar
+  container.querySelectorAll("[data-status-id]").forEach(button => {
+    button.addEventListener("click", () => {
+      updateSubscriptionStatus(
+        button.dataset.statusId,
+        button.dataset.newStatus
+      );
+    });
+  });
+// Eliminar una suscripción del historial
+container.querySelectorAll("[data-delete-history]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const id = button.dataset.deleteHistory;
+
+    const confirmed = confirm(
+      "¿Eliminar definitivamente esta suscripción del historial?\n\n" +
+      "También se eliminarán sus pedidos, artículos y pagos relacionados.\n\n" +
+      "Las demás suscripciones del cliente permanecerán intactas."
+    );
+
+    if (!confirmed) return;
+
+    button.disabled = true;
+    button.textContent = "Eliminando...";
+
+    const { error } = await db.rpc(
+      "delete_subscription_history",
+      { p_subscription_id: id }
+    );
+
+    if (error) {
+      alert("No se pudo eliminar la suscripción:\n" + error.message);
+      await loadSubscriptions();
+      return;
+    }
+
+    alert("Suscripción eliminada correctamente.");
+    await loadSubscriptions();
+  });
+});
+  // Eliminar suscriptor completo
+container.querySelectorAll("[data-delete-subscriber]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const customerId = button.dataset.deleteSubscriber;
+
+    const confirmed = confirm(
+      "¿Eliminar definitivamente a este suscriptor?\n\n" +
+      "Se borrarán su perfil, cuenta de acceso, todas sus suscripciones, " +
+      "pedidos, artículos y pagos relacionados.\n\n" +
+      "Esta acción es irreversible y no afectará a otros clientes."
+    );
+
+    if (!confirmed) return;
+
+    const confirmationWord = prompt(
+      'Para confirmar, escribe exactamente: ELIMINAR'
+    );
+
+    if (confirmationWord !== "ELIMINAR") {
+      alert("Eliminación cancelada.");
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Eliminando...";
+
+    const { data, error } = await db.functions.invoke(
+      "delete-subscriber",
+      {
+        body: {
+          customer_id: customerId
+        }
+      }
+    );
+
+    if (error || !data?.success) {
+      console.error("Error al eliminar suscriptor:", error || data);
+      alert(
+        "No se pudo completar la eliminación.\n\n" +
+        (data?.error || error?.message || "Error desconocido.")
+      );
+
+      await loadSubscriptions();
+      return;
+    }
+
+    alert("Suscriptor eliminado correctamente.");
+    await loadSubscriptions();
+  });
+});
+  // Mostrar y ocultar historial
+  container.querySelectorAll("[data-history-toggle]").forEach(button => {
+    button.addEventListener("click", () => {
+
+      const key = button.dataset.historyToggle;
+      const history = $("sub-history-" + key);
+
+      if (!history) return;
+
+      const isHidden = history.classList.toggle("hidden");
+
+      button.innerHTML = isHidden
+        ? `Ver historial (${history.children.length}) <span>＋</span>`
+        : `Ocultar historial <span>−</span>`;
+    });
+  });
+}
+  async function deleteSubscriptionHistory(id) {
+  const { error } = await db.rpc(
+    "delete_subscription_history",
+    { p_subscription_id: id }
+  );
+
+  if (error) {
+    alert("Error al eliminar: " + error.message);
+    return false;
+  }
+
+  await loadSubscriptions();
+  return true;
+}
+  async function toggleSubscriptionDetails(id, subscriptions, profiles) {
+  const detail = $("sub-detail-" + id);
+  const sub = subscriptions.find(s => String(s.id) === String(id));
+
+  if (!sub || !detail) return;
+
+  if (!detail.classList.contains("hidden")) {
+    detail.classList.add("hidden");
+    return;
+  }
+
+  detail.classList.remove("hidden");
+  detail.textContent = "Consultando platillos...";
+
+  const { data: items, error } = await db
+    .from("subscription_items")
+    .select("day_of_week, meal_name, unit_price_mxn, quantity")
+    .eq("subscription_id", id);
+
+  if (error) {
+    detail.textContent =
+      "No se pudieron cargar los platillos: " + error.message;
+    console.error(error);
+    return;
+  }
+
+  const person = profiles[sub.customer_id] || {};
+
+  const grouped = {};
+  (items || []).forEach(item => {
+    const day = item.day_of_week || "Día sin especificar";
+    if (!grouped[day]) grouped[day] = [];
+    grouped[day].push(item);
+  });
+
+  const dayOrder = [
+    "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+  ];
+
+  const days = Object.keys(grouped).sort((a, b) => {
+    const ia = dayOrder.indexOf(a);
+    const ib = dayOrder.indexOf(b);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+  detail.innerHTML = `
+    <div class="notice">
+      <strong>Dirección de entrega</strong><br>
+      ${escapeHtml(sub.delivery_address || "Sin dirección")}
+      ${
+        sub.delivery_notes
+          ? `<p><strong>Indicaciones:</strong><br>
+              ${escapeHtml(sub.delivery_notes)}</p>`
+          : ""
+      }
+      <p><strong>Teléfono:</strong>
+        ${escapeHtml(person.phone || "No registrado")}
+      </p>
+      <p><strong>Cargo de entrega:</strong>
+        ${money(sub.delivery_fee_mxn)}
+      </p>
+    </div>
+
+    <h3 style="font-size:16px">Platillos seleccionados</h3>
+
+    ${
+      days.length
+        ? days.map(day => `
+            <div style="margin-bottom:14px">
+              <strong>${escapeHtml(day)}</strong>
+              <div class="table-wrap" style="margin-top:6px">
+                <table style="min-width:0">
+                  <thead>
+                    <tr>
+                      <th>Platillo</th>
+                      <th>Cant.</th>
+                      <th>Precio</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${grouped[day].map(item => {
+                      const quantity = Number(item.quantity || 0);
+                      const price = Number(item.unit_price_mxn || 0);
+                      return `
+                        <tr>
+                          <td>${escapeHtml(item.meal_name || "Platillo")}</td>
+                          <td>${quantity}</td>
+                          <td>${money(price)}</td>
+                          <td>${money(quantity * price)}</td>
+                        </tr>
+                      `;
+                    }).join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `).join("")
+        : '<p class="empty">No se encontraron platillos para esta suscripción.</p>'
+    }
+  `;
+}
+
+
+async function updateSubscriptionStatus(id, newStatus) {
+  const labels = {
+    active: "activar",
+    cancelled: "cancelar"
+  };
+
+  if (!labels[newStatus]) return;
+
+  const confirmed = confirm(
+    `¿Seguro que deseas ${labels[newStatus]} esta suscripción?`
+  );
+
+  if (!confirmed) return;
+
+  // 1. Obtener el periodo de la suscripción
+  const { data: sub, error: subError } = await db
+    .from("subscriptions")
+    .select("id, start_date, end_date, status")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (subError || !sub) {
+    alert(
+      "No se pudo consultar la suscripción: " +
+      (subError?.message || "No encontrada.")
+    );
+    return;
+  }
+
+if (newStatus === "active" && sub.status !== "pending") {
+  alert("Solo puedes activar suscripciones pendientes.");
+  await loadSubscriptions();
+  return;
+}
+
+if (
+  newStatus === "cancelled" &&
+  !["pending", "active", "completed"].includes(
+    String(sub.status || "").toLowerCase()
+  )
+) {
+  alert("Esta suscripción ya está cancelada.");
+  await loadSubscriptions();
+  return;
+}
+  // 2. Actualizar el estado
+let updateQuery = db
+  .from("subscriptions")
+  .update({ status: newStatus })
+  .eq("id", id);
+
+if (newStatus === "active") {
+  updateQuery = updateQuery.eq("status", "pending");
+}
+
+const { data: updated, error: updateError } =
+  await updateQuery.select("id").maybeSingle();
+  if (updateError || !updated) {
+    alert(
+      "No se pudo actualizar la suscripción: " +
+      (updateError?.message || "El estado pudo cambiar previamente.")
+    );
+    await loadSubscriptions();
+    return;
+  }
+
+  // 3. Si se activa, generar los pedidos del periodo completo
+  if (newStatus === "active") {
+    const start = new Date(sub.start_date + "T12:00:00");
+    const end = new Date(sub.end_date + "T12:00:00");
+
+    let generatedTotal = 0;
+    const errors = [];
+
+    for (
+      let date = new Date(start);
+      date <= end;
+      date.setDate(date.getDate() + 1)
+    ) {
+      const deliveryDate = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+      ].join("-");
+
+      const { data, error } = await db.rpc(
+        "generate_subscription_orders",
+        { p_delivery_date: deliveryDate }
+      );
+
+      if (error) {
+        errors.push(
+          deliveryDate + ": " + error.message
+        );
+      } else {
+        generatedTotal += Number(data || 0);
+      }
+    }
+
+    await loadSubscriptions();
+
+    if (errors.length) {
+      alert(
+        "La suscripción quedó activa, pero algunos pedidos " +
+        "no pudieron generarse.\n\n" +
+        errors.join("\n") +
+        "\n\nRevisa esos días y vuelve a generar los pedidos " +
+        "pendientes desde Producción."
+      );
+      return;
+    }
+
+    alert(
+      "Suscripción activada correctamente.\n\n" +
+      "Pedidos nuevos generados: " + generatedTotal +
+      "\nPeriodo: " + sub.start_date + " al " + sub.end_date
+    );
+
+    return;
+  }
+
+  alert("Suscripción cancelada correctamente.");
+  await loadSubscriptions();
+}
+
+async function loadProduction() {
+  const date = $("production-date").value;
+
+  if (!date) {
+    $("production-list").textContent = "Selecciona una fecha.";
+    return;
+  }
+
+  $("production-list").textContent =
+    "Generando pedidos y calculando producción...";
+
+  // 1. Generar pedidos de suscripciones para la fecha seleccionada
+  const { data: generated, error: generateError } = await db.rpc(
+    "generate_subscription_orders",
+    { p_delivery_date: date }
+  );
+
+  if (generateError) {
+    console.error("Error al generar pedidos:", generateError);
+
+    $("production-list").textContent =
+      "Error al generar los pedidos: " + generateError.message;
+
+    return;
+  }
+
+  console.log("Pedidos nuevos generados:", generated);
+
+  // 2. Consultar todos los pedidos de esa fecha
+  const { data: orders, error } = await db
+    .from("orders")
+    .select("id, delivery_status")
+    .eq("delivery_date", date);
+
+  if (error) {
+    console.error("Error consultando pedidos:", error);
+
+    $("production-list").textContent =
+      "No se pudieron consultar los pedidos: " + error.message;
+
+    return;
+  }
+
+  // Excluir pedidos cancelados
+  const validOrders = (orders || []).filter(order => {
+    const status = String(order.delivery_status || "").toLowerCase();
+
+    return ![
+      "cancelled",
+      "canceled",
+      "cancelado",
+      "cancelada"
+    ].includes(status);
+  });
+
+  if (!validOrders.length) {
+    $("production-list").innerHTML =
+      '<div class="empty">No hay pedidos para esta fecha. Comprueba que existan suscripciones activas, vigentes y con platillos programados para ese día.</div>';
+
+    return;
+  }
+
+  // 3. Consultar los platillos de los pedidos
+  const orderIds = validOrders.map(order => order.id);
+
+  const { data: items, error: itemError } = await db
+    .from("order_items")
+    .select("item_name, meal_type, quantity")
+    .in("order_id", orderIds);
+
+  if (itemError) {
+    console.error("Error consultando platillos:", itemError);
+
+    $("production-list").textContent =
+      "No se pudieron consultar los platillos: " + itemError.message;
+
+    return;
+  }
+
+  // 4. Sumar las porciones por tipo y nombre de platillo
+  const totals = {};
+
+  (items || []).forEach(item => {
+    const type = item.meal_type || "lunch";
+    const name = item.item_name || "Platillo sin nombre";
+    const key = type + "||" + name;
+
+    if (!totals[key]) {
+      totals[key] = {
+        name,
+        type,
+        quantity: 0
+      };
+    }
+
+    totals[key].quantity += Number(item.quantity || 1);
+  });
+
+  const rows = Object.values(totals);
+
+  if (!rows.length) {
+    $("production-list").innerHTML =
+      '<div class="empty">Hay pedidos, pero no tienen platillos registrados.</div>';
+
+    return;
+  }
+
+  // 5. Mostrar el resumen
+  $("production-list").innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Platillo</th>
+            <th>Porciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(row => `
+            <tr>
+              <td>${row.type === "dinner" ? "Cena" : "Comida"}</td>
+              <td>${escapeHtml(row.name)}</td>
+              <td><strong>${row.quantity}</strong></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+  let financeAccountsCache = [];
+
+  function showFinanceMessage(message, type = "") {
+    const el = $("finance-message");
+    if (!el) return;
+    el.textContent = message;
+    el.className = "notice" + (type ? " " + type : "");
+    el.classList.remove("hidden");
+  }
+
+  function renderFinanceAccounts() {
+    const container = $("finance-accounts");
+    if (!container) return;
+    const search = String($("finance-search")?.value || "").trim().toLowerCase();
+    const filter = $("finance-filter")?.value || "all";
+    const rows = financeAccountsCache.filter(row => {
+      const snapshot = row.finance_customer_snapshots || {};
+      const haystack = `${snapshot.full_name || ""} ${snapshot.phone || ""}`.toLowerCase();
+      return (filter === "all" || row.status === filter) && (!search || haystack.includes(search));
+    });
+
+    if (!rows.length) {
+      container.innerHTML = '<div class="empty">No hay cuentas que coincidan con la búsqueda.</div>';
+      return;
+    }
+
+    const labels = { pending: "Pendiente", partial: "Parcial", paid: "Liquidada", cancelled: "Cancelada" };
+    container.innerHTML = rows.map(row => {
+      const person = row.finance_customer_snapshots || {};
+      const balance = Number(row._balance || 0);
+      const source = row.source_type === "subscription" ? "Suscripción" : "Pedido individual";
+      return `
+        <article class="finance-account">
+          <div class="finance-account-top">
+            <div>
+              <div class="finance-account-name">${escapeHtml(person.full_name || "Cliente sin nombre")}</div>
+              <div class="finance-account-meta">${escapeHtml(person.phone || "Sin teléfono")} · ${source}</div>
+              <div class="finance-account-meta">Cuenta: ${escapeHtml(row.id)}</div>
+            </div>
+            <span class="finance-pill ${escapeHtml(row.status)}">${escapeHtml(labels[row.status] || row.status)}</span>
+          </div>
+          <div class="finance-account-bottom">
+            <div><div class="muted">Importe actual</div><strong>${money(row.current_amount_mxn)}</strong></div>
+            <div><div class="muted">Saldo pendiente</div><div class="finance-balance">${money(balance)}</div></div>
+            <div><div class="muted">Creada</div><strong>${dateLocal(row.created_at)}</strong></div>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  async function loadFinance() {
+    const container = $("finance-accounts");
+    if (container) container.innerHTML = '<div class="empty">Consultando información financiera...</div>';
+    if ($("finance-message")) $("finance-message").classList.add("hidden");
+
+    try {
+      // Cargar cuentas y snapshots; el RLS limita la consulta al administrador.
+      const [accountsResult, transactionsResult, creditsResult, ordersResult, subscriptionsResult] = await Promise.all([
+        db.from("finance_accounts").select("id, source_type, source_id, customer_snapshot_id, original_amount_mxn, current_amount_mxn, status, created_at, finance_customer_snapshots(full_name, phone)").order("created_at", { ascending: false }),
+        db.from("finance_transactions").select("transaction_type, amount_mxn, transaction_date, cash_received_mxn, cash_refunded_mxn, balance_effect_mxn, credit_effect_mxn, account_id, customer_credit_id"),
+        db.from("finance_customer_credits").select("id"),
+        db.from("orders").select("id"),
+        db.from("subscriptions").select("id")
+      ]);
+
+      const firstError = accountsResult.error || transactionsResult.error || creditsResult.error || ordersResult.error || subscriptionsResult.error;
+      if (firstError) throw firstError;
+
+      const validOrderIds = new Set((ordersResult.data || []).map(x => x.id));
+      const validSubscriptionIds = new Set((subscriptionsResult.data || []).map(x => x.id));
+      // Excluir cuentas de pruebas/manuales que no correspondan a una operación real.
+      const accounts = (accountsResult.data || []).filter(a =>
+        a.source_type === "order" ? validOrderIds.has(a.source_id) :
+        a.source_type === "subscription" ? validSubscriptionIds.has(a.source_id) : false
+      );
+      const transactions = transactionsResult.data || [];
+      const accountIds = new Set(accounts.map(a => a.id));
+      const walletIds = new Set((creditsResult.data || []).map(x => x.id));
+      const accountEffects = {};
+      accounts.forEach(a => accountEffects[a.id] = Number(a.current_amount_mxn || 0));
+      transactions.forEach(t => {
+        if (t.account_id && accountIds.has(t.account_id)) {
+          accountEffects[t.account_id] = Math.max(0, (accountEffects[t.account_id] || 0) + Number(t.balance_effect_mxn || 0));
+        }
+      });
+      financeAccountsCache = accounts.map(a => ({ ...a, _balance: accountEffects[a.id] || 0 }));
+
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      const monthlyTransactions = transactions.filter(t => {
+        const d = new Date(t.transaction_date);
+        return d >= monthStart && d < monthEnd;
+      });
+      const received = monthlyTransactions.reduce((sum, t) => sum + Number(t.cash_received_mxn || 0), 0);
+      const refunded = monthlyTransactions.reduce((sum, t) => sum + Number(t.cash_refunded_mxn || 0), 0);
+      const receivable = financeAccountsCache.reduce((sum, a) => sum + a._balance, 0);
+      const creditTotal = transactions.reduce((sum, t) => sum + Number(t.credit_effect_mxn || 0), 0);
+
+      $("finance-income").textContent = money(received - refunded);
+      $("finance-pending").textContent = money(receivable);
+      $("finance-credit").textContent = money(creditTotal);
+      renderFinanceAccounts();
+    } catch (error) {
+      console.error("Error al cargar finanzas:", error);
+      if (container) container.innerHTML = '<div class="empty">No se pudo cargar la información financiera.</div>';
+      showFinanceMessage("Error al consultar finanzas: " + (error.message || "Error desconocido"), "error");
+    }
+  }
+
+  $("finance-search").addEventListener("input", renderFinanceAccounts);
+  $("finance-filter").addEventListener("change", renderFinanceAccounts);
+
+  document.querySelectorAll("[data-tab]").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab === button));
+["menu", "weekly", "orders", "production", "subscriptions", "finance"].forEach(name => {       
+  $("tab-" + name).classList.toggle("hidden", name !== button.dataset.tab);
+      });
+      if (button.dataset.tab === "finance") loadFinance();
+    });
+  });
+
+  $("refresh-btn").addEventListener("click", loadAll);
+  $("weekly-refresh").addEventListener("click", loadWeeklyData);
+  $("orders-refresh").addEventListener("click", loadOrders);
+  $("subscriptions-refresh").addEventListener("click", loadSubscriptions);
+  $("finance-refresh").addEventListener("click", loadFinance);
+  $("production-refresh").addEventListener("click", loadProduction);
+
+  $("logout-btn").addEventListener("click", async () => {
+    await db.auth.signOut();
+    location.replace("./login.html");
+  });
+
+  $("production-date").value = new Date().toLocaleDateString("en-CA");
+  verifyAccess();
+</script>
+</body>
+</html>
