@@ -1900,76 +1900,48 @@ tbody tr:last-child td {
       </div>`;
   }
 
-  let subscriptionsCache = [];
-  let subscriptionFilter = "all";
-
   async function loadSubscriptions() {
     const container = $("subscriptions-list");
     container.textContent = "Cargando suscripciones...";
 
-    const { data: subscriptions, error } = await db.from("subscriptions").select("*").order("created_at", { ascending: false }).limit(200);
+    const { data: subscriptions } = await db.from("subscriptions").select("*").order("created_at", { ascending: false }).limit(100);
 
-    if (error) {
-      container.innerHTML = '<div class="empty">No se pudieron cargar las suscripciones.</div>';
+    if (!subscriptions?.length) {
+      $("stat-subs").textContent = "0";
+      container.innerHTML = '<div class="empty">Todavía no hay suscripciones.</div>';
       return;
     }
 
-    subscriptionsCache = subscriptions || [];
-    renderSubscriptions();
-  }
+    const customerIds = [...new Set(subscriptions.map(s => s.customer_id).filter(Boolean))];
+    const profiles = {};
+    if (customerIds.length) {
+      const { data: people } = await db.from("profiles").select("id, full_name, phone").in("id", customerIds);
+      (people || []).forEach(p => profiles[p.id] = p);
+    }
 
-  function renderSubscriptions() {
-    const container = $("subscriptions-list");
-    const filteredSubs = subscriptionsCache.filter(sub => {
-      if (subscriptionFilter === "all") return true;
-      return String(sub.status || "").toLowerCase() === subscriptionFilter;
+    const customerGroups = {};
+    subscriptions.forEach((sub, i) => {
+      const key = sub.customer_id ? String(sub.customer_id) : "sin-cliente-" + i;
+      if (!customerGroups[key]) customerGroups[key] = [];
+      customerGroups[key].push(sub);
     });
 
-    const activeCount = subscriptionsCache.filter(s => String(s.status) === "active").length;
-    const pendingCount = subscriptionsCache.filter(s => String(s.status) === "pending").length;
-    const inactiveCount = subscriptionsCache.filter(s => String(s.status) === "inactive").length;
-    const cancelledCount = subscriptionsCache.filter(s => String(s.status) === "cancelled").length;
-
-    $("stat-subs").textContent = subscriptionsCache.length;
-    if ($("stat-subs-active")) $("stat-subs-active").textContent = activeCount;
-    if ($("stat-subs-pending")) $("stat-subs-pending").textContent = pendingCount;
-    if ($("stat-subs-inactive")) $("stat-subs-inactive").textContent = inactiveCount;
-    if ($("stat-subs-cancelled")) $("stat-subs-cancelled").textContent = cancelledCount;
-
-    if (!filteredSubs.length) {
-      container.innerHTML = '<div class="empty">No hay suscripciones en este filtro.</div>';
-      return;
-    }
-
-    container.innerHTML = filteredSubs.map(sub => {
-      const statusClass = { active: "pill-success", pending: "pill-warning", cancelled: "pill-danger", inactive: "" }[sub.status] || "";
+    $("stat-subs").textContent = Object.keys(customerGroups).length;
+    container.innerHTML = Object.entries(customerGroups).map(([key, list]) => {
+      const person = profiles[list[0].customer_id] || {};
       return `
         <article class="item sub-customer-card">
-          <button class="sub-customer-toggle" type="button" onclick="const detail = this.nextElementSibling; detail.classList.toggle('hidden');">
-            <span class="sub-customer-name">Suscripción #${escapeHtml(sub.id.slice(0, 8))}</span>
-            <span class="pill ${statusClass}">${escapeHtml(sub.status || "desconocido")}</span>
-            <span class="sub-customer-arrow">▾</span>
-          </button>
-          <div class="sub-customer-detail hidden">
-            <div class="sub-main">
-              <div class="sub-record-info">
-                <p><strong>Cliente ID:</strong> ${escapeHtml(sub.customer_id || "No asignado")}</p>
-                <p><strong>Creada el:</strong> ${dateLocal(sub.created_at)}</p>
-              </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+            <div>
+              <div class="item-title">${escapeHtml(person.full_name || "Cliente sin nombre")}</div>
+              <div class="muted">${escapeHtml(person.phone || "Sin teléfono")} · ${list.length} registros</div>
             </div>
+            <span class="pill">${escapeHtml(list[0].status)}</span>
           </div>
         </article>
       `;
     }).join("");
   }
-
-  document.querySelectorAll(".subscriber-filter").forEach(button => {
-    button.addEventListener("click", () => {
-      subscriptionFilter = button.dataset.filter;
-      document.querySelectorAll(".subscriber-filter").forEach(b => b.classList.toggle("active", b === button));
-      renderSubscriptions();
-    });
-  });
 
   async function loadProduction() {
     const date = $("production-date").value;
